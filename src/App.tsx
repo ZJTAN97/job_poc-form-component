@@ -18,8 +18,25 @@ export default function App() {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<FormValues>();
+    } = useForm<FormValues>({
+        defaultValues: {
+            firstName: "",
+            lastName: "",
+            age: 0,
+            developer: "",
+            gender: "",
+        },
+    });
+
+    const { onChange, onBlur, disabled, required, name } = register(
+        "firstName",
+        {
+            required: "This is required.",
+        }
+    );
+
     renderCount++;
+
     const onSubmit = (data: FormValues) => {
         console.log(data);
     };
@@ -32,16 +49,33 @@ export default function App() {
             />
             <label htmlFor="firstName">First Name:</label>
             <input
-                {...register("firstName", { required: "This is required." })}
+                onChange={onChange}
+                onBlur={onBlur}
+                disabled={disabled}
+                required={required}
+                name={name}
+                // {...register("firstName", { required: "This is required." })}
                 id="firstName"
             />
             {errors.firstName && <p>{errors.firstName.message}</p>}
 
             <label htmlFor="lastName">Last Name:</label>
             <input
-                {...register("lastName", { required: true, minLength: 5 })}
+                {...register("lastName", {
+                    required: {
+                        value: true,
+                        message: "This is a required field",
+                    },
+                    minLength: {
+                        value: 5,
+                        message: "Minimum length of 5",
+                    },
+                    validate: (value) => {
+                        return value === "bill";
+                    },
+                })}
             />
-
+            {errors.lastName && <p>{errors.lastName.message}</p>}
             <label htmlFor="age">Age</label>
             <input
                 type="number"
