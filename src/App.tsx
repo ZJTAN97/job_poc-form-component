@@ -18,6 +18,7 @@ export default function App() {
         register,
         handleSubmit,
         formState: { errors },
+        watch,
     } = useForm<FormValues>({
         defaultValues: {
             firstName: "",
@@ -36,6 +37,8 @@ export default function App() {
     );
 
     renderCount++;
+
+    watch(["firstName"]);
 
     const onSubmit = (data: FormValues) => {
         console.log(data);
