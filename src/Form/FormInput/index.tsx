@@ -1,44 +1,44 @@
-import { Input, Label } from "@fluentui/react-components";
+import { TextInput } from "@mantine/core";
 import React from "react";
-import { Control, useController, useFormContext } from "react-hook-form";
+import { useController } from "react-hook-form";
 
 interface FormInputProps {
-    type: "input" | "checkbox";
-    name: string;
-    label: string;
-    control: Control<any>;
+  name: string;
+  label: string;
 }
 
-const FormInput: React.FC<FormInputProps> = ({ type, name, label }) => {
-    const { control } = useFormContext();
+/**'
+ * It's ideal to use a single useController per component. 
+ * If you need to use more than one, make sure you rename the prop. May want to consider using Controller instead.
+ */
 
-    const {
-        field: { onChange, value, ref },
-        fieldState: { error },
-        formState: { isSubmitting },
-    } = useController({ control, name });
+const FormInput: React.FC<FormInputProps> = ({ name, label }) => {
+  const {
+    field: { onChange, value, ref },
+    fieldState: { error },
+    formState: { isSubmitting },
+  } = useController({ name });
 
-    return (
-        <div
-            style={{
-                display: "flex",
-                flexDirection: "column",
-                gap: "4px",
-                maxWidth: "400px",
-            }}
-        >
-            <Label htmlFor={name}>{label}</Label>
-            <Input
-                id={name}
-                onChange={(event) => onChange(event.target.value)}
-                value={value}
-                aria-label={name}
-                ref={ref}
-                disabled={isSubmitting}
-            />
-            {error?.message}{" "}
-        </div>
-    );
+  return (
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "4px",
+        maxWidth: "400px",
+      }}
+    >
+      <TextInput
+        ref={ref}
+        label={label}
+        withAsterisk
+        placeholder={label}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        error={error?.message}
+      />
+    </div>
+  );
 };
 
 export default FormInput;
