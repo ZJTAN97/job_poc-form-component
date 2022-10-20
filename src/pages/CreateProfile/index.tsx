@@ -1,13 +1,16 @@
 import React from "react";
 import "./index.css";
-import { useForm, useController, FormProvider } from "react-hook-form";
+import { useForm, useController } from "react-hook-form";
 import { FormSchemaType, formSchema } from "../../validations";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Chip, Textarea, TextInput } from "@mantine/core";
+import { Button, Chip, Textarea } from "@mantine/core";
 import mockSearchCharacterNames from "../../mock";
 import { debounce } from "lodash";
+import CesForm from "../../components/CesForm";
+import { useNavigate } from "@tanstack/react-location";
 
 const CreateProfile: React.FC = () => {
+  const navigate = useNavigate();
   const methods = useForm<FormSchemaType>({
     resolver: zodResolver(formSchema),
     mode: "onChange",
@@ -19,7 +22,7 @@ const CreateProfile: React.FC = () => {
     },
   });
 
-  const { formState, handleSubmit, control } = methods;
+  const { formState, handleSubmit, control, reset } = methods;
   const { isDirty, isValid, isSubmitting } = formState;
 
   const { field: jobField } = useController({
@@ -41,22 +44,16 @@ const CreateProfile: React.FC = () => {
     mockSearchCharacterNames(criteria, setCharacterNameError);
   }, 500);
 
-  const searchExistingNames = React.useCallback(
-    (searchValue: string) => {
-      characterNameField.onChange(searchValue);
-      debouncedSearch(searchValue);
-    },
-    [characterNameField.name]
-  );
-
   const switchJobType = (jobType: FormSchemaType["job"]) => {
-    jobField.onChange(jobType);
     characterNameField.onChange("");
     bioField.onChange("");
+    jobField.onChange(jobType);
+    // reset();
   };
 
   const submitForm = handleSubmit(async (data) => {
     console.log(data);
+    navigate({ to: "/profile", replace: true });
   });
 
   return (
@@ -65,15 +62,17 @@ const CreateProfile: React.FC = () => {
         <div className="title">Select Maplestory Job Type</div>
         <div className="title">Fill in the mandatory fields below</div>
 
-        <FormProvider {...methods}>
+        <CesForm methods={methods} useLocalStorage={true} preventLeaving={true}>
           <div className="chip__row">
             <Chip
+              disabled={isSubmitting}
               checked={jobField.value === "HERO"}
               onChange={() => switchJobType("HERO")}
             >
               Hero
             </Chip>
             <Chip
+              disabled={isSubmitting}
               checked={jobField.value === "ADVENTURER"}
               onChange={() => switchJobType("ADVENTURER")}
             >
@@ -81,21 +80,21 @@ const CreateProfile: React.FC = () => {
             </Chip>
           </div>
 
-          <TextInput
-            className="input"
+          <CesForm.TextInput
+            disabled={isSubmitting}
             label={"Character Name"}
-            value={characterNameField.value}
-            onChange={(e) => searchExistingNames(e.target.value)}
+            control={control}
+            name={"characterName"}
+            additionalCallBacks={debouncedSearch}
             error={
               characterNameError && (
-                <a href={characterNameField.value}>
-                  This profile exists, do you mean this guy?
-                </a>
+                <a href={"/profile"}>This name exists, do you mean this guy?</a>
               )
             }
           />
 
           <Textarea
+            disabled={isSubmitting}
             label={"Bio for Character"}
             className="input"
             value={bioField.value}
@@ -109,7 +108,7 @@ const CreateProfile: React.FC = () => {
           >
             Create Character
           </Button>
-        </FormProvider>
+        </CesForm>
       </div>
     </div>
   );

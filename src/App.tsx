@@ -1,16 +1,30 @@
 import React from "react";
-import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import "./App.css";
 import CreateProfile from "./pages/CreateProfile";
+import { ReactLocation, Router } from "@tanstack/react-location";
+import Profile from "./pages/Profile";
 
 const App: React.FC = () => {
+  const reactLocation = new ReactLocation();
+
   return (
     <>
-      <Router>
-        <Routes>
-          <Route path="/create-profile" element={<CreateProfile />}></Route>
-        </Routes>
-      </Router>
+      <Router
+        location={reactLocation}
+        routes={[
+          {
+            path: "/create-profile",
+            element: <CreateProfile />,
+          },
+          {
+            path: "/profile",
+            element: <Profile />,
+          },
+          {
+            element: "404 Not Found", // default fallback
+          },
+        ]}
+      />
     </>
   );
 };
