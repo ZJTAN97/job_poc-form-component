@@ -13,6 +13,11 @@ To create a form component using react-hook-form that has the following
 - [ ] Abstraction for forms to be saved in local storage if it is not submitted
 - [ ] Prevents user from closing the tab/page if they are in a dirtied form
 
+First Example of Creating a Character
+
+- [ ] An auto complete input that validates duplicate profile name
+- [ ] Checkbox between "job types", if "hero" is chosen --> Character Name can be Empty else cannot be empty.
+
 <br>
 
 # 2. Learning Points & TLDR from React-Hook-Form Documentation
@@ -34,3 +39,7 @@ To create a form component using react-hook-form that has the following
 
 - Used for creating reusable Controlled Input
 - Literally just powers `Controller` https://react-hook-form.com/api/usecontroller/controller
+
+<br>
+
+# 3. Learning Points & TLDR from Zod Documentation

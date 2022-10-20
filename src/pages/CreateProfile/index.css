@@ -1,0 +1,21 @@
+.main__container {
+  display: flex;
+  justify-content: center;
+}
+
+.chip__row {
+  display: flex;
+  gap: 10px;
+}
+
+.create__btn {
+  margin-top: 20px;
+}
+
+.title {
+  margin: 10px 0;
+}
+
+.input {
+  margin: 10px 0;
+}

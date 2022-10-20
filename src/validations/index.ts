@@ -1,11 +1,22 @@
 import z from "zod";
 
-export const formSchema = z.object({
-    job: z.enum(["HERO", "ADVENTURER"]),
-    characterName: z.string().min(5, "Minimum 5 characters"),
+export const baseSchema = z.object({
+  bio: z.string().min(10, "Minimally 10 character"),
+  dateCreated: z.date(),
 });
 
-export type FormSchemaType = z.infer<typeof formSchema>;
+export const formSchemaHero = z.object({
+  job: z.literal("HERO"),
+  characterName: z.string().optional(),
+});
 
-// TODO:
-// Research if zod is meant for form validation or just for schema validation
+export const formSchemaAdventurer = z.object({
+  job: z.literal("ADVENTURER"),
+  characterName: z.string().min(5, "require at least 5 characters"),
+});
+
+export const formSchema = z
+  .union([formSchemaHero, formSchemaAdventurer])
+  .and(baseSchema); // extends base schema
+
+export type FormSchemaType = z.infer<typeof formSchema>;
