@@ -1,9 +1,9 @@
 import React from "react";
 import "./index.css";
-import { useForm, useController } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { FormSchemaType, formSchema } from "../../validations";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Chip, Textarea } from "@mantine/core";
+import { Button } from "@mantine/core";
 import mockSearchCharacterNames from "../../mock";
 import { debounce } from "lodash";
 import Form from "../../components/Form";
@@ -19,37 +19,19 @@ const CreateProfile: React.FC = () => {
             characterName: "",
             bio: "",
             dateCreated: new Date(),
+            password: "",
+            confirmPassword: "",
         },
     });
 
     const { formState, handleSubmit, control, reset } = methods;
-    const { isDirty, isValid, isSubmitting } = formState;
-
-    const { field: jobField } = useController({
-        name: "job",
-        control,
-    });
-    const { field: characterNameField } = useController({
-        name: "characterName",
-        control,
-    });
-    const { field: bioField } = useController({
-        name: "bio",
-        control,
-    });
+    const { isValid, isSubmitting } = formState;
 
     const [characterNameError, setCharacterNameError] = React.useState("");
 
     const debouncedSearch = debounce((criteria: string) => {
         mockSearchCharacterNames(criteria, setCharacterNameError);
     }, 500);
-
-    const switchJobType = (jobType: FormSchemaType["job"]) => {
-        characterNameField.onChange("");
-        bioField.onChange("");
-        jobField.onChange(jobType);
-        // reset();
-    };
 
     const submitForm = handleSubmit(async (data) => {
         console.log(data);
@@ -67,29 +49,18 @@ const CreateProfile: React.FC = () => {
                     useLocalStorage={true}
                     preventLeaving={true}
                 >
-                    <div className="chip__row">
-                        <Chip
-                            disabled={isSubmitting}
-                            checked={jobField.value === "HERO"}
-                            onChange={() => switchJobType("HERO")}
-                        >
-                            Hero
-                        </Chip>
-                        <Chip
-                            disabled={isSubmitting}
-                            checked={jobField.value === "ADVENTURER"}
-                            onChange={() => switchJobType("ADVENTURER")}
-                        >
-                            Adventurer
-                        </Chip>
-                    </div>
-
+                    <Form.ChipSelection
+                        selections={["HERO", "ADVENTURER"]}
+                        name={"job"}
+                        control={control}
+                    />
                     <Form.TextInput
                         disabled={isSubmitting}
                         label={"Character Name"}
                         control={control}
                         name={"characterName"}
-                        additionalCallBacks={debouncedSearch}
+                        customOnChange={debouncedSearch}
+                        className={"input"}
                         error={
                             characterNameError && (
                                 <a href={"/profile"}>
@@ -98,13 +69,30 @@ const CreateProfile: React.FC = () => {
                             )
                         }
                     />
-
-                    <Textarea
+                    <Form.TextArea
                         disabled={isSubmitting}
+                        name={"bio"}
                         label={"Bio for Character"}
-                        className="input"
-                        value={bioField.value}
-                        onChange={(e) => bioField.onChange(e.target.value)}
+                        control={control}
+                        className={"input"}
+                    />
+
+                    <Form.TextInput
+                        disabled={isSubmitting}
+                        label={"Password"}
+                        control={control}
+                        name={"password"}
+                        className={"input"}
+                        type={"password"}
+                    />
+
+                    <Form.TextInput
+                        disabled={isSubmitting}
+                        label={"Confirm Password"}
+                        control={control}
+                        name={"confirmPassword"}
+                        className={"input"}
+                        type={"password"}
                     />
 
                     <Button

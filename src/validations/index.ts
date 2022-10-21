@@ -1,16 +1,28 @@
 import z from "zod";
 
-export const baseSchema = z.object({
-    bio: z.string().min(10, "Minimally 10 character"),
-    dateCreated: z.date(),
-});
+const baseSchema = z
+    .object({
+        bio: z.string().min(10, "Minimally 10 character"),
+        dateCreated: z.date(),
+        password: z
+            .string()
+            .min(6, "Password needs to be at least 6 characters long"),
+        confirmPassword: z.string(),
+    })
+    .refine(
+        async (baseSchema) =>
+            baseSchema.password === baseSchema.confirmPassword,
+        {
+            message: "Passwords dont match",
+        }
+    );
 
-export const formSchemaHero = z.object({
+const formSchemaHero = z.object({
     job: z.literal("HERO"),
     characterName: z.string().optional(),
 });
 
-export const formSchemaAdventurer = z.object({
+const formSchemaAdventurer = z.object({
     job: z.literal("ADVENTURER"),
     characterName: z.string().min(5, "require at least 5 characters"),
 });
