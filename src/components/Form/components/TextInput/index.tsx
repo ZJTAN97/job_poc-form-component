@@ -23,7 +23,7 @@ export const TextInput = ({
     className,
     type,
 }: TextInputProps) => {
-    const { field } = useController({ name, control });
+    const { field, fieldState } = useController({ name, control });
 
     const onChangeCallback = React.useCallback(
         (searchValue: string) => {
@@ -40,7 +40,7 @@ export const TextInput = ({
             label={label}
             value={field.value}
             onChange={(e) => onChangeCallback(e.target.value)}
-            error={error}
+            error={error || fieldState.error?.message}
             type={type}
         />
     );

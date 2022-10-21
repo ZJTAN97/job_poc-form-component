@@ -21,7 +21,7 @@ export const TextArea = ({
     customOnChange,
     className,
 }: TextInputProps) => {
-    const { field } = useController({ name, control });
+    const { field, fieldState } = useController({ name, control });
 
     const onChangeCallback = React.useCallback(
         (searchValue: string) => {
@@ -38,7 +38,7 @@ export const TextArea = ({
             label={label}
             value={field.value}
             onChange={(e) => onChangeCallback(e.target.value)}
-            error={error}
+            error={error || fieldState.error?.message}
         />
     );
 };

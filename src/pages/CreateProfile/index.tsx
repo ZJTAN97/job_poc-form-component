@@ -24,7 +24,7 @@ const CreateProfile: React.FC = () => {
         },
     });
 
-    const { formState, handleSubmit, control, reset } = methods;
+    const { formState, handleSubmit, control } = methods;
     const { isValid, isSubmitting } = formState;
 
     const [characterNameError, setCharacterNameError] = React.useState("");
@@ -50,7 +50,7 @@ const CreateProfile: React.FC = () => {
                     preventLeaving={true}
                 >
                     <Form.ChipSelection
-                        selections={["HERO", "ADVENTURER"]}
+                        selections={["HERO", "ADVENTURER", "RESISTANCE"]}
                         name={"job"}
                         control={control}
                     />
@@ -76,7 +76,6 @@ const CreateProfile: React.FC = () => {
                         control={control}
                         className={"input"}
                     />
-
                     <Form.TextInput
                         disabled={isSubmitting}
                         label={"Password"}
@@ -85,7 +84,6 @@ const CreateProfile: React.FC = () => {
                         className={"input"}
                         type={"password"}
                     />
-
                     <Form.TextInput
                         disabled={isSubmitting}
                         label={"Confirm Password"}
@@ -94,7 +92,6 @@ const CreateProfile: React.FC = () => {
                         className={"input"}
                         type={"password"}
                     />
-
                     <Button
                         disabled={!isValid}
                         onClick={submitForm}
