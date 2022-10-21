@@ -1,15 +1,11 @@
 import React from "react";
 import { TextInput as MantineTextInput } from "@mantine/core";
-import { Control, useController } from "react-hook-form";
+import { useController } from "react-hook-form";
+import { FormCommonProps } from "../../typings";
 
-interface TextInputProps {
+export interface TextInputProps extends FormCommonProps {
     label: string;
     error?: React.ReactNode;
-    customOnChange?: CallableFunction;
-    name: string;
-    control: Control<any>;
-    disabled?: boolean;
-    className?: string;
     type?: React.HTMLInputTypeAttribute;
 }
 

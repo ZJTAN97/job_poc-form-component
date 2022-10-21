@@ -34,8 +34,8 @@ const CreateProfile: React.FC = () => {
     }, 500);
 
     const submitForm = handleSubmit(async (data) => {
-        console.log(data);
         navigate({ to: "/profile", replace: true });
+        console.log(data);
     });
 
     return (
@@ -49,10 +49,11 @@ const CreateProfile: React.FC = () => {
                     useLocalStorage={true}
                     preventLeaving={true}
                 >
-                    <Form.ChipSelection
+                    <Form.ChipSelection<FormSchemaType["job"]>
                         selections={["HERO", "ADVENTURER", "RESISTANCE"]}
                         name={"job"}
                         control={control}
+                        disabled={isSubmitting}
                     />
                     <Form.TextInput
                         disabled={isSubmitting}

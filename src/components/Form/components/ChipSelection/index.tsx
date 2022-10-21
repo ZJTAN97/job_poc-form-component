@@ -1,29 +1,25 @@
 import { Chip } from "@mantine/core";
 import React from "react";
-import { Control, useController } from "react-hook-form";
+import { useController } from "react-hook-form";
+import { FormCommonProps } from "../../typings";
 import "./index.css";
 
-interface ChipSelectionProps {
-    name: string;
-    control: Control<any>;
-    disabled?: boolean;
-    className?: string;
-    selections: string[];
-    customOnChange?: CallableFunction;
+interface ChipSelectionProps<T> extends FormCommonProps {
+    selections: T[];
 }
 
-export const ChipSelection = ({
+export function ChipSelection<T extends String>({
     control,
     name,
     customOnChange,
     className,
     disabled,
     selections,
-}: ChipSelectionProps) => {
+}: ChipSelectionProps<T>) {
     const { field } = useController({ name, control });
 
     const onChangeCallback = React.useCallback(
-        (selection: string) => {
+        (selection: T) => {
             if (customOnChange) customOnChange();
             field.onChange(selection);
         },
@@ -34,7 +30,7 @@ export const ChipSelection = ({
         <div className={"chip__row" + " " + className}>
             {selections.map((item) => (
                 <Chip
-                    key={item}
+                    key={JSON.stringify(item)}
                     disabled={disabled}
                     checked={field.value === item}
                     onChange={() => onChangeCallback(item)}
@@ -44,4 +40,4 @@ export const ChipSelection = ({
             ))}
         </div>
     );
-};
+}

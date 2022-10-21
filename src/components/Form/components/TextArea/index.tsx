@@ -1,15 +1,11 @@
 import React from "react";
 import { Textarea as MantineTextArea } from "@mantine/core";
-import { Control, useController } from "react-hook-form";
+import { useController } from "react-hook-form";
+import { FormCommonProps } from "../../typings";
 
-interface TextInputProps {
-    name: string;
-    control: Control<any>;
-    disabled?: boolean;
-    className?: string;
+interface TextInputProps extends FormCommonProps {
     label: string;
     error?: React.ReactNode;
-    customOnChange?: CallableFunction;
 }
 
 export const TextArea = ({
