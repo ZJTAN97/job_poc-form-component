@@ -44,10 +44,11 @@ const CreateProfile: React.FC = () => {
                 <div className="title">Select Maplestory Job Type</div>
                 <div className="title">Fill in the mandatory fields below</div>
 
-                <Form
+                <Form<FormSchemaType>
                     methods={methods}
                     useLocalStorage={true}
                     preventLeaving={true}
+                    formSchema={formSchema}
                 >
                     <Form.ChipSelection<FormSchemaType["job"]>
                         selections={["HERO", "ADVENTURER", "RESISTANCE"]}
@@ -65,7 +66,7 @@ const CreateProfile: React.FC = () => {
                         error={
                             characterNameError && (
                                 <a href={"/profile"}>
-                                    This name exists, do you mean this guy?
+                                    This name exists, did you mean this guy?
                                 </a>
                             )
                         }

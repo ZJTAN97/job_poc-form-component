@@ -1,24 +1,34 @@
+import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
-import { FormProvider, UseFormReturn } from "react-hook-form";
+import { FormProvider, useForm, UseFormReturn } from "react-hook-form";
 import { ChipSelection } from "./components/ChipSelection";
 import { TextArea } from "./components/TextArea";
 import { TextInput } from "./components/TextInput";
 
-interface FormProps {
+interface FormProps<T> {
     methods: UseFormReturn<any>;
     useLocalStorage: boolean;
     preventLeaving: boolean;
     children: React.ReactNode;
+    // testing feasibility of including schema here
+    formSchema: any;
 }
 
-const Form = ({
+const Form = <T,>({
     methods,
     useLocalStorage,
     preventLeaving,
     children,
-}: FormProps) => {
+    formSchema,
+}: FormProps<T>) => {
     const { formState } = methods;
     const { isDirty } = formState;
+
+    // still testing the feasibility of this method
+    const methods2 = useForm<typeof formSchema>({
+        resolver: zodResolver(formSchema),
+        mode: "onChange",
+    });
 
     if (useLocalStorage) {
         // TODO: add localstorage logic here
