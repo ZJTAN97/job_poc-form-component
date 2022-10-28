@@ -1,0 +1,36 @@
+.main__container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.chip__row {
+  display: flex;
+  gap: 10px;
+}
+
+.create__btn {
+  margin-top: 20px;
+}
+
+.title {
+  margin: 10px 0;
+}
+
+.input {
+  margin: 10px 0;
+}
+
+.input__column {
+  padding: 30px;
+  width: 25%;
+}
+
+.source__column {
+  padding: 30px;
+  width: 25%;
+}
+
+.source__item {
+  padding: 10px;
+  color: #3f3f3f;
+}

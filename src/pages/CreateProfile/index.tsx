@@ -1,7 +1,7 @@
 import React from "react";
 import "./index.css";
 import { useForm } from "react-hook-form";
-import { FormSchemaType, formSchema } from "../../validations";
+import { FormSchemaType, formSchema } from "../../validations/character";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@mantine/core";
 import mockSearchCharacterNames from "../../mock";

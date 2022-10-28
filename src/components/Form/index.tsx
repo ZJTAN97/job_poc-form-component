@@ -1,6 +1,7 @@
 import React from "react";
 import { FormProvider, UseFormReturn } from "react-hook-form";
 import { ChipSelection } from "./components/ChipSelection";
+import Dropdown from "./components/Dropdown";
 import { TextArea } from "./components/TextArea";
 import { TextInput } from "./components/TextInput";
 
@@ -50,5 +51,6 @@ const Form = ({
 Form.TextInput = TextInput;
 Form.TextArea = TextArea;
 Form.ChipSelection = ChipSelection;
+Form.Dropdown = Dropdown;
 
 export default Form;
