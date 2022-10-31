@@ -3,7 +3,7 @@ import "./App.css";
 import CreateProfile from "./pages/CreateProfile";
 import { ReactLocation, Router } from "@tanstack/react-location";
 import Profile from "./pages/Profile";
-import CreateGuild from "./pages/CreateGuild";
+import CreateCareer from "./pages/CreateCareer";
 
 const App: React.FC = () => {
   const reactLocation = new ReactLocation();
@@ -22,20 +22,11 @@ const App: React.FC = () => {
             element: <Profile />,
           },
           {
-            path: "/create-guild",
-            element: <CreateGuild />,
+            path: "/create-career",
+            element: <CreateCareer />,
           },
           {
-            element: (
-              <>
-                <div>
-                  <a href="/create-profile">Go to create character</a>
-                </div>
-                <div>
-                  <a href="/create-guild">Go to create guild</a>
-                </div>
-              </>
-            ), // default fallback
+            element: <CreateProfile />, // default fallback
           },
         ]}
       />

@@ -1,5 +1,6 @@
 const path = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
+const ReactRefreshWebpackPlugin = require("@pmmmwh/react-refresh-webpack-plugin");
 
 module.exports = {
   entry: path.resolve(__dirname, "./src/index.tsx"),
@@ -25,6 +26,9 @@ module.exports = {
         use: [
           {
             loader: "babel-loader",
+            options: {
+              plugins: [require.resolve("react-refresh/babel")].filter(Boolean),
+            },
           },
         ],
       },
@@ -43,5 +47,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, "./public/index.html"),
     }),
+    new ReactRefreshWebpackPlugin(),
   ],
 };
