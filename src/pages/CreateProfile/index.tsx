@@ -65,6 +65,7 @@ const CreateProfile: React.FC = () => {
                 </a>
               )
             }
+            required={true}
           />
           <Form.TextArea
             disabled={isSubmitting}
@@ -80,6 +81,7 @@ const CreateProfile: React.FC = () => {
             name={"password"}
             className={"input"}
             type={"password"}
+            required={true}
           />
           <Form.TextInput
             disabled={isSubmitting}
@@ -88,6 +90,7 @@ const CreateProfile: React.FC = () => {
             name={"confirmPassword"}
             className={"input"}
             type={"password"}
+            required={true}
           />
           <Button
             disabled={!isValid}

@@ -1,43 +1,42 @@
-import { Chip } from "@mantine/core";
+import { Chip, ChipProps } from "@mantine/core";
 import React from "react";
 import { useController } from "react-hook-form";
 import { FormCommonProps } from "../../typings";
 import "./index.css";
 
-interface ChipSelectionProps<T> extends FormCommonProps {
-    selections: T[];
+interface ChipSelectionProps<T>
+  extends FormCommonProps,
+    Omit<ChipProps, "children"> {
+  name: string;
+  selections: T[];
+  groupClassName?: string;
 }
 
-export function ChipSelection<T extends String>({
-    control,
-    name,
-    customOnChange,
-    className,
-    disabled,
-    selections,
-}: ChipSelectionProps<T>) {
-    const { field } = useController({ name, control });
+export function ChipSelection<T extends String>(props: ChipSelectionProps<T>) {
+  const { name, control, customOnChange, ...mantineChipProps } = props;
 
-    const onChangeCallback = React.useCallback(
-        (selection: T) => {
-            if (customOnChange) customOnChange();
-            field.onChange(selection);
-        },
-        [field.name]
-    );
+  const { field } = useController({ name: name, control: control });
 
-    return (
-        <div className={"chip__row" + " " + className}>
-            {selections.map((item) => (
-                <Chip
-                    key={JSON.stringify(item)}
-                    disabled={disabled}
-                    checked={field.value === item}
-                    onChange={() => onChangeCallback(item)}
-                >
-                    {item}
-                </Chip>
-            ))}
-        </div>
-    );
+  const onChangeCallback = React.useCallback(
+    (selection: T) => {
+      if (props.customOnChange) props.customOnChange();
+      field.onChange(selection);
+    },
+    [field.name]
+  );
+
+  return (
+    <div className={"chip__row" + " " + props.groupClassName}>
+      {props.selections.map((item) => (
+        <Chip
+          key={JSON.stringify(item)}
+          {...mantineChipProps}
+          checked={field.value === item}
+          onChange={() => onChangeCallback(item)}
+        >
+          {item}
+        </Chip>
+      ))}
+    </div>
+  );
 }

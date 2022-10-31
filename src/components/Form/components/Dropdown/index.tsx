@@ -1,23 +1,17 @@
-import { Select, SelectItem } from "@mantine/core";
+import { Select, SelectProps } from "@mantine/core";
 import React from "react";
 import { FormCommonProps } from "../../typings";
 import { useController } from "react-hook-form";
 
-interface DropdownProps extends FormCommonProps {
-  choices: any[];
-  label?: string;
-}
+interface DropdownProps extends SelectProps, FormCommonProps {}
 
-const Dropdown = ({
-  control,
-  name,
-  customOnChange,
-  className,
-  disabled,
-  choices,
-  label,
-}: DropdownProps) => {
-  const { field } = useController({ name, control });
+const Dropdown = (props: DropdownProps) => {
+  const { control, customOnChange, ...mantineSelectProps } = props;
+
+  const { field } = useController({
+    name: String(mantineSelectProps.name),
+    control,
+  });
 
   const onChangeCallback = React.useCallback(
     (selection: any) => {
@@ -29,8 +23,7 @@ const Dropdown = ({
 
   return (
     <Select
-      label={label}
-      data={choices}
+      {...mantineSelectProps}
       onChange={(data) => onChangeCallback(data)}
     />
   );

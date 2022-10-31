@@ -85,7 +85,7 @@ const CreateGuild = () => {
                   label={"Type"}
                   control={sourceControl}
                   name="type"
-                  choices={["ASIASOFT", "NEXON"]}
+                  data={["ASIASOFT", "NEXON"]}
                 />
                 <Form.TextInput
                   control={sourceControl}
