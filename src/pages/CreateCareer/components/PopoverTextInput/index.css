@@ -1,0 +1,20 @@
+.popover__flex {
+  display: flex;
+}
+.popover__input {
+  width: 70%;
+}
+
+.dropdowns {
+  padding: 20px 10px;
+}
+
+.popover__container {
+  width: 50%;
+  margin: 20px 50px 0;
+}
+
+.popover__soi_input {
+  margin: 20px 0;
+  width: 30%;
+}

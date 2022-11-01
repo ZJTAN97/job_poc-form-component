@@ -34,7 +34,7 @@
     "@types/lodash": "^4.14.186",
     "@types/react": "^18.0.9",
     "babel-loader": "^8.2.3",
-    "css-loader": "^6.6.0",
+    "css-loader": "^6.7.1",
     "html-webpack-plugin": "^5.5.0",
     "miragejs": "^0.1.45",
     "react-refresh": "^0.14.0",
