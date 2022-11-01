@@ -37,8 +37,13 @@ const PopoverTextInput = ({
 
   const { formState, handleSubmit, control, getValues, watch } = methods;
 
-  console.log("[INFO] SOI Form: ");
-  console.log(watch());
+  // console.log("[INFO] SOI Form: ");
+  // console.log(watch());
+
+  console.log("[INFO] Errors in SOI Form");
+  console.log(formState.errors);
+
+  // TODO: Resolve no change error when switching source types
 
   return (
     <div className={styles.popover__flex}>
@@ -59,6 +64,7 @@ const PopoverTextInput = ({
               label={label}
               name={parentFormName}
               control={parentFormControl}
+              required={true}
             />
           </div>
         </Popover.Target>
@@ -73,7 +79,7 @@ const PopoverTextInput = ({
               className={styles.dropdowns}
               control={control}
               name={"source"}
-              defaultValue={"Last updated"}
+              defaultValue={getValues().source}
               data={["Last updated", "Create new"]}
             />
             {getValues().source === "Last updated" ? (
@@ -85,6 +91,7 @@ const PopoverTextInput = ({
                   className={styles.dropdowns}
                   control={control}
                   name={"sourceType"}
+                  defaultValue={"type1"}
                   data={["type1", "type2", "type3", "type4"]}
                 />
                 <Form.Dropdown
@@ -92,6 +99,7 @@ const PopoverTextInput = ({
                   className={styles.dropdowns}
                   control={control}
                   name={"sourceType"}
+                  defaultValue={"subtype1"}
                   data={["subtype1", "subtype2", "subtype3", "subtype4"]}
                 />
                 <Form.TextInput

@@ -28,8 +28,8 @@ const CreateCareer = () => {
   const [openCompanyPopover, setOpenCompanyPopover] = React.useState(false);
   const [openPositionPopover, setOpenPositionPopover] = React.useState(false);
 
-  console.log("[INFO] Form State: ");
-  console.log(watch());
+  // console.log("[INFO] Form State: ");
+  // console.log(watch());
 
   return (
     <Base>
@@ -47,6 +47,15 @@ const CreateCareer = () => {
           <PopoverTextInput
             label="Position"
             parentFormName="position"
+            parentFormControl={control}
+            open={openPositionPopover}
+            setOpen={setOpenPositionPopover}
+            existingSOIdata={getValues().soi}
+          />
+
+          <PopoverTextInput
+            label="Duration"
+            parentFormName="duration"
             parentFormControl={control}
             open={openPositionPopover}
             setOpen={setOpenPositionPopover}
