@@ -1,5 +1,5 @@
 import React from "react";
-import "./index.css";
+import styles from "./index.module.css";
 import { useForm } from "react-hook-form";
 
 import Base from "../../components/Base";
@@ -34,7 +34,7 @@ const CreateCareer = () => {
   return (
     <Base>
       <Form methods={methods} preventLeaving={true} useLocalStorage={false}>
-        <div className="container__career">
+        <div className={styles.container__career}>
           <PopoverTextInput
             label="Company"
             parentFormName="company"

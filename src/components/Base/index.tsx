@@ -1,5 +1,5 @@
 import React from "react";
-import "./index.css";
+import styles from "./index.module.css";
 import { AppShell, Header, Navbar, Container } from "@mantine/core";
 import { useNavigate } from "@tanstack/react-location";
 
@@ -21,10 +21,10 @@ const Base = ({ children }: BaseProps) => {
       navbar={
         <Navbar width={{ base: 300 }} p="xs">
           <Container onClick={() => navigate({ to: "/create-profile" })}>
-            <div className="selector">Create Character</div>
+            <div className={styles.selector}>Create Character</div>
           </Container>
           <Container onClick={() => navigate({ to: "/create-career" })}>
-            <div className="selector">Create Career</div>
+            <div className={styles.selector}>Create Career</div>
           </Container>
         </Navbar>
       }

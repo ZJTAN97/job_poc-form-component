@@ -2,7 +2,7 @@ import { Popover, SelectProps } from "@mantine/core";
 import React from "react";
 import Form from "../../../../components/Form";
 import { Control, useForm } from "react-hook-form";
-import "./index.css";
+import styles from "./index.module.css";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { SchemaSOI, SchemaSOIType } from "../../../../validations/career";
 
@@ -41,7 +41,7 @@ const PopoverTextInput = ({
   console.log(watch());
 
   return (
-    <div className="popover__flex">
+    <div className={styles.popover__flex}>
       <Popover
         width={350}
         withArrow
@@ -53,7 +53,7 @@ const PopoverTextInput = ({
         <Popover.Target>
           <div
             onFocusCapture={() => setOpen(true)}
-            className={"popover__container"}
+            className={styles.popover__container}
           >
             <Form.TextInput
               label={label}
@@ -70,7 +70,7 @@ const PopoverTextInput = ({
           >
             <Form.Dropdown
               label={"Select Source"}
-              className="dropdowns"
+              className={styles.dropdowns}
               control={control}
               name={"source"}
               defaultValue={"Last updated"}
@@ -82,27 +82,27 @@ const PopoverTextInput = ({
               <>
                 <Form.Dropdown
                   label={"Type"}
-                  className="dropdowns"
+                  className={styles.dropdowns}
                   control={control}
                   name={"sourceType"}
                   data={["type1", "type2", "type3", "type4"]}
                 />
                 <Form.Dropdown
                   label={"Sub Type"}
-                  className="dropdowns"
+                  className={styles.dropdowns}
                   control={control}
                   name={"sourceType"}
                   data={["subtype1", "subtype2", "subtype3", "subtype4"]}
                 />
                 <Form.TextInput
                   label={"Serial"}
-                  className="dropdowns"
+                  className={styles.dropdowns}
                   control={control}
                   name={"serial"}
                 />
                 <Form.TextInput
                   label={"Comment"}
-                  className="dropdowns"
+                  className={styles.dropdowns}
                   control={control}
                   name={"comments"}
                 />
@@ -115,7 +115,7 @@ const PopoverTextInput = ({
         label={"SOI | DATE"}
         name={"company"}
         control={control}
-        className={"popover__soi_input"}
+        className={styles.popover__soi_input}
         disabled={true}
       />
     </div>

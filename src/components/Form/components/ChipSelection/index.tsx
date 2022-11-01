@@ -2,7 +2,7 @@ import { Chip, ChipProps } from "@mantine/core";
 import React from "react";
 import { useController } from "react-hook-form";
 import { FormCommonProps } from "../../typings";
-import "./index.css";
+import styles from "./index.module.css";
 
 interface ChipSelectionProps<T>
   extends FormCommonProps,
@@ -26,7 +26,7 @@ export function ChipSelection<T extends String>(props: ChipSelectionProps<T>) {
   );
 
   return (
-    <div className={"chip__row" + " " + props.groupClassName}>
+    <div className={styles.main__container + " " + props.groupClassName}>
       {props.selections.map((item) => (
         <Chip
           key={JSON.stringify(item)}

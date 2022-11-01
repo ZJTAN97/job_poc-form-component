@@ -1,5 +1,5 @@
 import React from "react";
-import "./index.css";
+import styles from "./index.module.css";
 import { useForm } from "react-hook-form";
 import { SchemaProfile, SchemaProfileType } from "../../validations/character";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -41,9 +41,9 @@ const CreateProfile: React.FC = () => {
 
   return (
     <Base>
-      <div className="main__container">
+      <div className={styles.main__container}>
         <div>
-          <div className="title">Fill in the mandatory fields below</div>
+          <div className={styles.title}>Fill in the mandatory fields below</div>
           <Form methods={methods} useLocalStorage={true} preventLeaving={true}>
             <Form.ChipSelection<SchemaProfileType["gender"]>
               selections={["MALE", "FEMALE"]}
@@ -57,7 +57,7 @@ const CreateProfile: React.FC = () => {
               control={control}
               name={"characterName"}
               customOnChange={debouncedSearch}
-              className={"input"}
+              className={styles.input}
               error={
                 characterNameError && (
                   <a href={"/profile"}>
@@ -72,7 +72,7 @@ const CreateProfile: React.FC = () => {
               name={"bio"}
               label={"Bio for Character"}
               control={control}
-              className={"input"}
+              className={styles.input}
             />
             <Form.TextInput
               disabled={isSubmitting}
@@ -88,14 +88,14 @@ const CreateProfile: React.FC = () => {
               label={"Confirm Password"}
               control={control}
               name={"confirmPassword"}
-              className={"input"}
+              className={styles.input}
               type={"password"}
               required={true}
             />
             <Button
               disabled={!isValid}
               onClick={submitForm}
-              className="create__btn"
+              className={styles.create__btn}
             >
               Create Character
             </Button>
