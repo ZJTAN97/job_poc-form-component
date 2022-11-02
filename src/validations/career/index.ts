@@ -1,11 +1,10 @@
 import z from "zod";
 
-const SOI_TYPES = z.enum(["type1", "type2", "type3"]);
-const SOI_SUB_TYPES = z.enum(["subtype1", "subtype2", "subtype3"]);
-const SOI_SOURCE = z.enum(["Create new", "Last updated"]);
+const SOI_TYPES = z.enum(["Bird", "Cat", "Dog"]);
+const SOI_SUB_TYPES = z.enum(["Sub-Bird", "Sub-Cat", "Sub-Dog"]);
 
 export const SchemaSOI = z.object({
-  source: SOI_SOURCE,
+  appliedTo: z.array(z.string()),
   dateObtained: z.date(),
   sourceType: SOI_TYPES,
   sourceSubType: SOI_SUB_TYPES,
@@ -16,9 +15,9 @@ export const SchemaSOI = z.object({
 export type SchemaSOIType = z.infer<typeof SchemaSOI>;
 
 export const SchemaCareer = z.object({
-  company: z.string(),
-  position: z.string(),
-  duration: z.string(),
+  company: z.string().min(1, "Company cannot be empty"),
+  position: z.string().min(1, "Position cannot be empty"),
+  duration: z.string().min(1, "Duration cannot be empty"),
   soi: z.array(SchemaSOI),
 });
 

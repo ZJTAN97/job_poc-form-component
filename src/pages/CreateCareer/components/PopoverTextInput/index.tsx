@@ -1,17 +1,28 @@
-import { Popover, SelectProps } from "@mantine/core";
+import {
+  Button,
+  Popover,
+  Select,
+  StarIcon,
+  TextInput,
+  ThemeIcon,
+} from "@mantine/core";
 import React from "react";
 import Form from "../../../../components/Form";
-import { Control, useForm } from "react-hook-form";
+import { Control, useForm, UseFormReturn } from "react-hook-form";
 import styles from "./index.module.css";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SchemaSOI, SchemaSOIType } from "../../../../validations/career";
+import {
+  SchemaCareerType,
+  SchemaSOI,
+  SchemaSOIType,
+} from "../../../../validations/career";
 
 interface PopoverInputProps {
   label?: string;
   open: boolean;
   setOpen: (arg: boolean) => void;
-  existingSOIdata?: SchemaSOIType[];
-  parentFormName: string;
+  parentMethod: UseFormReturn<SchemaCareerType>;
+  parentFormName: keyof SchemaCareerType;
   parentFormControl: Control<any>;
 }
 
@@ -19,6 +30,7 @@ const PopoverTextInput = ({
   label,
   open,
   setOpen,
+  parentMethod,
   parentFormName,
   parentFormControl,
 }: PopoverInputProps) => {
@@ -26,32 +38,79 @@ const PopoverTextInput = ({
     resolver: zodResolver(SchemaSOI),
     mode: "onChange",
     defaultValues: {
-      source: "Last updated",
-      sourceType: "type1",
-      sourceSubType: "subtype1",
+      appliedTo: [],
+      sourceType: "Bird",
+      sourceSubType: "Sub-Bird",
       dateObtained: new Date(),
       comments: "",
       serial: "",
     },
   });
 
-  const { formState, handleSubmit, control, getValues, watch } = methods;
+  const {
+    setValue: setParentValue,
+    watch: parentValues,
+    formState: parentFormState,
+  } = parentMethod;
+  const { formState, handleSubmit, control, watch, setValue } = methods;
+  const [source, setSource] = React.useState<"create" | "previous">("create");
 
-  // console.log("[INFO] SOI Form: ");
-  // console.log(watch());
+  const { appliedTo } = watch();
 
-  console.log("[INFO] Errors in SOI Form");
-  console.log(formState.errors);
+  const { soi } = parentValues();
 
-  // TODO: Resolve no change error when switching source types
+  const {
+    comments: commentsError,
+    serial: serialError,
+    sourceSubType: sourceSubTypeError,
+    sourceType: sourceTypeError,
+  } = formState.errors;
+
+  const previousThreeSOI = React.useMemo(
+    () =>
+      soi
+        .sort((a, b) => b.dateObtained.getTime() - a.dateObtained.getTime())
+        .slice(0, 3),
+    [soi]
+  );
+
+  const submitForm = handleSubmit(async (data) => {
+    setParentValue("soi", [
+      ...soi,
+      {
+        ...data,
+        appliedTo: Array.from(new Set([...appliedTo, parentFormName])),
+      },
+    ]);
+    setOpen(false);
+  });
+
+  const applyForm = (index: number) => {
+    if (!soi[index].appliedTo.includes(parentFormName)) {
+      soi[index].appliedTo.push(parentFormName);
+    }
+    setParentValue("soi", soi);
+    setOpen(false);
+  };
+
+  const selectedSOIString = React.useMemo(() => {
+    const selectedSOI = soi.filter((item) =>
+      item.appliedTo.includes(parentFormName)
+    );
+    if (selectedSOI.length > 0) {
+      return `${selectedSOI[0].sourceType} | ${
+        selectedSOI[0].sourceSubType
+      } | ${selectedSOI[0].dateObtained.toDateString()}`;
+    }
+    return "";
+  }, [soi]);
 
   return (
     <div className={styles.popover__flex}>
       <Popover
-        width={350}
         withArrow
         shadow="md"
-        position="right"
+        position="right-start"
         opened={open}
         onClose={() => setOpen(false)}
       >
@@ -64,6 +123,7 @@ const PopoverTextInput = ({
               label={label}
               name={parentFormName}
               control={parentFormControl}
+              error={parentFormState.errors[parentFormName]?.message}
               required={true}
             />
           </div>
@@ -74,16 +134,59 @@ const PopoverTextInput = ({
             preventLeaving={false}
             useLocalStorage={false}
           >
-            <Form.Dropdown
+            <Select
               label={"Select Source"}
+              value={source === "create" ? "Create new" : "Last updated"}
+              onChange={(value) =>
+                setSource(value === "Create new" ? "create" : "previous")
+              }
               className={styles.dropdowns}
-              control={control}
-              name={"source"}
-              defaultValue={getValues().source}
-              data={["Last updated", "Create new"]}
+              data={["Create new", "Last updated"]}
+              disabled={!(soi.length > 0)}
             />
-            {getValues().source === "Last updated" ? (
-              <div>Last 3 updated stuf</div>
+            {source === "previous" ? (
+              <div className={styles.previous__updated_container}>
+                {previousThreeSOI.map((item, id) => (
+                  <div
+                    className={styles.previous__updated_col}
+                    key={item.toString() + id}
+                  >
+                    <label className={styles.previous__updated_label}>
+                      Date obtained
+                    </label>
+                    <div className={styles.previous__updated_content}>
+                      {item.dateObtained.toLocaleDateString()}
+                    </div>
+                    <label className={styles.previous__updated_label}>
+                      Type
+                    </label>
+                    <div className={styles.previous__updated_content}>
+                      {item.sourceType}
+                    </div>
+                    <label className={styles.previous__updated_label}>
+                      Sub-Type
+                    </label>
+                    <div className={styles.previous__updated_content}>
+                      {item.sourceSubType}
+                    </div>
+                    <label className={styles.previous__updated_label}>
+                      Serial Number
+                    </label>
+                    <div className={styles.previous__updated_content}>
+                      {item.serial}
+                    </div>
+                    <label className={styles.previous__updated_label}>
+                      Additional Comments
+                    </label>
+                    <div className={styles.previous__updated_content}>
+                      {item.comments}
+                    </div>
+                    <Button size="xs" onClick={() => applyForm(id)}>
+                      APPLY
+                    </Button>
+                  </div>
+                ))}
+              </div>
             ) : (
               <>
                 <Form.Dropdown
@@ -91,41 +194,53 @@ const PopoverTextInput = ({
                   className={styles.dropdowns}
                   control={control}
                   name={"sourceType"}
-                  defaultValue={"type1"}
-                  data={["type1", "type2", "type3", "type4"]}
+                  data={["Bird", "Cat", "Dog"]}
+                  error={sourceTypeError?.message}
                 />
                 <Form.Dropdown
                   label={"Sub Type"}
                   className={styles.dropdowns}
                   control={control}
-                  name={"sourceType"}
-                  defaultValue={"subtype1"}
-                  data={["subtype1", "subtype2", "subtype3", "subtype4"]}
+                  name={"sourceSubType"}
+                  data={["Sub-Bird", "Sub-Cat", "Sub-Dog"]}
+                  error={sourceSubTypeError?.message}
                 />
                 <Form.TextInput
                   label={"Serial"}
                   className={styles.dropdowns}
                   control={control}
                   name={"serial"}
+                  error={serialError?.message}
                 />
                 <Form.TextInput
                   label={"Comment"}
                   className={styles.dropdowns}
                   control={control}
                   name={"comments"}
+                  error={commentsError?.message}
                 />
+                <Button onClick={submitForm}>APPLY</Button>
               </>
             )}
           </Form>
         </Popover.Dropdown>
       </Popover>
-      <Form.TextInput
+      <TextInput
         label={"SOI | DATE"}
         name={"company"}
-        control={control}
         className={styles.popover__soi_input}
-        disabled={true}
+        value={selectedSOIString}
+        onChange={() => {}}
       />
+      <ThemeIcon
+        size="md"
+        variant="gradient"
+        gradient={{ from: "indigo", to: "cyan" }}
+        className={styles.icon}
+        onClick={() => setOpen(true)}
+      >
+        +
+      </ThemeIcon>
     </div>
   );
 };
