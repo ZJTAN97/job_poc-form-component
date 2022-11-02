@@ -1,11 +1,4 @@
-import {
-  Button,
-  Popover,
-  Select,
-  StarIcon,
-  TextInput,
-  ThemeIcon,
-} from "@mantine/core";
+import { Button, Popover, Select, TextInput, ThemeIcon } from "@mantine/core";
 import React from "react";
 import Form from "../../../../components/Form";
 import { Control, useForm, UseFormReturn } from "react-hook-form";
