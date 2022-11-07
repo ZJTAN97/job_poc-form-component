@@ -1,5 +1,7 @@
 # Proof Of Concept Project
 
+<br>
+
 # Introduction
 
 To create a reusable form component using react-hook-form and Mantine-UI that has the following
@@ -18,6 +20,17 @@ This Proof of Concept consists of two main pages which demostrates how the form 
 - Create Character Page
 - Create Career Page
 
+<br>
+<br>
+
+### Why a Specific Form Component when we already are using a UI library + React Hook Form?
+
+1. Ability to use implicit states by leveraging on React Context
+2. Ease of reusability across the entire team.
+3. Seperation of concerns between components (A form specific component/compound component is to be used as a context of a Form only).
+4. Extension of custom form components if required
+
+<br>
 <br>
 
 ### Create Character Page
