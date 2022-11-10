@@ -18,7 +18,7 @@ const Dropdown = (props: DropdownProps) => {
       if (customOnChange) customOnChange();
       field.onChange(selection);
     },
-    [field.name]
+    [field.name],
   );
 
   return (

@@ -1,0 +1,59 @@
+.main__container {
+  padding: 30px 0 50px 40px;
+  width: 70%;
+  border-right: solid 1px #dfdfdf;
+}
+.container__flex {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.text__input {
+  margin: 0 30px 30px 0;
+  height: 65px;
+}
+.container__col {
+  min-width: 47%;
+  margin-top: 10px;
+}
+.add__button {
+  width: 90%;
+  margin-top: 80px;
+  display: flex;
+  justify-content: flex-end;
+}
+.applied__reference {
+  padding-right: 10px;
+  text-align: right;
+  font-size: 12px;
+}
+
+.dropdowns {
+  margin-bottom: 20px;
+}
+
+.popover__container {
+  padding: 10px;
+}
+
+.apply__button {
+  margin-top: 20px;
+  width: 100%;
+}
+
+.skills__header {
+  font-weight: 500;
+}
+.skills__item {
+  padding: 15px 10px 10px 0;
+  font-size: 14px;
+}
+.skills__button {
+  margin-top: 10px;
+  width: 80px;
+  font-size: 12px;
+}
+.skills__input {
+  width: 200px;
+  margin: 10px 0;
+}

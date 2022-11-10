@@ -1,26 +1,24 @@
 import z from "zod";
 
-export const SAUCE_TYPES = z.enum(["Ketchup", "Chilli", "Mustard"]);
-export const SAUCE_PACKAGE = z.enum(["Packet", "Tub", "Bottle"]);
+export const REFERENCE_TYPES = z.enum(["LinkedIn", "Glassdoor", "Others"]);
 
-export const SchemaSAUCE = z.object({
-    appliedTo: z.array(z.string()),
-    dateObtained: z.date(),
-    sauceType: SAUCE_TYPES,
-    saucePackage: SAUCE_PACKAGE,
-    serial: z.string(),
-    comments: z.string(),
+export const SchemaReference = z.object({
+  appliedTo: z.string(),
+  dateObtained: z.string(),
+  referenceType: REFERENCE_TYPES,
+  comments: z.string(),
 });
 
-export type SchemaSOIType = z.infer<typeof SchemaSAUCE>;
+export type SchemaReferenceType = z.infer<typeof SchemaReference>;
 
 export const SchemaCareer = z.object({
-    company: z.string().min(1, "Company cannot be empty"),
-    position: z.string().min(1, "Position cannot be empty"),
-    duration: z.string().min(1, "Duration cannot be empty"),
-    lastDrawnSalary: z.string(),
-    skills: z.array(z.string()),
-    sauce: z.array(SchemaSAUCE),
+  company: z.string().min(1, "Company cannot be empty"),
+  position: z.string().min(1, "Intern is also an position bro."),
+  duration: z.string().min(1, "Duration cannot be empty"),
+  lastDrawnSalary: z.string().min(1, "How can the person not be paid?"),
+  skills: z.array(z.string()),
+  certs: z.array(z.string()),
+  references: z.array(SchemaReference),
 });
 
 export type SchemaCareerType = z.infer<typeof SchemaCareer>;

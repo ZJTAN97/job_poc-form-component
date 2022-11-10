@@ -1,4 +1,4 @@
-import z from "zod";
+import z from "zod"
 
 const SchemaBase = z
   .object({
@@ -14,21 +14,21 @@ const SchemaBase = z
     {
       message: "Passwords dont match",
       path: ["confirm"],
-    }
-  );
+    },
+  )
 
 const MaleSchema = z.object({
   gender: z.literal("MALE"),
-  characterName: z.string().min(5, "Male requires at least 5 characters"),
-});
+  employeeName: z.string().min(5, "Male requires at least 5 characters"),
+})
 
 const FemaleSchema = z.object({
   gender: z.literal("FEMALE"),
-  characterName: z.string().min(8, "Female requires at least 8 characters"),
-});
+  employeeName: z.string().min(8, "Female requires at least 8 characters"),
+})
 
-export const SchemaProfile = z
+export const SchemaEmployee = z
   .union([MaleSchema, FemaleSchema])
-  .and(SchemaBase); // extends base schema
+  .and(SchemaBase) // extends base schema
 
-export type SchemaProfileType = z.infer<typeof SchemaProfile>;
+export type SchemaEmployeeType = z.infer<typeof SchemaEmployee>

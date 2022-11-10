@@ -18,7 +18,7 @@ export const TextArea = (props: FormTextAreaProps) => {
       if (customOnChange) customOnChange(searchValue);
       field.onChange(searchValue);
     },
-    [field.name]
+    [field.name],
   );
 
   return (

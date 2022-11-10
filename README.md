@@ -2,13 +2,72 @@
 
 <br>
 
+# Objectives
+
+1. To show solution on Form Abstractions using `react-hook-form`, `mantine` and `zod`. Main idea is create a reusable form component using react-hook-form and Mantine-UI that has the following
+
+   - Standardized Display of Label, Description, Tooltip and Error
+   - Disabling form elements while form is being submitted
+   - Error message can render links to another page
+   - Abstraction for forms to be saved in local storage if it is not submitted
+   - Prevents user from closing the tab/page if they are in a dirtied form
+   - Show mandatory fields
+
+<br>
+
+2. Testing and experimenting complexity of handling nested MongoDB Schema on the Frontend Side (with forms)
+
+   - To ensure the form can handle the data structure as shown
+
+     ```
+     {
+         field1: "content1",
+         field2: "content2",
+         field3: ["item1", "item2"]
+         ref: [
+             {
+                 appliedTo: "content1",
+                 comment: "rara"
+             },
+             {
+                 appliedTo: "content2",
+                 comment: "rara2"
+             },
+             {
+                 appliedTo: "item1",
+                 comment: "rara3"
+             },
+             {
+                 appliedTo: "item2",
+                 comment: "rara4"
+             }
+         ]
+     }
+     ```
+
+<br>
+<br>
+
+# Tech Stack
+
+- React 18
+- TypeScript 4.5
+- react-hook-form
+- Mantinue UI (Main UI library used)
+- Webpack (React Project set up, NO CRA)
+- CSS Modules (might update to emotion if time permits)
+
+<br>
+<br>
+
 # How to Start
 
 1. Install Node (v16 and above)
 2. Ensure yarn is installed
 
 ```
-npm i -g yarn
+npm install --global yarn
+yarn --version
 ```
 
 3. Install Dependencies
@@ -23,26 +82,19 @@ yarn install
 yarn watch
 ```
 
+Go to: http://localhost:3000
+
 <br>
 <br>
 
-# Introduction
-
-To create a reusable form component using react-hook-form and Mantine-UI that has the following
-
--   Standardized Display of Label, Description, Tooltip and Error
--   Disabling form elements while form is being submitted
--   Error message can render links to another page
--   Abstraction for forms to be saved in local storage if it is not submitted
--   Prevents user from closing the tab/page if they are in a dirtied form
--   Show mandatory fields
+# Application Outline
 
 <br>
 
 This Proof of Concept consists of two main pages which demostrates how the form can be used
 
--   Create Character Page
--   Create Career Page
+- Create Character Page
+- Create Career Page
 
 <br>
 <br>
@@ -57,36 +109,24 @@ This Proof of Concept consists of two main pages which demostrates how the form 
 <br>
 <br>
 
-### Create Character Page
+### Create Employee Page
 
-A page to demo the basic validations and how the Form component is used in a standard Form.
+A page to demo the basic validations and how the Abstracted/Custom Form component is used in a standard Form.
 
-![plot](./images/create_character_page.PNG)
-
-<br>
-
-### Create Career Page
-
-A page to demo more complicated validations and how the Form component is used in a more nested Form.
-
-![plot](./images/create_career_page.PNG)
+![plot](./images/create_employee_page.PNG)
 
 <br>
-<br>
 
-# Tech Stack
+### Career History Page
 
--   React 18
--   TypeScript 4.5
--   react-hook-form
--   Mantinue UI (Main UI library used)
--   Webpack (React Project set up, NO CRA)
--   CSS Modules
+A page to demo more complicated validations and how the Abstracted/Custom Form component is used in a more nested Form.
+
+![plot](./images/career_history_page.PNG)
 
 <br>
 <br>
 
-# Usage of Form Component
+# Usage of Abstracted/Custom Form Component
 
 The form components leverages on the concept of Compound Components in React
 
@@ -120,22 +160,22 @@ const { control } = methods;
 
 # Learning Points & TLDR from React-Hook-Form Documentation
 
--   This portion aims to highlight the main hooks used and what are some key points to note when using the hooks. Aims to get you up to speed without digging through the entire documentation.
+- This portion aims to highlight the main hooks used and what are some key points to note when using the hooks. Aims to get you up to speed without digging through the entire documentation.
 
 ### `useForm`
 
 `formState`
 
--   `isDirty`: Returns boolean, check if forms is dirty, require default values to be set as underlying it uses deep copy to check.
--   `dirtyFields`: Returns object of dirtied fields with key being the fieldName and value being a boolean.
--   `touchedFields`: Return object, if you focused the field before, it will change to true for the particular field name
--   `isValid`: Returns boolean, only works if you used mode: "onChange"
+- `isDirty`: Returns boolean, check if forms is dirty, require default values to be set as underlying it uses deep copy to check.
+- `dirtyFields`: Returns object of dirtied fields with key being the fieldName and value being a boolean.
+- `touchedFields`: Return object, if you focused the field before, it will change to true for the particular field name
+- `isValid`: Returns boolean, only works if you used mode: "onChange"
 
 <br>
 
 ### `useController`
 
--   Used for creating reusable Controlled Input
--   Literally just powers `Controller` https://react-hook-form.com/api/usecontroller/controller
+- Used for creating reusable Controlled Input
+- Literally just powers `Controller` https://react-hook-form.com/api/usecontroller/controller
 
 <br>

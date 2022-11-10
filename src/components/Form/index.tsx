@@ -1,15 +1,15 @@
-import React from "react";
-import { FormProvider, UseFormReturn } from "react-hook-form";
-import { ChipSelection } from "./components/ChipSelection";
-import Dropdown from "./components/Dropdown";
-import { TextArea } from "./components/TextArea";
-import { TextInput } from "./components/TextInput";
+import React from "react"
+import { FormProvider, UseFormReturn } from "react-hook-form"
+import { ChipSelection } from "./components/ChipSelection"
+import Dropdown from "./components/Dropdown"
+import { TextArea } from "./components/TextArea"
+import { TextInput } from "./components/TextInput"
 
 interface FormProps {
-  methods: UseFormReturn<any>;
-  useLocalStorage: boolean;
-  preventLeaving: boolean;
-  children: React.ReactNode;
+  methods: UseFormReturn<any>
+  useLocalStorage: boolean
+  preventLeaving: boolean
+  children: React.ReactNode
 }
 
 const Form = ({
@@ -18,8 +18,8 @@ const Form = ({
   preventLeaving,
   children,
 }: FormProps) => {
-  const { formState } = methods;
-  const { isDirty } = formState;
+  const { formState } = methods
+  const { isDirty } = formState
 
   if (useLocalStorage) {
     // TODO: add localstorage logic here
@@ -31,26 +31,26 @@ const Form = ({
   const beforeUnload = React.useCallback(
     (event: BeforeUnloadEvent) => {
       if (preventLeaving && isDirty) {
-        event.returnValue = true;
+        event.returnValue = true
       }
     },
-    [isDirty, preventLeaving]
-  );
+    [isDirty, preventLeaving],
+  )
 
   React.useEffect(() => {
-    console.log("[INFO] Side effect triggered");
-    window.addEventListener("beforeunload", beforeUnload);
+    console.log("[INFO] Side effect triggered")
+    window.addEventListener("beforeunload", beforeUnload)
     return () => {
-      window.removeEventListener("beforeunload", beforeUnload);
-    };
-  }, [beforeUnload]);
+      window.removeEventListener("beforeunload", beforeUnload)
+    }
+  }, [beforeUnload])
 
-  return <FormProvider {...methods}>{children}</FormProvider>;
-};
+  return <FormProvider {...methods}>{children}</FormProvider>
+}
 
-Form.TextInput = TextInput;
-Form.TextArea = TextArea;
-Form.ChipSelection = ChipSelection;
-Form.Dropdown = Dropdown;
+Form.TextInput = TextInput
+Form.TextArea = TextArea
+Form.ChipSelection = ChipSelection
+Form.Dropdown = Dropdown
 
-export default Form;
+export default Form

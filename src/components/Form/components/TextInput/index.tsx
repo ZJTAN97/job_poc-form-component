@@ -18,7 +18,7 @@ export const TextInput = (props: FormTextInputProps) => {
       if (customOnChange) customOnChange(searchValue);
       field.onChange(searchValue);
     },
-    [field.name]
+    [field.name],
   );
 
   return (

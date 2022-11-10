@@ -22,7 +22,7 @@ export function ChipSelection<T extends String>(props: ChipSelectionProps<T>) {
       if (props.customOnChange) props.customOnChange();
       field.onChange(selection);
     },
-    [field.name]
+    [field.name],
   );
 
   return (
