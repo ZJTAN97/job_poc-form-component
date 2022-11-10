@@ -46,7 +46,6 @@
      ```
 
 <br>
-<br>
 
 # Tech Stack
 
@@ -57,7 +56,6 @@
 - Webpack (React Project set up, NO CRA)
 - CSS Modules (might update to emotion if time permits)
 
-<br>
 <br>
 
 # How to Start
@@ -85,7 +83,6 @@ yarn watch
 Go to: http://localhost:3000
 
 <br>
-<br>
 
 # Application Outline
 
@@ -97,7 +94,6 @@ This Proof of Concept consists of two main pages which demostrates how the form 
 - Create Career Page
 
 <br>
-<br>
 
 ### Why a Specific Form Component when we already are using a UI library + React Hook Form?
 
@@ -107,13 +103,12 @@ This Proof of Concept consists of two main pages which demostrates how the form 
 4. Extension of custom form components if required
 
 <br>
-<br>
 
 ### Create Employee Page
 
 A page to demo the basic validations and how the Abstracted/Custom Form component is used in a standard Form.
 
-![plot](./images/create_employee_page.PNG)
+![plot](./images/create_employee_page.png)
 
 <br>
 
@@ -121,7 +116,7 @@ A page to demo the basic validations and how the Abstracted/Custom Form componen
 
 A page to demo more complicated validations and how the Abstracted/Custom Form component is used in a more nested Form.
 
-![plot](./images/career_history_page.PNG)
+![plot](./images/career_history_page.png)
 
 <br>
 <br>
@@ -155,7 +150,6 @@ const { control } = methods;
 
 ```
 
-<br>
 <br>
 
 # Learning Points & TLDR from React-Hook-Form Documentation
