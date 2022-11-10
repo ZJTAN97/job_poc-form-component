@@ -6,6 +6,7 @@
 4. [Application Outline](#4-application-outline)
 5. [Usage of Abstracted/Custom Form Component](#5-usage-of-abstractedcustom-form-component)
 6. [Learning Points from React-Hook-Form](#6-learning-points--tldr-from-react-hook-form-documentation)
+7. [Current Schema](#7-current-schema-for-both-pages)
 
 <br>
 
@@ -180,3 +181,44 @@ const { control } = methods;
 - Literally just powers `Controller` https://react-hook-form.com/api/usecontroller/controller
 
 <br>
+
+# 7. Current Schema References for both pages
+
+Employee
+
+```
+
+{
+    employeName: string,
+    bio: string,
+    gender: enum,
+    password: string,
+    dateCreated: string
+}
+
+```
+
+<br>
+
+Career History
+
+```
+
+{
+    company: string,
+    position: string,
+    duration: string,
+    lastDrawnSalary: string,
+    skills: string[],
+    certs: string[],
+    references: [
+        {
+            appliedTo: string,
+            dateObtained: string,
+            referenceType: enum,
+            comments: string
+        }
+    ]
+}
+
+```
