@@ -4,94 +4,179 @@ import { useForm } from "react-hook-form";
 
 import Base from "../../components/Base";
 import Form from "../../components/Form";
-import { SchemaCareer, SchemaCareerType } from "../../validations/career";
+import {
+    SAUCE_TYPES,
+    SchemaCareer,
+    SchemaCareerType,
+} from "../../validations/career";
 import { zodResolver } from "@hookform/resolvers/zod";
-import PopoverTextInput from "./components/PopoverTextInput";
+import { ActionIcon, Button, Popover } from "@mantine/core";
 
 const CreateCareer = () => {
-  const methods = useForm<SchemaCareerType>({
-    resolver: zodResolver(SchemaCareer),
-    mode: "onChange",
-    defaultValues: {
-      company: "",
-      position: "",
-      duration: "",
-      soi: [
-        // UNCOMMENT IF YOU WANT MOCK EXISTING
-        // {
-        //   appliedTo: [],
-        //   comments: "zhen shi de",
-        //   dateObtained: new Date("10/10/2022"),
-        //   serial: "12345678",
-        //   sourceSubType: "Sub-Bird",
-        //   sourceType: "Bird",
-        // },
-        // {
-        //   appliedTo: [],
-        //   comments: "zhen shi de",
-        //   dateObtained: new Date("10/11/2022"),
-        //   serial: "12345678",
-        //   sourceSubType: "Sub-Cat",
-        //   sourceType: "Cat",
-        // },
-        // {
-        //   appliedTo: [],
-        //   comments: "zhen shi de",
-        //   dateObtained: new Date("10/12/2022"),
-        //   serial: "12345678",
-        //   sourceSubType: "Sub-Dog",
-        //   sourceType: "Dog",
-        // },
-      ],
-    },
-  });
+    const methods = useForm<SchemaCareerType>({
+        resolver: zodResolver(SchemaCareer),
+        mode: "onChange",
+        defaultValues: {
+            company: "",
+            position: "",
+            duration: "",
+            lastDrawnSalary: "",
+            skills: ["DevOps", "Backend", "Frontend"],
+            sauce: [],
+        },
+    });
 
-  const { formState, control, watch } = methods;
+    const { formState, control, watch, getValues } = methods;
 
-  const [openCompanyPopover, setOpenCompanyPopover] = React.useState(false);
-  const [openPositionPopover, setOpenPositionPopover] = React.useState(false);
-  const [openDurationPopover, setDurationPopover] = React.useState(false);
+    const [openSauceWindow, setOpenSauceWindow] = React.useState(false);
+    const [showSkillInput, setShowSkillInput] = React.useState(false);
 
-  console.log("[INFO] Form State: ");
-  console.log(watch());
+    console.log("[INFO] Form State: ");
+    console.log(watch());
 
-  console.log("[INFO] Current Errors");
-  console.log(formState.errors);
+    console.log("[INFO] Current Errors");
+    console.log(formState.errors);
 
-  return (
-    <Base>
-      <Form methods={methods} preventLeaving={true} useLocalStorage={false}>
-        <div className={styles.container__career}>
-          <PopoverTextInput
-            label="Company"
-            parentMethod={methods}
-            parentFormName="company"
-            parentFormControl={control}
-            open={openCompanyPopover}
-            setOpen={setOpenCompanyPopover}
-          />
-
-          <PopoverTextInput
-            label="Position"
-            parentMethod={methods}
-            parentFormName="position"
-            parentFormControl={control}
-            open={openPositionPopover}
-            setOpen={setOpenPositionPopover}
-          />
-
-          <PopoverTextInput
-            label="Duration"
-            parentMethod={methods}
-            parentFormName="duration"
-            parentFormControl={control}
-            open={openDurationPopover}
-            setOpen={setDurationPopover}
-          />
-        </div>
-      </Form>
-    </Base>
-  );
+    return (
+        <Base>
+            <Popover opened={openSauceWindow} position={"right"}>
+                <Popover.Target>
+                    <div className={styles.main__container}>
+                        <Form
+                            methods={methods}
+                            preventLeaving={true}
+                            useLocalStorage={false}
+                        >
+                            <h2>Career History</h2>
+                            <div className={styles.container__flex}>
+                                <div className={styles.container__col}>
+                                    <Form.TextInput
+                                        label={"Company"}
+                                        name={"company"}
+                                        control={control}
+                                        className={styles.text__input}
+                                    />
+                                    <Form.TextInput
+                                        label={"Position"}
+                                        name={"position"}
+                                        control={control}
+                                        className={styles.text__input}
+                                    />
+                                    <div className={styles.skills__header}>
+                                        Skill Sets
+                                    </div>
+                                    <div>
+                                        {getValues().skills.map((item, id) => (
+                                            <div
+                                                className={styles.skills__item}
+                                                key={item.toString() + id}
+                                            >
+                                                {item}
+                                            </div>
+                                        ))}
+                                        {showSkillInput && (
+                                            <Form.TextInput
+                                                label={"Skill Name"}
+                                                className={styles.skills__input}
+                                                control={control}
+                                                name={"idkyet"}
+                                            />
+                                        )}
+                                        <ActionIcon
+                                            variant={"gradient"}
+                                            className={styles.skills__button}
+                                            onClick={() =>
+                                                setShowSkillInput(
+                                                    !showSkillInput
+                                                )
+                                            }
+                                        >
+                                            Add{" "}
+                                        </ActionIcon>
+                                    </div>
+                                </div>
+                                <div className={styles.container__col}>
+                                    <Form.TextInput
+                                        label={"Duration"}
+                                        name={"duration"}
+                                        control={control}
+                                        className={styles.text__input}
+                                    />
+                                    <Form.TextInput
+                                        label={"Last Drawn Salary"}
+                                        name={"lastDrawnSalary"}
+                                        control={control}
+                                        className={styles.text__input}
+                                    />
+                                    <div className={styles.skills__header}>
+                                        Skill Sets
+                                    </div>
+                                    <div>
+                                        {getValues().skills.map((item, id) => (
+                                            <div
+                                                className={styles.skills__item}
+                                                key={item.toString() + id}
+                                            >
+                                                {item}
+                                            </div>
+                                        ))}
+                                        {showSkillInput && (
+                                            <Form.TextInput
+                                                label={"Skill Name"}
+                                                className={styles.skills__input}
+                                                control={control}
+                                                name={"idkyet"}
+                                            />
+                                        )}
+                                        <ActionIcon
+                                            variant={"gradient"}
+                                            className={styles.skills__button}
+                                            onClick={() =>
+                                                setShowSkillInput(
+                                                    !showSkillInput
+                                                )
+                                            }
+                                        >
+                                            Add{" "}
+                                        </ActionIcon>
+                                    </div>
+                                </div>
+                            </div>
+                            <div className={styles.add__button}>
+                                <Button
+                                    onClick={() =>
+                                        setOpenSauceWindow(!openSauceWindow)
+                                    }
+                                >
+                                    Add more Sauces
+                                </Button>
+                            </div>
+                        </Form>
+                    </div>
+                </Popover.Target>
+                <Popover.Dropdown>
+                    <div className={styles.popover__container}>
+                        <h5>Apply SAUCE to Fields</h5>
+                        <Form.Dropdown
+                            label={"Sauce Type"}
+                            control={control}
+                            name={"sauceType"}
+                            className={styles.dropdowns}
+                            data={["Ketchup", "Chilli", "Mustard"]}
+                        />
+                        <Form.Dropdown
+                            label={"Sauce Package"}
+                            control={control}
+                            name={"sauceSubType"}
+                            className={styles.dropdowns}
+                            data={["Packet", "Tub", "Bottle"]}
+                        />
+                        <Button className={styles.apply__button}>Apply</Button>
+                    </div>
+                </Popover.Dropdown>
+            </Popover>
+        </Base>
+    );
 };
 
 export default CreateCareer;
