@@ -28,29 +28,32 @@
    - To ensure the form can handle the data structure as shown
 
      ```
-     {
-         field1: "content1",
-         field2: "content2",
-         field3: ["item1", "item2"]
-         ref: [
-             {
-                 appliedTo: "content1",
-                 comment: "rara"
-             },
-             {
-                 appliedTo: "content2",
-                 comment: "rara2"
-             },
-             {
-                 appliedTo: "item1",
-                 comment: "rara3"
-             },
-             {
-                 appliedTo: "item2",
-                 comment: "rara4"
-             }
-         ]
-     }
+        const sample = {
+            company: "string",
+            appointment: {
+                position: "string",
+                rank: "string",
+            },
+            duration: "string",
+            lastDrawnSalary: "string",
+            skills: "string[]",
+            certs: [
+                {
+                    name: "string",
+                    issuedBy: "string",
+                },
+            ],
+            references: [
+                {
+                    field: "string, ",
+                    content: "string",
+                    dateObtained: "string",
+                    referenceType: "enum",
+                    comments: "string",
+                },
+            ],
+        };
+
      ```
 
 <br>
