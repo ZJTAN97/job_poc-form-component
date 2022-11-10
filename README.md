@@ -2,23 +2,47 @@
 
 <br>
 
+# How to Start
+
+1. Install Node (v16 and above)
+2. Ensure yarn is installed
+
+```
+npm i -g yarn
+```
+
+3. Install Dependencies
+
+```
+yarn install
+```
+
+4. Start Webpack Dev Server
+
+```
+yarn watch
+```
+
+<br>
+<br>
+
 # Introduction
 
 To create a reusable form component using react-hook-form and Mantine-UI that has the following
 
-- Standardized Display of Label, Description, Tooltip and Error
-- Disabling form elements while form is being submitted
-- Error message can render links to another page
-- Abstraction for forms to be saved in local storage if it is not submitted
-- Prevents user from closing the tab/page if they are in a dirtied form
-- Show mandatory fields
+-   Standardized Display of Label, Description, Tooltip and Error
+-   Disabling form elements while form is being submitted
+-   Error message can render links to another page
+-   Abstraction for forms to be saved in local storage if it is not submitted
+-   Prevents user from closing the tab/page if they are in a dirtied form
+-   Show mandatory fields
 
 <br>
 
 This Proof of Concept consists of two main pages which demostrates how the form can be used
 
-- Create Character Page
-- Create Career Page
+-   Create Character Page
+-   Create Career Page
 
 <br>
 <br>
@@ -52,12 +76,12 @@ A page to demo more complicated validations and how the Form component is used i
 
 # Tech Stack
 
-- React 18
-- TypeScript 4.5
-- react-hook-form
-- Mantinue UI (Main UI library used)
-- Webpack (React Project set up, NO CRA)
-- CSS Modules
+-   React 18
+-   TypeScript 4.5
+-   react-hook-form
+-   Mantinue UI (Main UI library used)
+-   Webpack (React Project set up, NO CRA)
+-   CSS Modules
 
 <br>
 <br>
@@ -96,22 +120,22 @@ const { control } = methods;
 
 # Learning Points & TLDR from React-Hook-Form Documentation
 
-- This portion aims to highlight the main hooks used and what are some key points to note when using the hooks. Aims to get you up to speed without digging through the entire documentation.
+-   This portion aims to highlight the main hooks used and what are some key points to note when using the hooks. Aims to get you up to speed without digging through the entire documentation.
 
 ### `useForm`
 
 `formState`
 
-- `isDirty`: Returns boolean, check if forms is dirty, require default values to be set as underlying it uses deep copy to check.
-- `dirtyFields`: Returns object of dirtied fields with key being the fieldName and value being a boolean.
-- `touchedFields`: Return object, if you focused the field before, it will change to true for the particular field name
-- `isValid`: Returns boolean, only works if you used mode: "onChange"
+-   `isDirty`: Returns boolean, check if forms is dirty, require default values to be set as underlying it uses deep copy to check.
+-   `dirtyFields`: Returns object of dirtied fields with key being the fieldName and value being a boolean.
+-   `touchedFields`: Return object, if you focused the field before, it will change to true for the particular field name
+-   `isValid`: Returns boolean, only works if you used mode: "onChange"
 
 <br>
 
 ### `useController`
 
-- Used for creating reusable Controlled Input
-- Literally just powers `Controller` https://react-hook-form.com/api/usecontroller/controller
+-   Used for creating reusable Controlled Input
+-   Literally just powers `Controller` https://react-hook-form.com/api/usecontroller/controller
 
 <br>
