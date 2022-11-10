@@ -1,8 +1,15 @@
 # Proof Of Concept Project
 
+1. [Objectives](#1-objectives)
+2. [Tech Stack](#2-tech-stack)
+3. [How to Start](#3-how-to-start)
+4. [Application Outline](#4-application-outline)
+5. [Usage of Abstracted/Custom Form Component](#5-usage-of-abstractedcustom-form-component)
+6. [Learning Points from React-Hook-Form](#6-learning-points--tldr-from-react-hook-form-documentation)
+
 <br>
 
-# Objectives
+# 1. Objectives
 
 1. To show solution on Form Abstractions using `react-hook-form`, `mantine` and `zod`. Main idea is create a reusable form component using react-hook-form and Mantine-UI that has the following
 
@@ -47,7 +54,7 @@
 
 <br>
 
-# Tech Stack
+# 2. Tech Stack
 
 - React 18
 - TypeScript 4.5
@@ -58,7 +65,7 @@
 
 <br>
 
-# How to Start
+# 3. How to Start
 
 1. Install Node (v16 and above)
 2. Ensure yarn is installed
@@ -84,14 +91,14 @@ Go to: http://localhost:3000
 
 <br>
 
-# Application Outline
+# 4. Application Outline
 
 <br>
 
 This Proof of Concept consists of two main pages which demostrates how the form can be used
 
-- Create Character Page
-- Create Career Page
+- Create Employee Page
+- Career History Page
 
 <br>
 
@@ -121,7 +128,7 @@ A page to demo more complicated validations and how the Abstracted/Custom Form c
 <br>
 <br>
 
-# Usage of Abstracted/Custom Form Component
+# 5. Usage of Abstracted/Custom Form Component
 
 The form components leverages on the concept of Compound Components in React
 
@@ -152,7 +159,7 @@ const { control } = methods;
 
 <br>
 
-# Learning Points & TLDR from React-Hook-Form Documentation
+# 6. Learning Points & TLDR from React-Hook-Form Documentation
 
 - This portion aims to highlight the main hooks used and what are some key points to note when using the hooks. Aims to get you up to speed without digging through the entire documentation.
 
