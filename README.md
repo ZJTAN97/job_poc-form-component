@@ -25,36 +25,118 @@
 
 2. Testing and experimenting complexity of handling nested MongoDB Schema on the Frontend Side (with forms)
 
-   - To ensure the form can handle the data structure as shown
+To ensure the form can handle the following data structures
 
-     ```
-        const sample = {
-            company: "string",
-            appointment: {
-                position: "string",
-                rank: "string",
-            },
-            duration: "string",
-            lastDrawnSalary: "string",
-            skills: "string[]",
-            certs: [
-                {
-                    name: "string",
-                    issuedBy: "string",
-                },
-            ],
-            references: [
-                {
-                    field: "string, ",
-                    content: "string",
-                    dateObtained: "string",
-                    referenceType: "enum",
-                    comments: "string",
-                },
-            ],
-        };
+1. Single Field
 
-     ```
+```
+  const singleFieldSample = {
+    company: "ABC Restaurant",
+    references: [
+      {
+        field: "company",
+        content: "ABC Restaurant",
+        dateObtained: "12/12/2022",
+      },
+    ],
+  };
+
+```
+
+2. Single Object
+
+```
+  const singleObjectSample = {
+    appointment: {
+      position: "Head Chef",
+      rank: "A",
+    },
+    references: [
+      {
+        field: "appointment.position",
+        content: "Head Chef",
+        dateObtained: "12/12/2022",
+      },
+      {
+        field: "appointment.rank",
+        content: "A",
+        dateObtained: "12/12/2022",
+      },
+    ],
+  };
+
+```
+
+3. Multi Field
+
+```
+  const multiFieldSample = {
+    skills: ["cooking", "slicing", "boiling", "coding"],
+    references: [
+      {
+        field: "skills",
+        content: "cooking",
+        dateObtained: "12/12/2022",
+      },
+      {
+        field: "skills",
+        content: "slicing",
+        dateObtained: "12/12/2022",
+      },
+      {
+        field: "skills",
+        content: "boiling",
+        dateObtained: "12/12/2022",
+      },
+      {
+        field: "skills",
+        content: "coding",
+        dateObtained: "12/12/2022",
+      },
+    ],
+  };
+
+```
+
+4. Multi Objects
+
+```
+const multiObjectSample = {
+    certs: [
+      {
+        name: "Cooking101",
+        issuedBy: "Culinary School A",
+      },
+      {
+        name: "Coding",
+        issuedBy: "NUS ISS",
+      },
+    ],
+    references: [
+      {
+        field: "certs.name",
+        content: "Cooking101",
+        dateObtained: "12/12/2022",
+      },
+      {
+        field: "certs.issuedBy",
+        content: "Cooking101",
+        dateObtained: "Culinary School A",
+      },
+      {
+        field: "certs.name",
+        content: "Coding",
+        dateObtained: "12/12/2022",
+      },
+      {
+        field: "certs.issuedBy",
+        content: "NUS ISS",
+        dateObtained: "12/12/2022",
+      },
+    ],
+  };
+
+```
 
 <br>
 

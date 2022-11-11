@@ -1,9 +1,8 @@
 import React from "react";
 import "./App.css";
 import { ReactLocation, Router } from "@tanstack/react-location";
-import Profile from "./pages/Profile";
-import { CareerHistory } from "./pages/CareerHistory";
 import { CreateEmployee } from "./pages/CreateEmployee";
+import { EmployeeInfo } from "./pages/EmployeeInfo";
 
 const App: React.FC = () => {
   const reactLocation = new ReactLocation();
@@ -18,12 +17,8 @@ const App: React.FC = () => {
             element: <CreateEmployee />,
           },
           {
-            path: "/profile",
-            element: <Profile />,
-          },
-          {
-            path: "/career-history",
-            element: <CareerHistory />,
+            path: "/employee",
+            element: <EmployeeInfo />,
           },
           {
             element: <CreateEmployee />, // default fallback

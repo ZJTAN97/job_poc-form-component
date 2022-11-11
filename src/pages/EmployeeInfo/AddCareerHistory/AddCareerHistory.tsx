@@ -2,26 +2,26 @@ import React from "react";
 import styles from "./index.module.css";
 import { useForm } from "react-hook-form";
 
-import Form from "../../components/Form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Button, Popover, TextInput } from "@mantine/core";
 import {
   SchemaCareer,
   SchemaCareerType,
   SchemaReference,
   SchemaReferenceType,
-} from "../../validations/career";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { ActionIcon, Button, Popover, TextInput } from "@mantine/core";
-import { Base } from "../../components/Base";
+} from "../../../validations/career";
+import Form from "../../../components/Form";
 
-export const CareerHistory = () => {
+export const AddCareerHistory = () => {
   const careerFormMethods = useForm<SchemaCareerType>({
     resolver: zodResolver(SchemaCareer),
     mode: "onChange",
     defaultValues: {
       company: "",
-      position: "",
-      duration: "",
-      lastDrawnSalary: "",
+      appointment: {
+        position: "",
+        rank: "",
+      },
       skills: [],
       certs: [],
       references: [],
@@ -75,10 +75,10 @@ export const CareerHistory = () => {
 
   const appendCerts = () => {
     if (showCertsInput && currentCertInput.length > 0) {
-      careerFormSetValues("certs", [
-        ...careerFormGetValues().certs,
-        currentCertInput,
-      ]);
+      // careerFormSetValues("certs", [
+      //   ...careerFormGetValues().certs,
+      //   currentCertInput,
+      // ]);
       setShowCertsInput(false);
     } else {
       setShowCertsInput(true);
@@ -97,19 +97,28 @@ export const CareerHistory = () => {
 
   const submitCareerForm = careerFormHandleSubmit(async (data) => {
     console.log("[INFO] Career Form State: ");
-    console.log(careerFormWatch());
+    console.log(data);
   });
 
+  console.log("[INFO] Career Form State: ");
+  console.log(careerFormWatch());
+
   return (
-    <Base>
-      <Popover opened={openReferenceWindow} position={"right"}>
-        <Popover.Target>
-          <div className={styles.main__container}>
-            <Form
-              methods={careerFormMethods}
-              preventLeaving={true}
-              useLocalStorage={false}
-            >
+    <Popover
+      opened={openReferenceWindow}
+      position={"right-start"}
+      withArrow
+      arrowOffset={150}
+      arrowSize={20}
+    >
+      <Popover.Target>
+        <div className={styles.popover__target}>
+          <Form
+            methods={careerFormMethods}
+            preventLeaving={true}
+            useLocalStorage={false}
+          >
+            <div className={styles.main__container}>
               <h2>Career History</h2>
               <div className={styles.container__flex}>
                 <div className={styles.container__col}>
@@ -130,34 +139,18 @@ export const CareerHistory = () => {
                   <div className={styles.text__input}>
                     <Form.TextInput
                       label={"Position"}
-                      name={"position"}
+                      name={"appointment.position"}
                       control={careerFormControl}
                     />
                     <div className={styles.applied__reference}>{}</div>
                   </div>
-                  <div className={styles.skills__header}>Skill Sets</div>
-                  <div>
-                    {careerFormGetValues().skills.map((item, id) => (
-                      <div
-                        className={styles.skills__item}
-                        key={item.toString() + id}
-                      >
-                        {item}
-                      </div>
-                    ))}
-                    {showSkillInput && (
-                      <TextInput
-                        className={styles.skills__input}
-                        onChange={(e) => setCurrentSkillInput(e.target.value)}
-                      />
-                    )}
-                    <ActionIcon
-                      variant={"gradient"}
-                      className={styles.skills__button}
-                      onClick={appendSkills}
-                    >
-                      Add
-                    </ActionIcon>
+                  <div className={styles.text__input}>
+                    <Form.TextInput
+                      label={"Rank"}
+                      name={"appointment.rank"}
+                      control={careerFormControl}
+                    />
+                    <div className={styles.applied__reference}>{}</div>
                   </div>
                 </div>
                 <div className={styles.container__col}>
@@ -177,6 +170,40 @@ export const CareerHistory = () => {
                     />
                     <div className={styles.applied__reference}>{}</div>
                   </div>
+                </div>
+              </div>
+            </div>
+            <div className={styles.main__container}>
+              <div className={styles.container__flex}>
+                <div className={styles.container__col}>
+                  <div className={styles.skills__header}>Skill Sets</div>
+                  <div>
+                    {careerFormGetValues().skills.map((item, id) => (
+                      <div
+                        className={styles.skills__item}
+                        key={item.toString() + id}
+                      >
+                        {item}
+                      </div>
+                    ))}
+                    {showSkillInput && (
+                      <TextInput
+                        className={styles.skills__input}
+                        onChange={(e) => setCurrentSkillInput(e.target.value)}
+                      />
+                    )}
+                    <div className={styles.append__array_btn}>
+                      <div
+                        className={styles.circular__add}
+                        onClick={appendSkills}
+                      >
+                        +
+                      </div>{" "}
+                      Add Skills
+                    </div>
+                  </div>
+                </div>
+                <div className={styles.container__col}>
                   <div className={styles.skills__header}>Certificates</div>
                   <div>
                     {careerFormGetValues().certs.map((item, id) => (
@@ -184,7 +211,7 @@ export const CareerHistory = () => {
                         className={styles.skills__item}
                         key={item.toString() + id}
                       >
-                        {item}
+                        {item.name} | {item.issuedBy}
                       </div>
                     ))}
                     {showCertsInput && (
@@ -193,70 +220,68 @@ export const CareerHistory = () => {
                         onChange={(e) => setCurrentCertInput(e.target.value)}
                       />
                     )}
-                    <ActionIcon
-                      variant={"gradient"}
-                      className={styles.skills__button}
-                      onClick={appendCerts}
-                    >
-                      Add
-                    </ActionIcon>
+                    <div className={styles.append__array_btn}>
+                      <div
+                        className={styles.circular__add}
+                        onClick={appendCerts}
+                      >
+                        +
+                      </div>{" "}
+                      Add Certs
+                    </div>
                   </div>
                 </div>
               </div>
-              <div className={styles.add__button}>
-                <Button
-                  variant="light"
-                  onClick={() => setOpenReferenceWindow(!openReferenceWindow)}
-                >
-                  Add references
-                </Button>
-              </div>
-              <div className={styles.add__button}>
-                <Button variant="gradient" onClick={submitCareerForm}>
-                  Add to Employment History
-                </Button>
-              </div>
-            </Form>
-          </div>
-        </Popover.Target>
-        <Popover.Dropdown>
-          <div className={styles.popover__container}>
-            <h5>Apply references to Fields</h5>
-            <Form.Dropdown
-              label={"Applied Field"}
-              control={referenceFormControl}
-              name={"appliedTo"}
-              className={styles.dropdowns}
-              data={["company", "position", "duration", "lastDrawnSalary"]}
-            />
-            <Form.Dropdown
-              label={"Reference Type"}
-              control={referenceFormControl}
-              name={"referenceType"}
-              className={styles.dropdowns}
-              data={["LinkedIn", "Glassdoor", "Others"]}
-            />
-            <Form.TextInput
-              label={"Comments"}
-              name={"comments"}
-              control={referenceFormControl}
-              className={styles.dropdowns}
-            />
-            <Form.TextInput
-              label={"Date of Origin"}
-              name={"dateObtained"}
-              control={referenceFormControl}
-              className={styles.dropdowns}
-            />
+            </div>
+          </Form>
+          <div className={styles.add__button}>
             <Button
-              className={styles.apply__button}
-              onClick={submitReferenceForm}
+              variant="white"
+              size="xs"
+              onClick={() => setOpenReferenceWindow(!openReferenceWindow)}
             >
-              Apply
+              Add references
             </Button>
           </div>
-        </Popover.Dropdown>
-      </Popover>
-    </Base>
+        </div>
+      </Popover.Target>
+      <Popover.Dropdown>
+        <div className={styles.popover__container}>
+          <h5>Apply references to Fields</h5>
+          <Form.Dropdown
+            label={"Applied Field"}
+            control={referenceFormControl}
+            name={"appliedTo"}
+            className={styles.dropdowns}
+            data={["company", "position", "duration", "lastDrawnSalary"]}
+          />
+          <Form.Dropdown
+            label={"Reference Type"}
+            control={referenceFormControl}
+            name={"referenceType"}
+            className={styles.dropdowns}
+            data={["LinkedIn", "Glassdoor", "Others"]}
+          />
+          <Form.TextInput
+            label={"Comments"}
+            name={"comments"}
+            control={referenceFormControl}
+            className={styles.dropdowns}
+          />
+          <Form.TextInput
+            label={"Date of Origin"}
+            name={"dateObtained"}
+            control={referenceFormControl}
+            className={styles.dropdowns}
+          />
+          <Button
+            className={styles.apply__button}
+            onClick={submitReferenceForm}
+          >
+            Apply
+          </Button>
+        </div>
+      </Popover.Dropdown>
+    </Popover>
   );
 };

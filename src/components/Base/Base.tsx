@@ -23,8 +23,8 @@ export const Base = ({ children }: BaseProps) => {
           <Container onClick={() => navigate({ to: "/create-employee" })}>
             <div className={styles.selector}>Create Employee</div>
           </Container>
-          <Container onClick={() => navigate({ to: "/career-history" })}>
-            <div className={styles.selector}>Career History</div>
+          <Container onClick={() => navigate({ to: "/employee" })}>
+            <div className={styles.selector}>Employee Info</div>
           </Container>
         </Navbar>
       }
@@ -41,4 +41,3 @@ export const Base = ({ children }: BaseProps) => {
     </AppShell>
   );
 };
-
