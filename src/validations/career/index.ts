@@ -15,7 +15,8 @@ export const SchemaCert = z.object({
 export type SchemaCertType = z.infer<typeof SchemaCert>;
 
 export const SchemaReference = z.object({
-  appliedTo: z.string(),
+  field: z.string(),
+  content: z.string(),
   dateObtained: z.string(),
   referenceType: REFERENCE_TYPES,
   comments: z.string(),

@@ -3,14 +3,15 @@ import styles from "./index.module.css";
 import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Button, Popover, TextInput } from "@mantine/core";
+import { Button, MultiSelect, Popover } from "@mantine/core";
 import {
   SchemaCareer,
   SchemaCareerType,
   SchemaReference,
   SchemaReferenceType,
-} from "../../../validations/career";
-import Form from "../../../components/Form";
+} from "../../../../validations/career";
+import Form from "../../../../components/Form";
+import { MultiField } from "../MultiField";
 
 export const AddCareerHistory = () => {
   const careerFormMethods = useForm<SchemaCareerType>({
@@ -36,11 +37,16 @@ export const AddCareerHistory = () => {
     handleSubmit: careerFormHandleSubmit,
   } = careerFormMethods;
 
+  const appendSkills = (skill: string) => {
+    careerFormSetValues("skills", [...careerFormGetValues().skills, skill]);
+  };
+
   const referenceFormMethods = useForm<SchemaReferenceType>({
     resolver: zodResolver(SchemaReference),
     mode: "onChange",
     defaultValues: {
-      appliedTo: "",
+      field: "",
+      content: "",
       comments: "",
       dateObtained: "",
       referenceType: "LinkedIn",
@@ -49,51 +55,47 @@ export const AddCareerHistory = () => {
 
   const {
     control: referenceFormControl,
-    getValues: referenceFormGetValues,
-    setValue: referenceFormSetValues,
+    // getValues: referenceFormGetValues,
+    // setValue: referenceFormSetValues,
     handleSubmit: referenceFormHandleSubmit,
   } = referenceFormMethods;
 
-  const [currentSkillInput, setCurrentSkillInput] = React.useState("");
-  const [currentCertInput, setCurrentCertInput] = React.useState("");
+  const [singleFieldsSelected, setSingleFieldsSelected] = React.useState<
+    string[]
+  >([]);
 
   const [openReferenceWindow, setOpenReferenceWindow] = React.useState(false);
-  const [showSkillInput, setShowSkillInput] = React.useState(false);
-  const [showCertsInput, setShowCertsInput] = React.useState(false);
 
-  const appendSkills = () => {
-    if (showSkillInput && currentSkillInput.length > 0) {
-      careerFormSetValues("skills", [
-        ...careerFormGetValues().skills,
-        currentSkillInput,
-      ]);
-      setShowSkillInput(false);
-    } else {
-      setShowSkillInput(true);
-    }
-  };
-
-  const appendCerts = () => {
-    if (showCertsInput && currentCertInput.length > 0) {
-      // careerFormSetValues("certs", [
-      //   ...careerFormGetValues().certs,
-      //   currentCertInput,
-      // ]);
-      setShowCertsInput(false);
-    } else {
-      setShowCertsInput(true);
-    }
-  };
-
-  const submitReferenceForm = referenceFormHandleSubmit(async (data) => {
-    console.log("[INFO] Reference Form State: ");
-    console.log(data);
+  const appendReferences = (data: SchemaReferenceType) => {
     careerFormSetValues("references", [
       ...careerFormGetValues().references,
       data,
     ]);
-    setOpenReferenceWindow(false);
-  });
+  };
+
+  const filteredSkillsReferences = React.useMemo(
+    () =>
+      careerFormGetValues().references.filter(
+        (item) => item.field === "skills",
+      ),
+    [careerFormGetValues().references],
+  );
+
+  const singleFieldsAppendReference = referenceFormHandleSubmit(
+    async (data) => {
+      singleFieldsSelected.forEach((item) => {
+        careerFormSetValues("references", [
+          ...careerFormGetValues().references,
+          {
+            ...data,
+            content: "",
+            field: item,
+          },
+        ]);
+      });
+      setOpenReferenceWindow(false);
+    },
+  );
 
   const submitCareerForm = careerFormHandleSubmit(async (data) => {
     console.log("[INFO] Career Form State: ");
@@ -131,7 +133,7 @@ export const AddCareerHistory = () => {
                     <div className={styles.applied__reference}>
                       {
                         careerFormGetValues().references.find(
-                          (item) => item.appliedTo === "company",
+                          (item) => item.field === "company",
                         )?.referenceType
                       }
                     </div>
@@ -176,60 +178,18 @@ export const AddCareerHistory = () => {
             <div className={styles.main__container}>
               <div className={styles.container__flex}>
                 <div className={styles.container__col}>
-                  <div className={styles.skills__header}>Skill Sets</div>
-                  <div>
-                    {careerFormGetValues().skills.map((item, id) => (
-                      <div
-                        className={styles.skills__item}
-                        key={item.toString() + id}
-                      >
-                        {item}
-                      </div>
-                    ))}
-                    {showSkillInput && (
-                      <TextInput
-                        className={styles.skills__input}
-                        onChange={(e) => setCurrentSkillInput(e.target.value)}
-                      />
-                    )}
-                    <div className={styles.append__array_btn}>
-                      <div
-                        className={styles.circular__add}
-                        onClick={appendSkills}
-                      >
-                        +
-                      </div>{" "}
-                      Add Skills
-                    </div>
-                  </div>
+                  <MultiField
+                    title={"Skill Set"}
+                    data={careerFormGetValues().skills}
+                    references={filteredSkillsReferences}
+                    appliedField={"skills"}
+                    appendHandler={appendSkills}
+                    appendReference={appendReferences}
+                  />
                 </div>
                 <div className={styles.container__col}>
-                  <div className={styles.skills__header}>Certificates</div>
-                  <div>
-                    {careerFormGetValues().certs.map((item, id) => (
-                      <div
-                        className={styles.skills__item}
-                        key={item.toString() + id}
-                      >
-                        {item.name} | {item.issuedBy}
-                      </div>
-                    ))}
-                    {showCertsInput && (
-                      <TextInput
-                        className={styles.skills__input}
-                        onChange={(e) => setCurrentCertInput(e.target.value)}
-                      />
-                    )}
-                    <div className={styles.append__array_btn}>
-                      <div
-                        className={styles.circular__add}
-                        onClick={appendCerts}
-                      >
-                        +
-                      </div>{" "}
-                      Add Certs
-                    </div>
-                  </div>
+                  Certificate stuffs here
+                  {/* TODO: MultiObject component */}
                 </div>
               </div>
             </div>
@@ -248,12 +208,13 @@ export const AddCareerHistory = () => {
       <Popover.Dropdown>
         <div className={styles.popover__container}>
           <h5>Apply references to Fields</h5>
-          <Form.Dropdown
-            label={"Applied Field"}
-            control={referenceFormControl}
-            name={"appliedTo"}
+          <MultiSelect
+            label={"Apply references to fields"}
+            name={"field"}
             className={styles.dropdowns}
             data={["company", "position", "duration", "lastDrawnSalary"]}
+            maxDropdownHeight={200}
+            onChange={(arr) => setSingleFieldsSelected(arr)}
           />
           <Form.Dropdown
             label={"Reference Type"}
@@ -276,7 +237,7 @@ export const AddCareerHistory = () => {
           />
           <Button
             className={styles.apply__button}
-            onClick={submitReferenceForm}
+            onClick={singleFieldsAppendReference}
           >
             Apply
           </Button>

@@ -1,7 +1,7 @@
 import { Button, Drawer } from "@mantine/core";
 import React from "react";
 import { Base } from "../../components/Base";
-import { AddCareerHistory } from "./AddCareerHistory";
+import { AddCareerHistory } from "./components/AddCareerHistory";
 import styles from "./index.module.css";
 
 export const EmployeeInfo = () => {
