@@ -9,7 +9,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Form from "../../../../components/Form";
 
-interface MultiFieldProps<> {
+interface MultiFieldProps {
   title: string;
   data: string[];
   references: SchemaReferenceType[];
@@ -79,7 +79,6 @@ export const MultiField = ({
       <Popover.Dropdown>
         <TextInput
           label={"Value"}
-          className={styles.skills__input}
           onChange={(e) => {
             setTextInput(e.target.value);
           }}

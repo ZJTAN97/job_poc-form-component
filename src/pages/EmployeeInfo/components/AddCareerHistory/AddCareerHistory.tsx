@@ -12,6 +12,7 @@ import {
 } from "../../../../validations/career";
 import Form from "../../../../components/Form";
 import { MultiField } from "../MultiField";
+import { SingleField } from "../SingleField";
 
 export const AddCareerHistory = () => {
   const careerFormMethods = useForm<SchemaCareerType>({
@@ -124,54 +125,58 @@ export const AddCareerHistory = () => {
               <h2>Career History</h2>
               <div className={styles.container__flex}>
                 <div className={styles.container__col}>
-                  <div className={styles.text__input}>
-                    <Form.TextInput
-                      label={"Company"}
-                      name={"company"}
-                      control={careerFormControl}
-                    />
-                    <div className={styles.applied__reference}>
-                      {
-                        careerFormGetValues().references.find(
-                          (item) => item.field === "company",
-                        )?.referenceType
-                      }
-                    </div>
-                  </div>
-                  <div className={styles.text__input}>
-                    <Form.TextInput
-                      label={"Position"}
-                      name={"appointment.position"}
-                      control={careerFormControl}
-                    />
-                    <div className={styles.applied__reference}>{}</div>
-                  </div>
-                  <div className={styles.text__input}>
-                    <Form.TextInput
-                      label={"Rank"}
-                      name={"appointment.rank"}
-                      control={careerFormControl}
-                    />
-                    <div className={styles.applied__reference}>{}</div>
-                  </div>
+                  <SingleField
+                    parentControl={careerFormControl}
+                    label={"Company"}
+                    name={"company"}
+                    reference={
+                      careerFormGetValues().references.filter(
+                        (item) => item.field === "company",
+                      )[0]
+                    }
+                  />
+                  <SingleField
+                    parentControl={careerFormControl}
+                    label={"Position"}
+                    name={"appointment.position"}
+                    reference={
+                      careerFormGetValues().references.filter(
+                        (item) => item.field === "appointment.position",
+                      )[0]
+                    }
+                  />
+                  <SingleField
+                    parentControl={careerFormControl}
+                    label={"Rank"}
+                    name={"appointment.rank"}
+                    reference={
+                      careerFormGetValues().references.filter(
+                        (item) => item.field === "appointment.rank",
+                      )[0]
+                    }
+                  />
                 </div>
                 <div className={styles.container__col}>
-                  <div className={styles.text__input}>
-                    <Form.TextInput
-                      label={"Duration"}
-                      name={"duration"}
-                      control={careerFormControl}
-                    />
-                    <div className={styles.applied__reference}>{}</div>
-                  </div>
-                  <div className={styles.text__input}>
-                    <Form.TextInput
-                      label={"Last Drawn Salary"}
-                      name={"lastDrawnSalary"}
-                      control={careerFormControl}
-                    />
-                    <div className={styles.applied__reference}>{}</div>
-                  </div>
+                  <SingleField
+                    parentControl={careerFormControl}
+                    label={"Duration"}
+                    name={"duration"}
+                    reference={
+                      careerFormGetValues().references.filter(
+                        (item) => item.field === "duration",
+                      )[0]
+                    }
+                  />
+                  <SingleField
+                    parentControl={careerFormControl}
+                    label={"Last Drawn Salary"}
+                    name={"lastDrawnSalary"}
+                    reference={
+                      careerFormGetValues().references.filter(
+                        (item) => item.field === "lastDrawnSalary",
+                      )[0]
+                    }
+                  />
                 </div>
               </div>
             </div>
@@ -212,7 +217,13 @@ export const AddCareerHistory = () => {
             label={"Apply references to fields"}
             name={"field"}
             className={styles.dropdowns}
-            data={["company", "position", "duration", "lastDrawnSalary"]}
+            data={[
+              "company",
+              "appointment.position",
+              "appointment.rank",
+              "duration",
+              "lastDrawnSalary",
+            ]}
             maxDropdownHeight={200}
             onChange={(arr) => setSingleFieldsSelected(arr)}
           />
