@@ -60,7 +60,14 @@ export const MultiField = ({
   });
 
   return (
-    <Popover width={200} position={"right-start"} withArrow opened={openPopup}>
+    <Popover
+      width={200}
+      position={"right-start"}
+      withArrow
+      opened={openPopup}
+      closeOnClickOutside // TODO: fix this
+      closeOnEscape // TODO: fix this
+    >
       <Popover.Target>
         <div className={styles.header}>{title}</div>
       </Popover.Target>

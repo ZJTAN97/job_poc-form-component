@@ -1,24 +1,25 @@
 .main__container {
-  margin: 40px 0 60px 0;
+  margin: 50px 0;
   display: flex;
   gap: 30px;
 }
-
 .container__col {
   width: 50%;
+  display: flex;
+  flex-direction: column;
+  gap: 25px;
 }
-
 .read__label {
   padding-top: 5px;
   font-size: 16px;
   font-weight: 500;
   color: #212529;
 }
-
 .read__value {
   padding-top: 12px;
   font-size: 14px;
   color: #212529;
+  margin-bottom: 25px;
 }
 
 .applied__reference {

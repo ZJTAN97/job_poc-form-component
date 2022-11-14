@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, MultiSelect, Popover } from "@mantine/core";
-import { MultiField } from "../MultiField";
 import { SingleField } from "../SingleField";
 import { Form } from "../../../../components/Form";
 import {
@@ -13,8 +12,17 @@ import {
   TYPES_OF_REFERENCES,
 } from "../../../../data/common/Reference";
 import { Career, CareerType } from "../../../../data/career/CareerHistory";
+import { SingleObject } from "../SingleObject";
+import { AppointmentType } from "../../../../data/career/Appointment";
 
 export const AddCareerHistory = () => {
+  const [editMode, setEditMode] = React.useState(true);
+
+  const toggleEditMode = () => {
+    setEditMode(!editMode);
+    setOpenReferenceWindow(!openReferenceWindow);
+  };
+
   const careerFormMethods = useForm<CareerType>({
     resolver: zodResolver(Career),
     mode: "onChange",
@@ -35,12 +43,7 @@ export const AddCareerHistory = () => {
     watch: careerFormWatch,
     getValues: careerFormGetValues,
     setValue: careerFormSetValues,
-    handleSubmit: careerFormHandleSubmit,
   } = careerFormMethods;
-
-  const appendSkills = (skill: string) => {
-    careerFormSetValues("skills", [...careerFormGetValues().skills, skill]);
-  };
 
   const referenceFormMethods = useForm<ReferenceType>({
     resolver: zodResolver(Reference),
@@ -56,40 +59,28 @@ export const AddCareerHistory = () => {
 
   const {
     control: referenceFormControl,
-    // getValues: referenceFormGetValues,
-    // setValue: referenceFormSetValues,
     handleSubmit: referenceFormHandleSubmit,
   } = referenceFormMethods;
 
-  const [singleFieldsSelected, setSingleFieldsSelected] = React.useState<
-    string[]
-  >([]);
+  const [singleValueFieldSelected, setSingleValueFieldSelected] =
+    React.useState<(keyof CareerType)[]>([]);
 
   const [openReferenceWindow, setOpenReferenceWindow] = React.useState(false);
 
-  const appendReferences = (data: ReferenceType) => {
-    careerFormSetValues("references", [
-      ...careerFormGetValues().references,
-      data,
-    ]);
-  };
+  const [apply, setApply] = React.useState(false);
 
-  const filteredSkillsReferences = React.useMemo(
-    () =>
-      careerFormGetValues().references.filter(
-        (item) => item.field === "skills",
-      ),
-    [careerFormGetValues().references],
-  );
-
-  const singleFieldsAppendReference = referenceFormHandleSubmit(
+  const applyReferencesToSelectedFields = referenceFormHandleSubmit(
     async (data) => {
-      singleFieldsSelected.forEach((item) => {
+      setApply(true);
+      singleValueFieldSelected.forEach((item) => {
+        console.log(item);
+        console.log(careerFormGetValues()[item]);
+
         careerFormSetValues("references", [
           ...careerFormGetValues().references,
           {
             ...data,
-            content: "",
+            content: careerFormGetValues()[item] as string,
             field: item,
           },
         ]);
@@ -98,13 +89,10 @@ export const AddCareerHistory = () => {
     },
   );
 
-  const submitCareerForm = careerFormHandleSubmit(async (data) => {
-    console.log("[INFO] Career Form State: ");
-    console.log(data);
-  });
+  careerFormWatch();
 
-  console.log("[INFO] Career Form State: ");
-  console.log(careerFormWatch());
+  // console.log("[INFO] Career Form State: ");
+  // console.log(careerFormWatch());
 
   return (
     <Popover
@@ -121,90 +109,42 @@ export const AddCareerHistory = () => {
             preventLeaving={true}
             useLocalStorage={false}
           >
-            <div className={styles.main__container}>
-              <h2>Career History</h2>
-              <div className={styles.container__flex}>
-                <div className={styles.container__col}>
-                  <SingleField
-                    parentControl={careerFormControl}
-                    label={"Company"}
-                    name={"company"}
-                    reference={
-                      careerFormGetValues().references.filter(
-                        (item) => item.field === "company",
-                      )[0]
-                    }
-                  />
-                  <SingleField
-                    parentControl={careerFormControl}
-                    label={"Position"}
-                    name={"appointment.position"}
-                    reference={
-                      careerFormGetValues().references.filter(
-                        (item) => item.field === "appointment.position",
-                      )[0]
-                    }
-                  />
-                  <SingleField
-                    parentControl={careerFormControl}
-                    label={"Rank"}
-                    name={"appointment.rank"}
-                    reference={
-                      careerFormGetValues().references.filter(
-                        (item) => item.field === "appointment.rank",
-                      )[0]
-                    }
-                  />
-                </div>
-                <div className={styles.container__col}>
-                  <SingleField
-                    parentControl={careerFormControl}
-                    label={"Duration"}
-                    name={"duration"}
-                    reference={
-                      careerFormGetValues().references.filter(
-                        (item) => item.field === "duration",
-                      )[0]
-                    }
-                  />
-                  <SingleField
-                    parentControl={careerFormControl}
-                    label={"Last Drawn Salary"}
-                    name={"lastDrawnSalary"}
-                    reference={
-                      careerFormGetValues().references.filter(
-                        (item) => item.field === "lastDrawnSalary",
-                      )[0]
-                    }
-                  />
-                </div>
-              </div>
-            </div>
-            <div className={styles.main__container}>
-              <div className={styles.container__flex}>
-                <div className={styles.container__col}>
-                  <MultiField
-                    title={"Skill Set"}
-                    data={careerFormGetValues().skills}
-                    references={filteredSkillsReferences}
-                    appliedField={"skills"}
-                    appendHandler={appendSkills}
-                    appendReference={appendReferences}
-                  />
-                </div>
-                <div className={styles.container__col}>
-                  Certificate stuffs here
-                  {/* TODO: MultiObject component */}
-                </div>
-              </div>
+            <div className={styles.container__col}>
+              <h2 className={styles.header}>Career History</h2>
+              <SingleField
+                editMode={editMode}
+                parentControl={careerFormControl}
+                label={"Name of Company"}
+                name={"company"}
+                groupName={"Company Details"}
+                currentValue={careerFormGetValues().company}
+                selected={singleValueFieldSelected.includes("company")}
+                apply={apply}
+                setParentReferences={careerFormSetValues}
+                reference={
+                  careerFormGetValues().references.filter(
+                    (item) => item.field === "company",
+                  )[0]
+                }
+              />
+              <SingleObject<AppointmentType>
+                editMode={editMode}
+                names={["position", "rank"]}
+                parentControl={careerFormControl}
+                labels={["Position", "Rank"]}
+                groupName={"Appointment Details"}
+                existingReferences={careerFormGetValues().references}
+                currentValues={careerFormGetValues().appointment}
+              />
+
+              <div>{/* TODO: MultiObject component For Certificates */}</div>
             </div>
           </Form>
           <div className={styles.add__button}>
-            <Button
-              variant="white"
-              size="xs"
-              onClick={() => setOpenReferenceWindow(!openReferenceWindow)}
-            >
+            <Button variant="white" size="xs">
+              Cancel
+            </Button>
+            <Button variant="white" size="xs" onClick={toggleEditMode}>
               Add references
             </Button>
           </div>
@@ -217,15 +157,10 @@ export const AddCareerHistory = () => {
             label={"Apply references to fields"}
             name={"field"}
             className={styles.dropdowns}
-            data={[
-              "company",
-              "appointment.position",
-              "appointment.rank",
-              "duration",
-              "lastDrawnSalary",
-            ]}
+            data={["company"]}
+            // data={["company", "appointment.position", "appointment.rank"]}
             maxDropdownHeight={200}
-            onChange={(arr) => setSingleFieldsSelected(arr)}
+            onChange={(arr: any) => setSingleValueFieldSelected(arr)}
           />
           <Form.Dropdown
             label={"Reference Type"}
@@ -248,7 +183,7 @@ export const AddCareerHistory = () => {
           />
           <Button
             className={styles.apply__button}
-            onClick={singleFieldsAppendReference}
+            onClick={applyReferencesToSelectedFields}
           >
             Apply
           </Button>
@@ -257,3 +192,38 @@ export const AddCareerHistory = () => {
     </Popover>
   );
 };
+
+{
+  /* <MultiField
+                title={"Skill Set"}
+                data={careerFormGetValues().skills}
+                references={filteredSkillsReferences}
+                appliedField={"skills"}
+                appendHandler={appendSkills}
+                appendReference={appendReferences}
+              /> */
+}
+
+// const appendSkills = (skill: string) => {
+//   careerFormSetValues("skills", [...careerFormGetValues().skills, skill]);
+// };
+
+// const appendReferences = (data: ReferenceType) => {
+//   careerFormSetValues("references", [
+//     ...careerFormGetValues().references,
+//     data,
+//   ]);
+// };
+
+// const filteredSkillsReferences = React.useMemo(
+//   () =>
+//     careerFormGetValues().references.filter(
+//       (item) => item.field === "skills",
+//     ),
+//   [careerFormGetValues().references],
+// );
+
+// const submitCareerForm = careerFormHandleSubmit(async (data) => {
+//   console.log("[INFO] Career Form State: ");
+//   console.log(data);
+// });

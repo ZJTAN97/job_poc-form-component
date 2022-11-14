@@ -1,10 +1,11 @@
 .header {
+  margin: 50px 0 10px 0;
   font-weight: 500;
   width: fit-content;
 }
 .item {
-  padding: 15px 10px 10px 0;
-  font-size: 14px;
+  padding: 8px 10px 8px 0;
+  font-size: 13px;
 }
 
 .circular__add {
