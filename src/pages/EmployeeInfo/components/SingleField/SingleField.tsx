@@ -1,15 +1,7 @@
-import React from "react";
 import styles from "./index.module.css";
-import { Control, UseFormSetValue } from "react-hook-form";
+import { Control } from "react-hook-form";
 import { Form } from "../../../../components/Form";
-import {
-  Reference,
-  ReferenceType,
-  TYPES_OF_REFERENCES,
-} from "../../../../data/common/Reference";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { CareerType } from "../../../../data/career/CareerHistory";
+import { ReferenceType } from "../../../../data/common/Reference";
 
 interface SingleFieldProps {
   label: string;
@@ -19,9 +11,6 @@ interface SingleFieldProps {
   parentControl: Control<any>;
   reference?: ReferenceType;
   editMode: boolean;
-  selected?: boolean;
-  apply: boolean;
-  setParentReferences: UseFormSetValue<CareerType>;
 }
 
 export const SingleField = ({
@@ -32,33 +21,8 @@ export const SingleField = ({
   parentControl,
   reference,
   editMode,
-  selected,
-  apply,
-  setParentReferences,
 }: SingleFieldProps) => {
   const { comments, dateObtained, referenceType } = reference ?? {};
-
-  const referenceFormMethods = useForm<ReferenceType>({
-    resolver: zodResolver(Reference),
-    mode: "onChange",
-    defaultValues: {
-      field: "",
-      content: "",
-      comments: "",
-      dateObtained: "",
-      referenceType: TYPES_OF_REFERENCES.FACEBOOK,
-    },
-  });
-
-  const {
-    control: referenceFormControl,
-    handleSubmit: referenceFormHandleSubmit,
-  } = referenceFormMethods;
-
-  if (selected && apply) {
-    console.log("update form");
-    setParentReferences("references", []);
-  }
 
   return (
     <div className={styles.main__container}>

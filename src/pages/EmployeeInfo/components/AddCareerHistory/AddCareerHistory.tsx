@@ -7,6 +7,7 @@ import { Button, MultiSelect, Popover } from "@mantine/core";
 import { SingleField } from "../SingleField";
 import { Form } from "../../../../components/Form";
 import {
+  GetReferenceTypeKey,
   Reference,
   ReferenceType,
   TYPES_OF_REFERENCES,
@@ -14,6 +15,7 @@ import {
 import { Career, CareerType } from "../../../../data/career/CareerHistory";
 import { SingleObject } from "../SingleObject";
 import { AppointmentType } from "../../../../data/career/Appointment";
+import { MultiField } from "../MultiField";
 
 export const AddCareerHistory = () => {
   const [editMode, setEditMode] = React.useState(true);
@@ -67,32 +69,66 @@ export const AddCareerHistory = () => {
 
   const [openReferenceWindow, setOpenReferenceWindow] = React.useState(false);
 
-  const [apply, setApply] = React.useState(false);
-
   const applyReferencesToSelectedFields = referenceFormHandleSubmit(
     async (data) => {
-      setApply(true);
-      singleValueFieldSelected.forEach((item) => {
-        console.log(item);
-        console.log(careerFormGetValues()[item]);
+      console.log("--data--");
+      console.log(data);
 
-        careerFormSetValues("references", [
-          ...careerFormGetValues().references,
-          {
-            ...data,
-            content: careerFormGetValues()[item] as string,
-            field: item,
-          },
-        ]);
+      singleValueFieldSelected.forEach((item) => {
+        const isSingleObjectType = item.split(".").length === 2;
+
+        if (isSingleObjectType) {
+          const objArr = item.split(".") as (keyof CareerType)[];
+          const appointmentObj = careerFormGetValues()[
+            objArr[0]
+          ] as AppointmentType;
+          const fieldItem = appointmentObj[objArr[1] as keyof AppointmentType];
+          careerFormSetValues("references", [
+            ...careerFormGetValues().references,
+            {
+              ...data,
+              referenceType: GetReferenceTypeKey(data.referenceType),
+              content: fieldItem,
+              field: item,
+            },
+          ]);
+        } else {
+          careerFormSetValues("references", [
+            ...careerFormGetValues().references,
+            {
+              ...data,
+              referenceType: GetReferenceTypeKey(data.referenceType),
+              content: careerFormGetValues()[item] as string,
+              field: item,
+            },
+          ]);
+        }
       });
       setOpenReferenceWindow(false);
     },
   );
 
-  careerFormWatch();
+  const appendSkills = (skill: string) => {
+    careerFormSetValues("skills", [...careerFormGetValues().skills, skill]);
+  };
 
-  // console.log("[INFO] Career Form State: ");
-  // console.log(careerFormWatch());
+  const appendReferences = (data: ReferenceType) => {
+    careerFormSetValues("references", [
+      ...careerFormGetValues().references,
+      data,
+    ]);
+  };
+
+  const filteredSkillsReferences = React.useMemo(
+    () =>
+      careerFormGetValues().references.filter(
+        (item) => item.field === "skills",
+      ),
+    [careerFormGetValues().references],
+  );
+
+  console.log("[INFO] Career Form State: ");
+  console.log(careerFormWatch());
 
   return (
     <Popover
@@ -118,9 +154,6 @@ export const AddCareerHistory = () => {
                 name={"company"}
                 groupName={"Company Details"}
                 currentValue={careerFormGetValues().company}
-                selected={singleValueFieldSelected.includes("company")}
-                apply={apply}
-                setParentReferences={careerFormSetValues}
                 reference={
                   careerFormGetValues().references.filter(
                     (item) => item.field === "company",
@@ -137,6 +170,14 @@ export const AddCareerHistory = () => {
                 currentValues={careerFormGetValues().appointment}
               />
 
+              <MultiField
+                title={"Skill Set"}
+                data={careerFormGetValues().skills}
+                references={filteredSkillsReferences}
+                appliedField={"skills"}
+                appendHandler={appendSkills}
+                appendReference={appendReferences}
+              />
               <div>{/* TODO: MultiObject component For Certificates */}</div>
             </div>
           </Form>
@@ -157,8 +198,7 @@ export const AddCareerHistory = () => {
             label={"Apply references to fields"}
             name={"field"}
             className={styles.dropdowns}
-            data={["company"]}
-            // data={["company", "appointment.position", "appointment.rank"]}
+            data={["company", "appointment.position", "appointment.rank"]}
             maxDropdownHeight={200}
             onChange={(arr: any) => setSingleValueFieldSelected(arr)}
           />
@@ -181,6 +221,7 @@ export const AddCareerHistory = () => {
             control={referenceFormControl}
             className={styles.dropdowns}
           />
+
           <Button
             className={styles.apply__button}
             onClick={applyReferencesToSelectedFields}
@@ -192,36 +233,6 @@ export const AddCareerHistory = () => {
     </Popover>
   );
 };
-
-{
-  /* <MultiField
-                title={"Skill Set"}
-                data={careerFormGetValues().skills}
-                references={filteredSkillsReferences}
-                appliedField={"skills"}
-                appendHandler={appendSkills}
-                appendReference={appendReferences}
-              /> */
-}
-
-// const appendSkills = (skill: string) => {
-//   careerFormSetValues("skills", [...careerFormGetValues().skills, skill]);
-// };
-
-// const appendReferences = (data: ReferenceType) => {
-//   careerFormSetValues("references", [
-//     ...careerFormGetValues().references,
-//     data,
-//   ]);
-// };
-
-// const filteredSkillsReferences = React.useMemo(
-//   () =>
-//     careerFormGetValues().references.filter(
-//       (item) => item.field === "skills",
-//     ),
-//   [careerFormGetValues().references],
-// );
 
 // const submitCareerForm = careerFormHandleSubmit(async (data) => {
 //   console.log("[INFO] Career Form State: ");
