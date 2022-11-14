@@ -68,28 +68,36 @@ export const MultiField = ({
       closeOnClickOutside // TODO: fix this
       closeOnEscape // TODO: fix this
     >
-      <Popover.Target>
-        <div className={styles.header}>{title}</div>
-      </Popover.Target>
-      {data.map((item, id) => (
-        <div className={styles.item} key={item.toString() + id}>
-          {item}
-          <span className={styles.reference__text}>
-            {Object.entries(references.filter((ref) => ref.content === item)[0])
-              .slice(2)
-              .map((object) => object[1] + " | ")}
-          </span>
-        </div>
-      ))}
-      <div className={styles.append__array_btn}>
-        <div
-          className={styles.circular__add}
-          onClick={() => setOpenPopup(!openPopup)}
-        >
-          +
-        </div>{" "}
-        Add Skills
+      <div className={styles.main__container}>
+        <div className={styles.container__col}>Skill Sets</div>
+        <Popover.Target>
+          <div className={styles.container__col}>
+            <div>{title}</div>
+            {data.map((item, id) => (
+              <div className={styles.item} key={item.toString() + id}>
+                {item}
+                <span className={styles.reference__text}>
+                  {Object.entries(
+                    references.filter((ref) => ref.content === item)[0],
+                  )
+                    .slice(2)
+                    .map((object) => object[1] + " | ")}
+                </span>
+              </div>
+            ))}
+            <div className={styles.append__array_btn}>
+              <div
+                className={styles.circular__add}
+                onClick={() => setOpenPopup(!openPopup)}
+              >
+                +
+              </div>{" "}
+              Add Skills
+            </div>
+          </div>
+        </Popover.Target>
       </div>
+
       <Popover.Dropdown>
         <TextInput
           label={"Value"}

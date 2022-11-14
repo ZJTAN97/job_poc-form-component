@@ -105,6 +105,7 @@ export const AddCareerHistory = () => {
         }
       });
       setOpenReferenceWindow(false);
+      setEditMode(true);
     },
   );
 
