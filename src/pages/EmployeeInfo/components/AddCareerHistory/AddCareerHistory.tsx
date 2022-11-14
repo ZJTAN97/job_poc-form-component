@@ -4,19 +4,19 @@ import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, MultiSelect, Popover } from "@mantine/core";
-import {
-  SchemaCareer,
-  SchemaCareerType,
-  SchemaReference,
-  SchemaReferenceType,
-} from "../../../../validations/career";
-import Form from "../../../../components/Form";
 import { MultiField } from "../MultiField";
 import { SingleField } from "../SingleField";
+import { Form } from "../../../../components/Form";
+import {
+  Reference,
+  ReferenceType,
+  TYPES_OF_REFERENCES,
+} from "../../../../data/common/Reference";
+import { Career, CareerType } from "../../../../data/career/CareerHistory";
 
 export const AddCareerHistory = () => {
-  const careerFormMethods = useForm<SchemaCareerType>({
-    resolver: zodResolver(SchemaCareer),
+  const careerFormMethods = useForm<CareerType>({
+    resolver: zodResolver(Career),
     mode: "onChange",
     defaultValues: {
       company: "",
@@ -42,15 +42,15 @@ export const AddCareerHistory = () => {
     careerFormSetValues("skills", [...careerFormGetValues().skills, skill]);
   };
 
-  const referenceFormMethods = useForm<SchemaReferenceType>({
-    resolver: zodResolver(SchemaReference),
+  const referenceFormMethods = useForm<ReferenceType>({
+    resolver: zodResolver(Reference),
     mode: "onChange",
     defaultValues: {
       field: "",
       content: "",
       comments: "",
       dateObtained: "",
-      referenceType: "LinkedIn",
+      referenceType: TYPES_OF_REFERENCES.FACEBOOK,
     },
   });
 
@@ -67,7 +67,7 @@ export const AddCareerHistory = () => {
 
   const [openReferenceWindow, setOpenReferenceWindow] = React.useState(false);
 
-  const appendReferences = (data: SchemaReferenceType) => {
+  const appendReferences = (data: ReferenceType) => {
     careerFormSetValues("references", [
       ...careerFormGetValues().references,
       data,
@@ -232,7 +232,7 @@ export const AddCareerHistory = () => {
             control={referenceFormControl}
             name={"referenceType"}
             className={styles.dropdowns}
-            data={["LinkedIn", "Glassdoor", "Others"]}
+            data={Object.values(TYPES_OF_REFERENCES)}
           />
           <Form.TextInput
             label={"Comments"}

@@ -1,21 +1,24 @@
 import { Button, Popover, TextInput } from "@mantine/core";
 import React from "react";
-import {
-  SchemaReference,
-  SchemaReferenceType,
-} from "../../../../validations/career";
+
 import styles from "./index.module.css";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import Form from "../../../../components/Form";
+import { Form } from "../../../../components/Form";
+import {
+  GetReferenceTypeKey,
+  Reference,
+  ReferenceType,
+  TYPES_OF_REFERENCES,
+} from "../../../../data/common/Reference";
 
 interface MultiFieldProps {
   title: string;
   data: string[];
-  references: SchemaReferenceType[];
+  references: ReferenceType[];
   appliedField: string;
   appendHandler: (arg: string) => void; // to append the skills array specifically
-  appendReference: (data: SchemaReferenceType) => void; // to append the references array; can I combine the 2?
+  appendReference: (data: ReferenceType) => void; // to append the references array; can I combine the 2?
 }
 
 export const MultiField = ({
@@ -29,15 +32,15 @@ export const MultiField = ({
   const [openPopup, setOpenPopup] = React.useState(false);
   const [textInput, setTextInput] = React.useState("");
 
-  const referenceFormMethods = useForm<SchemaReferenceType>({
-    resolver: zodResolver(SchemaReference),
+  const referenceFormMethods = useForm<ReferenceType>({
+    resolver: zodResolver(Reference),
     mode: "onChange",
     defaultValues: {
       field: appliedField,
       content: "",
       comments: "",
       dateObtained: "",
-      referenceType: "LinkedIn",
+      referenceType: TYPES_OF_REFERENCES.FACEBOOK,
     },
   });
 
@@ -48,7 +51,11 @@ export const MultiField = ({
 
   const onClickHandler = referenceFormHandleSubmit(async (data) => {
     appendHandler(textInput);
-    appendReference({ ...data, content: textInput });
+    appendReference({
+      ...data,
+      content: textInput,
+      referenceType: GetReferenceTypeKey(data.referenceType),
+    });
     setOpenPopup(false);
   });
 
@@ -92,7 +99,7 @@ export const MultiField = ({
             label={"Reference Type"}
             control={referenceFormControl}
             name={"referenceType"}
-            data={["LinkedIn", "Glassdoor", "Others"]}
+            data={Object.values(TYPES_OF_REFERENCES)}
             className={styles.input__fields}
           />
           <Form.TextInput

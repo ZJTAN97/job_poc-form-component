@@ -1,14 +1,14 @@
 import React from "react";
 import styles from "./index.module.css";
 import { Control } from "react-hook-form";
-import { SchemaReferenceType } from "../../../../validations/career";
-import Form from "../../../../components/Form";
+import { Form } from "../../../../components/Form";
+import { ReferenceType } from "../../../../data/common/Reference";
 
 interface SingleFieldProps {
   label: string;
   name: string;
   parentControl: Control<any>;
-  reference?: SchemaReferenceType;
+  reference?: ReferenceType;
 }
 
 export const SingleField = ({

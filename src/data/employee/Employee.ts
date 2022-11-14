@@ -1,6 +1,6 @@
-import z from "zod"
+import z from "zod";
 
-const SchemaBase = z
+const BaseEmployee = z
   .object({
     bio: z.string().min(10, "Minimally 10 characters long"),
     dateCreated: z.date(),
@@ -15,20 +15,18 @@ const SchemaBase = z
       message: "Passwords dont match",
       path: ["confirm"],
     },
-  )
+  );
 
-const MaleSchema = z.object({
+const Male = z.object({
   gender: z.literal("MALE"),
   employeeName: z.string().min(5, "Male requires at least 5 characters"),
-})
+});
 
-const FemaleSchema = z.object({
+const Female = z.object({
   gender: z.literal("FEMALE"),
   employeeName: z.string().min(8, "Female requires at least 8 characters"),
-})
+});
 
-export const SchemaEmployee = z
-  .union([MaleSchema, FemaleSchema])
-  .and(SchemaBase) // extends base schema
+export const Employee = z.union([Male, Female]).and(BaseEmployee); // extends base schema
 
-export type SchemaEmployeeType = z.infer<typeof SchemaEmployee>
+export type EmployeeType = z.infer<typeof Employee>;

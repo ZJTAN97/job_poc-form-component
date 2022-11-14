@@ -13,7 +13,7 @@ interface FormProps {
   children: React.ReactNode;
 }
 
-const Form = ({
+export const Form = ({
   methods,
   useLocalStorage,
   preventLeaving,
@@ -54,5 +54,3 @@ Form.TextArea = TextArea;
 Form.ChipSelection = ChipSelection;
 Form.Dropdown = Dropdown;
 Form.MultiSelect = MultiSelect;
-
-export default Form;
