@@ -6,7 +6,6 @@ import { ReferenceType } from "../../../../../../data/common/Reference";
 interface SingleFieldProps {
   label: string;
   name: string;
-  groupName: string;
   currentValue: string;
   parentControl: Control<any>;
   reference?: ReferenceType;
@@ -16,7 +15,6 @@ interface SingleFieldProps {
 export const SingleField = ({
   label,
   name,
-  groupName,
   currentValue,
   parentControl,
   reference,
@@ -26,28 +24,25 @@ export const SingleField = ({
 
   return (
     <div className={styles.main__container}>
-      <div className={styles.container__col}>{groupName}</div>
-      <div className={styles.container__col}>
-        {editMode ? (
-          <Form.TextInput
-            value={currentValue}
-            label={label}
-            name={name}
-            control={parentControl}
-          />
-        ) : (
-          <>
-            <div className={styles.read__label}>{label}</div>
-            <div className={styles.read__value}>{currentValue}</div>
-          </>
+      {editMode ? (
+        <Form.TextInput
+          value={currentValue}
+          label={label}
+          name={name}
+          control={parentControl}
+        />
+      ) : (
+        <>
+          <div className={styles.read__label}>{label}</div>
+          <div className={styles.read__value}>{currentValue}</div>
+        </>
+      )}
+      <div className={styles.applied__reference}>
+        {reference && (
+          <div>
+            {referenceType} | {comments} | {dateObtained}
+          </div>
         )}
-        <div className={styles.applied__reference}>
-          {reference && (
-            <div>
-              {referenceType} | {comments} | {dateObtained}
-            </div>
-          )}
-        </div>
       </div>
     </div>
   );

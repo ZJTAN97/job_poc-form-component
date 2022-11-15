@@ -15,7 +15,7 @@ import { Career, CareerType } from "../../../../data/career/CareerHistory";
 import { MultiField } from "./components/MultiField";
 import { AppointmentType } from "../../../../data/career/Appointment";
 import { SingleField } from "./components/SingleField";
-import { SingleObject } from "./components/SingleObject";
+import { GroupRow } from "./components/GroupRow";
 
 export const CareerHistoryForm = () => {
   const [editMode, setEditMode] = React.useState(true);
@@ -35,7 +35,7 @@ export const CareerHistoryForm = () => {
         rank: "",
       },
       skills: [],
-      certs: [],
+      // certs: [],
       references: [],
     },
   });
@@ -151,28 +151,46 @@ export const CareerHistoryForm = () => {
           >
             <div className={styles.container__col}>
               <h2 className={styles.header}>Career History</h2>
-              <SingleField
-                editMode={editMode}
-                parentControl={careerFormControl}
-                label={"Name of Company"}
-                name={"company"}
-                groupName={"Company Details"}
-                currentValue={careerFormGetValues().company}
-                reference={
-                  careerFormGetValues().references.filter(
-                    (item) => item.field === "company",
-                  )[0]
-                }
-              />
-              <SingleObject<AppointmentType>
-                editMode={editMode}
-                names={["position", "rank"]}
-                parentControl={careerFormControl}
-                labels={["Position", "Rank"]}
-                groupName={"Appointment Details"}
-                existingReferences={careerFormGetValues().references}
-                currentValues={careerFormGetValues().appointment}
-              />
+              <GroupRow groupName="Company Details">
+                <SingleField
+                  editMode={editMode}
+                  parentControl={careerFormControl}
+                  label={"Name of Company"}
+                  name={"company"}
+                  currentValue={careerFormGetValues().company}
+                  reference={
+                    careerFormGetValues().references.filter(
+                      (item) => item.field === "company",
+                    )[0]
+                  }
+                />
+              </GroupRow>
+              <GroupRow groupName="Appointment Details">
+                <SingleField
+                  editMode={editMode}
+                  parentControl={careerFormControl}
+                  label={"Position"}
+                  name={"appointment.position"}
+                  currentValue={careerFormGetValues().appointment.position}
+                  reference={
+                    careerFormGetValues().references.filter(
+                      (item) => item.field === "appointment.position",
+                    )[0]
+                  }
+                />
+                <SingleField
+                  editMode={editMode}
+                  parentControl={careerFormControl}
+                  label={"Rank"}
+                  name={"appointment.rank"}
+                  currentValue={careerFormGetValues().appointment.rank}
+                  reference={
+                    careerFormGetValues().references.filter(
+                      (item) => item.field === "appointment.rank",
+                    )[0]
+                  }
+                />
+              </GroupRow>
 
               <MultiField
                 title={"Skill Set"}

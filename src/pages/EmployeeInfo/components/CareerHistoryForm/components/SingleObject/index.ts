@@ -1,1 +1,0 @@
-export { SingleObject } from "./SingleObject";

@@ -1,13 +1,6 @@
 .main__container {
-  margin: 40px 0 60px 0;
-  display: flex;
-  gap: 30px;
+  margin-bottom: 20px;
 }
-
-.container__col {
-  width: 50%;
-}
-
 .read__label {
   padding-top: 5px;
   font-size: 16px;
