@@ -1,7 +1,7 @@
 import styles from "./index.module.css";
 import { Control } from "react-hook-form";
-import { Form } from "../../../../components/Form";
-import { ReferenceType } from "../../../../data/common/Reference";
+import { Form } from "../../../../../../components/Form";
+import { ReferenceType } from "../../../../../../data/common/Reference";
 
 interface SingleFieldProps {
   label: string;

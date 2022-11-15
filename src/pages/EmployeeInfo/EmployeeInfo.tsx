@@ -1,7 +1,7 @@
 import { Button, Drawer } from "@mantine/core";
 import React from "react";
 import { Base } from "../../components/Base";
-import { AddCareerHistory } from "./components/AddCareerHistory";
+import { CareerHistoryForm } from "./components/CareerHistoryForm";
 import styles from "./index.module.css";
 
 export const EmployeeInfo = () => {
@@ -21,7 +21,7 @@ export const EmployeeInfo = () => {
         onClose={() => setOpened(false)}
         className={styles.drawer__container}
       >
-        <AddCareerHistory />
+        <CareerHistoryForm />
       </Drawer>
     </Base>
   );

@@ -4,13 +4,13 @@ import React from "react";
 import styles from "./index.module.css";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "../../../../components/Form";
+import { Form } from "../../../../../../components/Form";
 import {
   GetReferenceTypeKey,
   Reference,
   ReferenceType,
   TYPES_OF_REFERENCES,
-} from "../../../../data/common/Reference";
+} from "../../../../../../data/common/Reference";
 
 interface MultiFieldProps {
   title: string;

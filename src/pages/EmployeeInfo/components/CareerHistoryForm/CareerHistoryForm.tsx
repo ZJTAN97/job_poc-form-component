@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button, MultiSelect, Popover } from "@mantine/core";
-import { SingleField } from "../SingleField";
 import { Form } from "../../../../components/Form";
 import {
   GetReferenceTypeKey,
@@ -13,11 +12,12 @@ import {
   TYPES_OF_REFERENCES,
 } from "../../../../data/common/Reference";
 import { Career, CareerType } from "../../../../data/career/CareerHistory";
-import { SingleObject } from "../SingleObject";
+import { MultiField } from "./components/MultiField";
 import { AppointmentType } from "../../../../data/career/Appointment";
-import { MultiField } from "../MultiField";
+import { SingleField } from "./components/SingleField";
+import { SingleObject } from "./components/SingleObject";
 
-export const AddCareerHistory = () => {
+export const CareerHistoryForm = () => {
   const [editMode, setEditMode] = React.useState(true);
 
   const toggleEditMode = () => {
@@ -45,6 +45,7 @@ export const AddCareerHistory = () => {
     watch: careerFormWatch,
     getValues: careerFormGetValues,
     setValue: careerFormSetValues,
+    formState: careerFormState,
   } = careerFormMethods;
 
   const referenceFormMethods = useForm<ReferenceType>({
@@ -75,6 +76,8 @@ export const AddCareerHistory = () => {
       console.log(data);
 
       singleValueFieldSelected.forEach((item) => {
+        // can use typeof, check between primitives and objects
+
         const isSingleObjectType = item.split(".").length === 2;
 
         if (isSingleObjectType) {

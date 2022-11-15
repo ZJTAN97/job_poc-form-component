@@ -1,7 +1,7 @@
 import styles from "./index.module.css";
 import { Control } from "react-hook-form";
-import { ReferenceType } from "../../../../data/common/Reference";
-import { Form } from "../../../../components/Form";
+import { ReferenceType } from "../../../../../../data/common/Reference";
+import { Form } from "../../../../../../components/Form";
 
 interface SingleObjectProps<
   T extends {
@@ -36,9 +36,9 @@ export const SingleObject = <
       <div className={styles.container__col}>
         {names.map((name, id) => {
           const { comments, dateObtained, referenceType } =
-            existingReferences.filter(
+            existingReferences.find(
               (item) => item.field === "appointment." + (name as string),
-            )[0] ?? {};
+            ) ?? {};
 
           return (
             <div key={name.toString() + id}>
