@@ -85,6 +85,12 @@ export const MultiField = ({
                 </span>
               </div>
             ))}
+            <TextInput
+              label={"Value"}
+              onChange={(e) => {
+                setTextInput(e.target.value);
+              }}
+            />
             <div className={styles.append__array_btn}>
               <div
                 className={styles.circular__add}
@@ -99,12 +105,6 @@ export const MultiField = ({
       </div>
 
       <Popover.Dropdown>
-        <TextInput
-          label={"Value"}
-          onChange={(e) => {
-            setTextInput(e.target.value);
-          }}
-        />
         <Form
           methods={referenceFormMethods}
           preventLeaving={true}

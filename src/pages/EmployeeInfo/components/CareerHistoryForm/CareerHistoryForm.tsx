@@ -16,6 +16,7 @@ import { MultiField } from "./components/MultiField";
 import { AppointmentType } from "../../../../data/career/Appointment";
 import { SingleField } from "./components/SingleField";
 import { GroupRow } from "./components/GroupRow";
+import { FlattenObject } from "../../../../utils/FlattenObject";
 
 export const CareerHistoryForm = () => {
   const [editMode, setEditMode] = React.useState(true);
@@ -48,6 +49,8 @@ export const CareerHistoryForm = () => {
     formState: careerFormState,
   } = careerFormMethods;
 
+  console.log(careerFormState.dirtyFields);
+
   const referenceFormMethods = useForm<ReferenceType>({
     resolver: zodResolver(Reference),
     mode: "onChange",
@@ -72,14 +75,9 @@ export const CareerHistoryForm = () => {
 
   const applyReferencesToSelectedFields = referenceFormHandleSubmit(
     async (data) => {
-      console.log("--data--");
-      console.log(data);
-
       singleValueFieldSelected.forEach((item) => {
         // can use typeof, check between primitives and objects
-
         const isSingleObjectType = item.split(".").length === 2;
-
         if (isSingleObjectType) {
           const objArr = item.split(".") as (keyof CareerType)[];
           const appointmentObj = careerFormGetValues()[
@@ -132,8 +130,8 @@ export const CareerHistoryForm = () => {
   );
 
   console.log("[INFO] Career Form State: ");
-  console.log(careerFormWatch());
-
+  careerFormWatch();
+  // console.log(careerFormWatch());
   return (
     <Popover
       opened={openReferenceWindow}
@@ -207,7 +205,15 @@ export const CareerHistoryForm = () => {
             <Button variant="white" size="xs">
               Cancel
             </Button>
-            <Button variant="white" size="xs" onClick={toggleEditMode}>
+            <Button
+              variant="white"
+              size="xs"
+              onClick={toggleEditMode}
+              disabled={
+                Object.keys(FlattenObject(careerFormState.dirtyFields)).length <
+                3
+              }
+            >
               Add references
             </Button>
           </div>
@@ -255,8 +261,3 @@ export const CareerHistoryForm = () => {
     </Popover>
   );
 };
-
-// const submitCareerForm = careerFormHandleSubmit(async (data) => {
-//   console.log("[INFO] Career Form State: ");
-//   console.log(data);
-// });
