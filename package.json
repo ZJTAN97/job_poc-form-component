@@ -2,8 +2,11 @@
   "name": "test-react-hook-form",
   "version": "0.1.0",
   "private": true,
+  "homepage": "https://zjtan97.github.io/job_poc-form-component",
   "scripts": {
-    "watch": "webpack serve --config webpack.config.js"
+    "watch": "webpack serve --config webpack.config.js",
+    "build": "webpack --config deployment/webpack.prod.js",
+    "deploy": "gh-pages -d build"
   },
   "dependencies": {
     "@emotion/react": "^11.10.5",
@@ -37,7 +40,9 @@
     "@types/react": "^18.0.9",
     "babel-loader": "^8.2.3",
     "css-loader": "^6.7.1",
+    "gh-pages": "^4.0.0",
     "html-webpack-plugin": "^5.5.0",
+    "mini-css-extract-plugin": "^2.6.1",
     "miragejs": "^0.1.45",
     "react-refresh": "^0.14.0",
     "style-loader": "^3.3.1",
