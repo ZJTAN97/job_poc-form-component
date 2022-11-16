@@ -25,12 +25,7 @@ export const SingleField = ({
   return (
     <div className={styles.main__container}>
       {editMode ? (
-        <Form.TextInput
-          value={currentValue}
-          label={label}
-          name={name}
-          control={parentControl}
-        />
+        <Form.TextInput label={label} name={name} control={parentControl} />
       ) : (
         <>
           <div className={styles.read__label}>{label}</div>

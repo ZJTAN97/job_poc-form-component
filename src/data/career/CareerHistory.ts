@@ -7,6 +7,7 @@ export const Career = z.object({
   company: z.string().min(1, "Company cannot be empty"),
   appointment: Appointment,
   skills: z.array(z.string()),
+  lastSeen: z.string(),
   // certs: z.array(Certification),
   references: z.array(Reference),
 });

@@ -2,6 +2,7 @@ import { Button, Drawer } from "@mantine/core";
 import React from "react";
 import { Base } from "../../components/Base";
 import { CareerHistoryForm } from "./components/CareerHistoryForm";
+import { CareerHistoryForm2 } from "./components/CareerHistoryForm2";
 import styles from "./index.module.css";
 
 export const EmployeeInfo = () => {
@@ -20,7 +21,7 @@ export const EmployeeInfo = () => {
         onClose={() => setOpenOption1(false)}
         className={styles.drawer__container}
       >
-        <CareerHistoryForm />
+        <CareerHistoryForm setDrawer={setOpenOption1} />
       </Drawer>
 
       <Button onClick={() => setOpenOption2(true)} className={styles.btn}>
@@ -33,7 +34,7 @@ export const EmployeeInfo = () => {
         onClose={() => setOpenOption2(false)}
         className={styles.drawer__container}
       >
-        <div>Option 2</div>
+        <CareerHistoryForm2 />
       </Drawer>
     </Base>
   );

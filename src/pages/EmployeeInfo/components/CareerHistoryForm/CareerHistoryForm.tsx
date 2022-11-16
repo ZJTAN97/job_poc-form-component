@@ -18,7 +18,11 @@ import { SingleField } from "./components/SingleField";
 import { GroupRow } from "./components/GroupRow";
 import { FlattenObject } from "../../../../utils/FlattenObject";
 
-export const CareerHistoryForm = () => {
+interface CareerHistoryFormProps {
+  setDrawer: (arg: boolean) => void;
+}
+
+export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   const [editMode, setEditMode] = React.useState(true);
 
   const careerFormMethods = useForm<CareerType>({
@@ -31,14 +35,13 @@ export const CareerHistoryForm = () => {
         rank: "",
       },
       skills: [],
-      // certs: [],
       references: [],
+      lastSeen: "",
     },
   });
 
   const {
     control: careerFormControl,
-    watch: careerFormWatch,
     getValues: careerFormGetValues,
     setValue: careerFormSetValues,
     formState: careerFormState,
@@ -132,9 +135,6 @@ export const CareerHistoryForm = () => {
     [careerFormGetValues().references],
   );
 
-  console.log("[INFO] Career Form State: ");
-  console.log(careerFormWatch());
-
   return (
     <Popover
       opened={openReferenceWindow}
@@ -201,11 +201,25 @@ export const CareerHistoryForm = () => {
                 appendHandler={appendSkills}
                 appendReference={appendReferences}
               />
+              <GroupRow groupName="Last Seen Details">
+                <SingleField
+                  editMode={editMode}
+                  parentControl={careerFormControl}
+                  label={"Last Seen"}
+                  name={"lastSeen"}
+                  currentValue={careerFormGetValues().lastSeen}
+                  reference={
+                    careerFormGetValues().references.filter(
+                      (item) => item.field === "lastSeen",
+                    )[0]
+                  }
+                />
+              </GroupRow>
               <div>{/* TODO: MultiObject component For Certificates */}</div>
             </div>
           </Form>
           <div className={styles.add__button}>
-            <Button variant="white" size="xs">
+            <Button variant="white" size="xs" onClick={() => setDrawer(false)}>
               Cancel
             </Button>
             <Button

@@ -49,7 +49,7 @@ export const MultiField = ({
     handleSubmit: referenceFormHandleSubmit,
   } = referenceFormMethods;
 
-  const onClickHandler = referenceFormHandleSubmit(async (data) => {
+  const onClickHandler = referenceFormHandleSubmit((data) => {
     appendHandler(textInput);
     appendReference({
       ...data,
@@ -61,6 +61,9 @@ export const MultiField = ({
   });
 
   const [showAddValue, setShowAddValue] = React.useState(false);
+
+  console.log("--data--");
+  console.log(data);
 
   return (
     <Popover

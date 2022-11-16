@@ -23,6 +23,7 @@ const Dropdown = (props: DropdownProps) => {
 
   return (
     <Select
+      value={field.value}
       {...mantineSelectProps}
       onChange={(data) => onChangeCallback(data)}
     />

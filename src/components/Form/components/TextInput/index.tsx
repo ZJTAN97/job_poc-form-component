@@ -18,11 +18,12 @@ export const TextInput = (props: FormTextInputProps) => {
       if (customOnChange) customOnChange(searchValue);
       field.onChange(searchValue);
     },
-    [field.name],
+    [field],
   );
 
   return (
     <MantineTextInput
+      value={field.value}
       {...mantineTextInputProps}
       error={mantineTextInputProps.error || fieldState.error?.message}
       onChange={(e) => onChangeCallback(e.target.value)}
