@@ -1,5 +1,5 @@
 .popover__target {
-  width: 76%;
+  width: 60%;
 }
 .header {
   padding-bottom: 15px;
@@ -11,12 +11,13 @@
 }
 .container__col {
   min-width: 42%;
-  padding: 0px 40px 0 40px;
+  padding: 0px 0px 0 40px;
 }
 .add__button {
   background-color: #fafafa;
   padding: 15px 30px;
   margin-top: 70px;
+  margin-bottom: 200px;
   display: flex;
   justify-content: flex-end;
   gap: 10px;

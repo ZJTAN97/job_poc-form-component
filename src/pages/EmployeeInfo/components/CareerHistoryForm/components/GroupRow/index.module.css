@@ -4,6 +4,10 @@
   gap: 30px;
 }
 
-.container__col {
-  width: 50%;
+.container__col_label {
+  width: 28%;
+}
+
+.container__col_content {
+  width: 55%;
 }

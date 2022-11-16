@@ -9,8 +9,8 @@ interface GroupRowProps {
 export const GroupRow = ({ groupName, children }: GroupRowProps) => {
   return (
     <div className={styles.main__container}>
-      <div className={styles.container__col}>{groupName}</div>
-      <div className={styles.container__col}>{children}</div>
+      <div className={styles.container__col_label}>{groupName}</div>
+      <div className={styles.container__col_content}>{children}</div>
     </div>
   );
 };

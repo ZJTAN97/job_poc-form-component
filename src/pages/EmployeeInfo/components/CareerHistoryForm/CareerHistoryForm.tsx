@@ -21,11 +21,6 @@ import { FlattenObject } from "../../../../utils/FlattenObject";
 export const CareerHistoryForm = () => {
   const [editMode, setEditMode] = React.useState(true);
 
-  const toggleEditMode = () => {
-    setEditMode(!editMode);
-    setOpenReferenceWindow(!openReferenceWindow);
-  };
-
   const careerFormMethods = useForm<CareerType>({
     resolver: zodResolver(Career),
     mode: "onChange",
@@ -49,8 +44,6 @@ export const CareerHistoryForm = () => {
     formState: careerFormState,
   } = careerFormMethods;
 
-  console.log(careerFormState.dirtyFields);
-
   const referenceFormMethods = useForm<ReferenceType>({
     resolver: zodResolver(Reference),
     mode: "onChange",
@@ -72,6 +65,16 @@ export const CareerHistoryForm = () => {
     React.useState<(keyof CareerType)[]>([]);
 
   const [openReferenceWindow, setOpenReferenceWindow] = React.useState(false);
+
+  const toggleEditMode = () => {
+    setSingleValueFieldSelected(
+      Object.keys(
+        FlattenObject(careerFormState.dirtyFields),
+      ) as (keyof CareerType)[],
+    );
+    setEditMode(!editMode);
+    setOpenReferenceWindow(!openReferenceWindow);
+  };
 
   const applyReferencesToSelectedFields = referenceFormHandleSubmit(
     async (data) => {
@@ -130,8 +133,8 @@ export const CareerHistoryForm = () => {
   );
 
   console.log("[INFO] Career Form State: ");
-  careerFormWatch();
-  // console.log(careerFormWatch());
+  console.log(careerFormWatch());
+
   return (
     <Popover
       opened={openReferenceWindow}
@@ -229,6 +232,7 @@ export const CareerHistoryForm = () => {
             data={["company", "appointment.position", "appointment.rank"]}
             maxDropdownHeight={200}
             onChange={(arr: any) => setSingleValueFieldSelected(arr)}
+            value={singleValueFieldSelected}
           />
           <Form.Dropdown
             label={"Reference Type"}

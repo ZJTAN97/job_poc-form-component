@@ -57,7 +57,10 @@ export const MultiField = ({
       referenceType: GetReferenceTypeKey(data.referenceType),
     });
     setOpenPopup(false);
+    setShowAddValue(false);
   });
+
+  const [showAddValue, setShowAddValue] = React.useState(false);
 
   return (
     <Popover
@@ -69,39 +72,52 @@ export const MultiField = ({
       closeOnEscape // TODO: fix this
     >
       <div className={styles.main__container}>
-        <div className={styles.container__col}>Skill Sets</div>
-        <Popover.Target>
-          <div className={styles.container__col}>
-            <div>{title}</div>
-            {data.map((item, id) => (
-              <div className={styles.item} key={item.toString() + id}>
-                {item}
-                <span className={styles.reference__text}>
-                  {Object.entries(
-                    references.filter((ref) => ref.content === item)[0],
-                  )
-                    .slice(2)
-                    .map((object) => object[1] + " | ")}
-                </span>
-              </div>
-            ))}
+        <div className={styles.container__col_label}>Skill Sets</div>
+        <div className={styles.container__col_content}>
+          <div>{title}</div>
+          {data.map((item, id) => (
+            <div className={styles.item} key={item.toString() + id}>
+              {item}
+              <span className={styles.reference__text}>
+                {Object.entries(
+                  references.filter((ref) => ref.content === item)[0],
+                )
+                  .slice(2)
+                  .map((object) => object[1] + " | ")}
+              </span>
+            </div>
+          ))}
+          {showAddValue ? (
             <TextInput
-              label={"Value"}
               onChange={(e) => {
                 setTextInput(e.target.value);
               }}
+              rightSectionWidth={100}
+              rightSection={
+                textInput.length > 0 && (
+                  <Popover.Target>
+                    <div className={styles.append__array_btn}>
+                      Add Ref
+                      <div
+                        className={styles.circular__add}
+                        onClick={() => setOpenPopup(!openPopup)}
+                      >
+                        +
+                      </div>
+                    </div>
+                  </Popover.Target>
+                )
+              }
             />
-            <div className={styles.append__array_btn}>
-              <div
-                className={styles.circular__add}
-                onClick={() => setOpenPopup(!openPopup)}
-              >
-                +
-              </div>{" "}
-              Add Skills
+          ) : (
+            <div
+              className={styles.add__to_array}
+              onClick={() => setShowAddValue(true)}
+            >
+              Add skills
             </div>
-          </div>
-        </Popover.Target>
+          )}
+        </div>
       </div>
 
       <Popover.Dropdown>
