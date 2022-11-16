@@ -1,9 +1,0 @@
-.drawer__container {
-  top: 60px;
-  width: calc(100% - 200px);
-  overflow-y: auto;
-}
-
-.btn {
-  margin-right: 30px;
-}

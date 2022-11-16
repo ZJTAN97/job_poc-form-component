@@ -3,7 +3,7 @@ import { useStyles } from "./styles";
 import { UseFormReturn } from "react-hook-form";
 import { Form } from "../../../../../../components/Form";
 import { CareerType } from "../../../../../../data/career/CareerHistory";
-import { Box, Button, Grid, TextInput } from "@mantine/core";
+import { Box, Button, Container, Grid, TextInput } from "@mantine/core";
 
 interface EditContentProps {
   formMethods: UseFormReturn<CareerType>;
@@ -31,8 +31,7 @@ export const EditContent = ({ formMethods }: EditContentProps) => {
   };
 
   return (
-    <>
-      <Box className={classes.header}>Career History</Box>
+    <Container>
       <Grid className={classes.groupLabel}>
         <Grid.Col span={4}>Company Details</Grid.Col>
         <Grid.Col span={7}>
@@ -79,7 +78,12 @@ export const EditContent = ({ formMethods }: EditContentProps) => {
                 if (e.key === "Enter") appendSkillArray();
               }}
               rightSection={
-                <Button size="xs" variant="light" onClick={appendSkillArray}>
+                <Button
+                  disabled={currentSkillTextInput.length === 0}
+                  size="xs"
+                  variant="light"
+                  onClick={appendSkillArray}
+                >
                   Add
                 </Button>
               }
@@ -108,6 +112,6 @@ export const EditContent = ({ formMethods }: EditContentProps) => {
           />
         </Grid.Col>
       </Grid>
-    </>
+    </Container>
   );
 };

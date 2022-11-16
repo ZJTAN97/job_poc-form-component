@@ -1,3 +1,5 @@
+import styled from "@emotion/styled";
+import { Box, BoxProps, createPolymorphicComponent } from "@mantine/core";
 import { createStyles } from "@mantine/styles";
 
 export const useStyles = createStyles(() => ({
