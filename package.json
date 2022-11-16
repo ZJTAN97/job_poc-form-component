@@ -6,6 +6,7 @@
   "scripts": {
     "watch": "webpack serve --config webpack.config.js",
     "build": "webpack --config deployment/webpack.prod.js",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
   "dependencies": {
