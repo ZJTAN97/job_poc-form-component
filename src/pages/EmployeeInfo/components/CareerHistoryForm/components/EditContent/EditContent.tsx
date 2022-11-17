@@ -1,9 +1,10 @@
 import React from "react";
-import { useStyles } from "./styles";
+import { ErrorLabel, GridRow, SkillLabel, useStyles } from "./styles";
 import { UseFormReturn } from "react-hook-form";
 import { Form } from "../../../../../../components/Form";
 import { CareerType } from "../../../../../../data/career/CareerHistory";
-import { Box, Button, Container, Grid, TextInput } from "@mantine/core";
+import { ActionIcon, Button, Container, Grid, TextInput } from "@mantine/core";
+import { IconX } from "@tabler/icons";
 
 interface EditContentProps {
   formMethods: UseFormReturn<CareerType>;
@@ -12,77 +13,96 @@ interface EditContentProps {
 export const EditContent = ({ formMethods }: EditContentProps) => {
   const { classes } = useStyles();
 
-  const { control, getValues, setValue } = formMethods;
+  const { control, getValues, setValue, watch, formState } = formMethods;
+  watch("skills");
 
-  const {
-    skills: currentSkills,
-    appointment: currentAppointment,
-    company: currentCompany,
-    lastSeen: currentLastSeen,
-  } = getValues();
+  const { skills: currentSkills } = getValues();
 
   const [showAddSkill, setShowAddSkill] = React.useState(false);
   const [currentSkillTextInput, setCurrentSkillTextInput] = React.useState("");
 
-  const appendSkillArray = () => {
+  const appendToSkillArray = () => {
     setValue("skills", [...currentSkills, currentSkillTextInput]);
     setCurrentSkillTextInput("");
     setShowAddSkill(false);
   };
 
+  const removeFromSkillArray = (skill: string) => {
+    console.log("skill to remove: " + skill);
+    setValue(
+      "skills",
+      currentSkills.filter((item) => item !== skill),
+    );
+  };
+
+  console.warn("[WARNING] Rerender cause: EditContent Component");
+
   return (
     <Container>
-      <Grid className={classes.groupLabel}>
+      <GridRow m="lg">
         <Grid.Col span={4}>Company Details</Grid.Col>
         <Grid.Col span={7}>
           <Form.TextInput
             control={control}
             label={"Company name"}
+            required
             name={"company"}
             className={classes.textInput}
           />
         </Grid.Col>
-      </Grid>
+      </GridRow>
 
-      <Grid className={classes.groupLabel}>
+      <GridRow>
         <Grid.Col span={4}>Appointment Details</Grid.Col>
         <Grid.Col span={7}>
           <Form.TextInput
             control={control}
             label={"Position"}
+            required
             name={"appointment.position"}
             className={classes.textInput}
           />
           <Form.TextInput
             control={control}
             label={"Rank"}
+            required
             name={"appointment.rank"}
             className={classes.textInput}
           />
         </Grid.Col>
-      </Grid>
+      </GridRow>
 
-      <Grid className={classes.groupLabel}>
+      <GridRow>
         <Grid.Col span={4}>Skill Sets</Grid.Col>
         <Grid.Col span={5}>
-          {currentSkills.map((skill) => (
-            <Box key={skill} className={classes.skillItem}>
+          {currentSkills.map((skill, id) => (
+            <SkillLabel key={skill + id}>
               {skill}
-            </Box>
+              <ActionIcon
+                pb={6}
+                ml={5}
+                onClick={() => removeFromSkillArray(skill)}
+              >
+                <IconX size={10} />
+              </ActionIcon>
+            </SkillLabel>
           ))}
+          <ErrorLabel>
+            {formState.errors.skills && formState.errors.skills.message}
+          </ErrorLabel>
           {showAddSkill ? (
             <TextInput
               value={currentSkillTextInput}
               onChange={(e) => setCurrentSkillTextInput(e.target.value)}
               onKeyUp={(e) => {
-                if (e.key === "Enter") appendSkillArray();
+                if (e.key === "Enter") appendToSkillArray();
               }}
               rightSection={
                 <Button
                   disabled={currentSkillTextInput.length === 0}
                   size="xs"
                   variant="light"
-                  onClick={appendSkillArray}
+                  onClick={appendToSkillArray}
                 >
                   Add
                 </Button>
@@ -99,9 +119,9 @@ export const EditContent = ({ formMethods }: EditContentProps) => {
             </Button>
           )}
         </Grid.Col>
-      </Grid>
+      </GridRow>
 
-      <Grid className={classes.groupLabel}>
+      <GridRow>
         <Grid.Col span={4}>Other details</Grid.Col>
         <Grid.Col span={7}>
           <Form.TextInput
@@ -111,7 +131,7 @@ export const EditContent = ({ formMethods }: EditContentProps) => {
             className={classes.textInput}
           />
         </Grid.Col>
-      </Grid>
+      </GridRow>
     </Container>
   );
 };

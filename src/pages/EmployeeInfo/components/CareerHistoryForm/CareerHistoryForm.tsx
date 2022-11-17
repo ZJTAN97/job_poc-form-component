@@ -7,6 +7,7 @@ import { Career, CareerType } from "../../../../data/career/CareerHistory";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddReferences } from "./components/AddReferences";
 import { Form } from "../../../../components/Form";
+import { FlattenObject } from "../../../../utils/FlattenObject";
 
 export const CareerHistoryForm = () => {
   const { classes } = useStyles();
@@ -23,10 +24,11 @@ export const CareerHistoryForm = () => {
       lastSeen: "",
       skills: [],
       references: [],
+      certs: [],
     },
   });
 
-  const { handleSubmit, formState } = careerFormMethods;
+  const { handleSubmit } = careerFormMethods;
 
   const [active, setActive] = React.useState(0);
 
@@ -69,12 +71,16 @@ export const CareerHistoryForm = () => {
         <Stepper.Completed>Your changes has been updated</Stepper.Completed>
       </Stepper>
       <ButtonGroup position="right" mt="xl" mb={"lg"} pb={"lg"}>
-        <Button variant="default" onClick={prevStep} size={"md"}>
-          Back
-        </Button>
-        <Button onClick={nextStep} size={"md"} disabled={!formState.isValid}>
-          Next
-        </Button>
+        {!(active === 0) && (
+          <Button variant="default" onClick={prevStep} size={"md"}>
+            Back
+          </Button>
+        )}
+        {!(active === 2) && (
+          <Button onClick={nextStep} size={"md"}>
+            Next
+          </Button>
+        )}
       </ButtonGroup>
     </Form>
   );

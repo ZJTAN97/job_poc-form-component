@@ -2,6 +2,7 @@ import { Button, Drawer } from "@mantine/core";
 import React from "react";
 import { Base } from "../../components/Base";
 import { CareerHistoryForm } from "./components/CareerHistoryForm";
+import { ReferencePopup } from "./components/CareerHistoryForm/components/ReferencesPopup";
 import { useStyles } from "./styles";
 
 export const EmployeeInfo = () => {

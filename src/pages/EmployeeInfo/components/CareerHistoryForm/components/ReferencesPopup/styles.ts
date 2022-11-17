@@ -8,9 +8,9 @@ export const useStyles = createStyles(() => ({
   },
 }));
 
-const _AddReferenceTrigger = styled(Box)(() => ({
-  paddingTop: "2px",
-  fontSize: "13px",
+const _AddReferenceTrigger = styled(Box)(({ theme }) => ({
+  paddingTop: theme.spacing.md,
+  fontSize: theme.fontSizes.sm,
   cursor: "pointer",
   ":hover": {
     color: "red",

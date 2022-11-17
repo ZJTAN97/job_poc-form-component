@@ -1,7 +1,7 @@
 import { Button, Flex, Popover } from "@mantine/core";
 import React from "react";
 import { AddReferenceTrigger, ReferenceHeader, useStyles } from "./styles";
-import { useForm, UseFormSetValue } from "react-hook-form";
+import { useForm, UseFieldArrayAppend } from "react-hook-form";
 import {
   Reference,
   ReferenceType,
@@ -9,21 +9,20 @@ import {
 } from "../../../../../../data/common/Reference";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../../../components/Form";
-import { CareerType } from "../../../../../../data/career/CareerHistory";
 
 interface ReferencePopupProps {
   field: string;
-  existingReference?: string;
-  existingReferences: ReferenceType[];
-  setParentFormValue: UseFormSetValue<CareerType>;
+  // existingReference?: string;
+  // existingReferences: ReferenceType[];
+  // appendParentReferences: UseFieldArrayAppend<ReferenceType>;
 }
 
 export const ReferencePopup = ({
   field,
-  existingReference,
-  existingReferences,
-  setParentFormValue,
-}: ReferencePopupProps) => {
+}: // existingReference,
+// existingReferences,
+// appendParentReferences,
+ReferencePopupProps) => {
   const { classes } = useStyles();
 
   const [open, setOpen] = React.useState(false);
@@ -44,21 +43,26 @@ export const ReferencePopup = ({
 
   const appendReference = handleSubmit(async (data) => {
     console.log(data);
-    setParentFormValue("references", [...existingReferences, data]);
     setOpen(false);
   });
 
   return (
     <Popover
-      opened={open}
       width={200}
-      position="right-start"
+      position="right"
       withArrow
       shadow="md"
+      closeOnClickOutside
+      closeOnEscape
+      onClose={() => setOpen(false)}
+      opened={open}
+      onPositionChange={() => console.log("wdf")}
+      withinPortal={true}
     >
       <Popover.Target>
         <AddReferenceTrigger onClick={() => setOpen(true)}>
-          {existingReference ? existingReference : "Add references"}
+          Add references
+          {/* {existingReference ? existingReference : "Add references"} */}
         </AddReferenceTrigger>
       </Popover.Target>
       <Popover.Dropdown>

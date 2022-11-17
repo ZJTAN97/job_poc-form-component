@@ -1,6 +1,6 @@
 import { Container, Grid } from "@mantine/core";
 import React from "react";
-import { UseFormReturn } from "react-hook-form";
+import { UseFormReturn, useFieldArray } from "react-hook-form";
 import { CareerType } from "../../../../../../data/career/CareerHistory";
 import { ReferenceType } from "../../../../../../data/common/Reference";
 import { ReferencePopup } from "../ReferencesPopup";
@@ -11,7 +11,7 @@ interface AddReferencesProps {
 }
 
 export const AddReferences = ({ formMethods }: AddReferencesProps) => {
-  const { control, getValues, setValue, watch } = formMethods;
+  const { control, getValues, setValue } = formMethods;
 
   const {
     appointment: currentAppointment,
@@ -30,7 +30,7 @@ export const AddReferences = ({ formMethods }: AddReferencesProps) => {
       return `${referenceType} | ${comments} | ${dateObtained}`;
     }
     return undefined;
-  }, [watch()]);
+  }, []);
 
   const positionReference = React.useMemo(() => {
     const filteredReference = currentReferences.find(
@@ -41,7 +41,7 @@ export const AddReferences = ({ formMethods }: AddReferencesProps) => {
       return `${referenceType} | ${comments} | ${dateObtained}`;
     }
     return undefined;
-  }, [watch()]);
+  }, []);
 
   return (
     <Container>
@@ -53,12 +53,7 @@ export const AddReferences = ({ formMethods }: AddReferencesProps) => {
               <CurrentValue>{currentCompany}</CurrentValue>
             </Grid.Col>
             <Grid.Col span={3}>
-              <ReferencePopup
-                field={"company"}
-                setParentFormValue={setValue}
-                existingReference={companyReference}
-                existingReferences={currentReferences}
-              />
+              <ReferencePopup field={"company"} />
             </Grid.Col>
           </Grid>
         </>
@@ -71,12 +66,7 @@ export const AddReferences = ({ formMethods }: AddReferencesProps) => {
               <CurrentValue>{currentAppointment.position}</CurrentValue>
             </Grid.Col>
             <Grid.Col span={3}>
-              <ReferencePopup
-                field={"appointment.position"}
-                setParentFormValue={setValue}
-                existingReference={positionReference}
-                existingReferences={currentReferences}
-              />
+              <ReferencePopup field={"appointment.position"} />
             </Grid.Col>
           </Grid>
         </>
@@ -89,7 +79,7 @@ export const AddReferences = ({ formMethods }: AddReferencesProps) => {
               <CurrentValue>{currentAppointment.rank}</CurrentValue>
             </Grid.Col>
             <Grid.Col span={3}>
-              {/* <ReferencePopup field={"appointment.rank"} /> */}
+              <ReferencePopup field={"appointment.rank"} />
             </Grid.Col>
           </Grid>
         </>
@@ -101,7 +91,7 @@ export const AddReferences = ({ formMethods }: AddReferencesProps) => {
             <CurrentValue>{skill}</CurrentValue>
           </Grid.Col>
           <Grid.Col span={3}>
-            {/* <ReferencePopup field={"skills"} /> */}
+            <ReferencePopup field={"skills"} />
           </Grid.Col>
         </Grid>
       ))}
@@ -113,7 +103,7 @@ export const AddReferences = ({ formMethods }: AddReferencesProps) => {
               <CurrentValue>{currentLastSeen}</CurrentValue>
             </Grid.Col>
             <Grid.Col span={3}>
-              {/* <ReferencePopup field={"lastSeen"} /> */}
+              <ReferencePopup field={"lastSeen"} />
             </Grid.Col>
           </Grid>
         </>
