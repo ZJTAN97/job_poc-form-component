@@ -12,7 +12,6 @@ interface EditContentProps {
 
 export const EditContent = ({ formMethods }: EditContentProps) => {
   const { classes } = useStyles();
-
   const { control, getValues, setValue, watch, formState } = formMethods;
   watch("skills");
 
@@ -39,7 +38,7 @@ export const EditContent = ({ formMethods }: EditContentProps) => {
 
   return (
     <Container>
-      <GridRow m="lg">
+      <GridRow>
         <Grid.Col span={4}>Company Details</Grid.Col>
         <Grid.Col span={7}>
           <Form.TextInput
@@ -47,11 +46,10 @@ export const EditContent = ({ formMethods }: EditContentProps) => {
             label={"Company name"}
             required
             name={"company"}
-            className={classes.textInput}
+            mb={35}
           />
         </Grid.Col>
       </GridRow>
-
       <GridRow>
         <Grid.Col span={4}>Appointment Details</Grid.Col>
         <Grid.Col span={7}>
@@ -60,18 +58,17 @@ export const EditContent = ({ formMethods }: EditContentProps) => {
             label={"Position"}
             required
             name={"appointment.position"}
-            className={classes.textInput}
+            mb={35}
           />
           <Form.TextInput
             control={control}
             label={"Rank"}
             required
             name={"appointment.rank"}
-            className={classes.textInput}
+            mb={35}
           />
         </Grid.Col>
       </GridRow>
-
       <GridRow>
         <Grid.Col span={4}>Skill Sets</Grid.Col>
         <Grid.Col span={5}>

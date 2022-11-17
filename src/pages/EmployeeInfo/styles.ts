@@ -2,8 +2,8 @@ import { createStyles } from "@mantine/styles";
 
 export const useStyles = createStyles(() => ({
   drawer: {
-    top: "60px",
-    width: "calc(100% - 200px)",
+    top: "60px !important",
+    width: "calc(100% - 200px) !important",
     overflowY: "auto",
   },
   btn: {

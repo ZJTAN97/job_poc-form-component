@@ -1,32 +1,29 @@
 import styled from "@emotion/styled";
-import { Box, BoxProps, createPolymorphicComponent } from "@mantine/core";
 import { createStyles } from "@mantine/styles";
 
 export const useStyles = createStyles(() => ({
   formTextInput: {
-    margin: "20px 0",
+    margin: "25px 0",
   },
 }));
 
-const _AddReferenceTrigger = styled(Box)(({ theme }) => ({
-  paddingTop: theme.spacing.md,
-  fontSize: theme.fontSizes.sm,
+export const AddReferenceTrigger = styled("button")(({ theme }) => ({
+  fontSize: theme.fontSizes.xs,
   cursor: "pointer",
   ":hover": {
     color: "red",
   },
+  border: "none",
 }));
 
-export const AddReferenceTrigger = createPolymorphicComponent<
-  "button",
-  BoxProps
->(_AddReferenceTrigger);
-
-const _ReferenceHeader = styled(Box)(() => ({
+export const ReferenceHeader = styled("div")(() => ({
   margin: "10px 0 20px 0",
   fontSize: "16px",
 }));
 
-export const ReferenceHeader = createPolymorphicComponent<"div", BoxProps>(
-  _ReferenceHeader,
-);
+export const ButtonGroup = styled("div")(({ theme }) => ({
+  display: "flex",
+  justifyContent: "space-around",
+  alignItems: "center",
+  gap: theme.spacing.lg,
+}));

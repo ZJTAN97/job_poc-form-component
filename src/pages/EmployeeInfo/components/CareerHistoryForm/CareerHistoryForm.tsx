@@ -7,7 +7,6 @@ import { Career, CareerType } from "../../../../data/career/CareerHistory";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { AddReferences } from "./components/AddReferences";
 import { Form } from "../../../../components/Form";
-import { FlattenObject } from "../../../../utils/FlattenObject";
 
 export const CareerHistoryForm = () => {
   const { classes } = useStyles();
@@ -57,15 +56,27 @@ export const CareerHistoryForm = () => {
           content: classes.stepBody,
         }}
       >
-        <Stepper.Step label="Edit Career History">
+        <Stepper.Step
+          allowStepClick={false}
+          allowStepSelect={false}
+          label="Edit Career History"
+        >
           <DrawerHeader>Career History</DrawerHeader>
           <EditContent formMethods={careerFormMethods} />
         </Stepper.Step>
-        <Stepper.Step label="Add References">
+        <Stepper.Step
+          label="Add References"
+          allowStepClick={false}
+          allowStepSelect={false}
+        >
           <DrawerHeader>Career History</DrawerHeader>
           <AddReferences formMethods={careerFormMethods} />
         </Stepper.Step>
-        <Stepper.Step label="Preview & Update">
+        <Stepper.Step
+          label="Preview & Update"
+          allowStepClick={false}
+          allowStepSelect={false}
+        >
           <DrawerHeader>Career History</DrawerHeader>
         </Stepper.Step>
         <Stepper.Completed>Your changes has been updated</Stepper.Completed>

@@ -1,11 +1,5 @@
 import styled from "@emotion/styled";
-import {
-  Box,
-  BoxProps,
-  createPolymorphicComponent,
-  Grid,
-  GridProps,
-} from "@mantine/core";
+import { createPolymorphicComponent, Grid, GridProps } from "@mantine/core";
 import { createStyles } from "@mantine/styles";
 
 export const useStyles = createStyles(() => ({
@@ -14,28 +8,21 @@ export const useStyles = createStyles(() => ({
   },
 }));
 
-const _SkillLabel = styled(Box)(({ theme }) => ({
+export const SkillLabel = styled("div")(({ theme }) => ({
   display: "flex",
-  marginBottom: `"0 0 15px 0"`,
-  fontSize: "12px",
+  marginTop: theme.spacing.xs,
+  paddingBottom: theme.spacing.xs,
+  fontSize: theme.fontSizes.sm,
 }));
 
-export const SkillLabel = createPolymorphicComponent<"div", BoxProps>(
-  _SkillLabel,
-);
-
-const _ErrorLabel = styled("div")(() => ({
-  fontSize: "12px",
+export const ErrorLabel = styled("div")(({ theme }) => ({
+  fontSize: theme.spacing.sm,
   color: "red",
-  margin: "15px 0",
+  margin: `${theme.spacing.sm} 0`,
 }));
 
-export const ErrorLabel = createPolymorphicComponent<"div", BoxProps>(
-  _ErrorLabel,
-);
-
-const _GridRow = styled(Grid)(() => ({
-  margin: "40px 0",
+const _GridRow = styled(Grid)(({}) => ({
+  margin: `40px 0`,
 }));
 
 export const GridRow = createPolymorphicComponent<"div", GridProps>(_GridRow);

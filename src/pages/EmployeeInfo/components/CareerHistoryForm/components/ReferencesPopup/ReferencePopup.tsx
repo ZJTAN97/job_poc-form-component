@@ -1,7 +1,12 @@
 import { Button, Flex, Popover } from "@mantine/core";
 import React from "react";
-import { AddReferenceTrigger, ReferenceHeader, useStyles } from "./styles";
-import { useForm, UseFieldArrayAppend } from "react-hook-form";
+import {
+  AddReferenceTrigger,
+  ButtonGroup,
+  ReferenceHeader,
+  useStyles,
+} from "./styles";
+import { useForm, useFieldArray, Control } from "react-hook-form";
 import {
   Reference,
   ReferenceType,
@@ -9,23 +14,25 @@ import {
 } from "../../../../../../data/common/Reference";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../../../components/Form";
+import { CareerType } from "../../../../../../data/career/CareerHistory";
 
 interface ReferencePopupProps {
   field: string;
-  // existingReference?: string;
-  // existingReferences: ReferenceType[];
-  // appendParentReferences: UseFieldArrayAppend<ReferenceType>;
+  parentControl: Control<CareerType>;
 }
 
 export const ReferencePopup = ({
   field,
-}: // existingReference,
-// existingReferences,
-// appendParentReferences,
-ReferencePopupProps) => {
+  parentControl,
+}: ReferencePopupProps) => {
   const { classes } = useStyles();
 
   const [open, setOpen] = React.useState(false);
+
+  const { fields, update, append, remove } = useFieldArray({
+    control: parentControl,
+    name: "references",
+  });
 
   const referenceFormMethods = useForm<ReferenceType>({
     resolver: zodResolver(Reference),
@@ -41,10 +48,26 @@ ReferencePopupProps) => {
 
   const { control, handleSubmit } = referenceFormMethods;
 
+  const existingReference = React.useMemo(() => {
+    const filtered = fields.find((item) => item.field === field);
+    if (filtered) {
+      const { referenceType, comments, dateObtained } = filtered;
+      return `${referenceType} | ${comments} | ${dateObtained}`;
+    }
+    return undefined;
+  }, [fields]);
+
   const appendReference = handleSubmit(async (data) => {
-    console.log(data);
+    if (existingReference) {
+      const filtered = fields.find((item) => item.field === field);
+      if (filtered) update(fields.indexOf(filtered), data);
+    } else {
+      append(data);
+    }
     setOpen(false);
   });
+
+  console.warn("[WARNING] Rerender cause: ReferencePopup Component");
 
   return (
     <Popover
@@ -56,13 +79,11 @@ ReferencePopupProps) => {
       closeOnEscape
       onClose={() => setOpen(false)}
       opened={open}
-      onPositionChange={() => console.log("wdf")}
       withinPortal={true}
     >
       <Popover.Target>
         <AddReferenceTrigger onClick={() => setOpen(true)}>
-          Add references
-          {/* {existingReference ? existingReference : "Add references"} */}
+          {existingReference ? existingReference : "Add references"}
         </AddReferenceTrigger>
       </Popover.Target>
       <Popover.Dropdown>
@@ -75,6 +96,7 @@ ReferencePopupProps) => {
           <Form.Dropdown
             label={"Reference Type"}
             control={control}
+            name="referenceType"
             data={Object.values(TYPES_OF_REFERENCES)}
           />
           <Form.TextInput
@@ -90,21 +112,14 @@ ReferencePopupProps) => {
             control={control}
           />
         </Form>
-        <Flex
-          mih={50}
-          gap="xl"
-          justify="space-around"
-          align="center"
-          direction="row"
-          wrap="wrap"
-        >
-          <Button variant="default" size="sm" onClick={() => setOpen(false)}>
+        <ButtonGroup>
+          <Button variant="default" size="xs" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button size="sm" onClick={appendReference}>
+          <Button size="xs" onClick={appendReference}>
             Apply
           </Button>
-        </Flex>
+        </ButtonGroup>
       </Popover.Dropdown>
     </Popover>
   );
