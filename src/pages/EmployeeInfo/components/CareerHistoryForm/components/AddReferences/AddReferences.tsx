@@ -10,7 +10,7 @@ interface AddReferencesProps {
 }
 
 export const AddReferences = ({ formMethods }: AddReferencesProps) => {
-  const { control, getValues, setValue } = formMethods;
+  const { control, getValues } = formMethods;
 
   const {
     appointment: currentAppointment,
