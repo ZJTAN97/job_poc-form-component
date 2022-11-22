@@ -17,7 +17,8 @@ export const Career = z.object({
         });
       }
     }),
-  lastSeen: z.string(),
+  duration: z.string(),
+  lastDrawnSalary: z.string(),
   certs: z.array(Certification),
   references: z.array(Reference),
 });

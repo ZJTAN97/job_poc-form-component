@@ -12,13 +12,12 @@ export const EmployeeInfo = () => {
 
   React.useEffect(() => {
     const data = getAllCareers();
-    console.log(data);
   }, []);
 
   return (
     <Base>
       <Button onClick={() => setOpenOption(true)} className={classes.btn}>
-        Click to add Career History Stepper
+        Click to add Career Record
       </Button>
       <Drawer
         withOverlay={false}

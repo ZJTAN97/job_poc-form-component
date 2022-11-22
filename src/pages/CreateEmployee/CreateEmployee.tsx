@@ -8,7 +8,7 @@ import { debounce } from "lodash";
 import { useNavigate } from "@tanstack/react-location";
 import { Base } from "../../components/Base";
 import { Form } from "../../components/Form";
-import { Employee, EmployeeType } from "../../data/employee/Employee";
+import { Employee, EmployeeType } from "../../model/employee/Employee";
 
 export const CreateEmployee = () => {
   const navigate = useNavigate();

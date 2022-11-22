@@ -2,7 +2,7 @@ import React from "react";
 import { ErrorLabel, GridRow, SkillLabel, useStyles } from "./styles";
 import { UseFormReturn } from "react-hook-form";
 import { Form } from "../../../../../../components/Form";
-import { CareerType } from "../../../../../../data/career/CareerHistory";
+import { CareerType } from "../../../../../../model/career/Career";
 import { ActionIcon, Button, Container, Grid, TextInput } from "@mantine/core";
 import { IconX } from "@tabler/icons";
 

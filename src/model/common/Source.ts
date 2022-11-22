@@ -17,11 +17,10 @@ export function GetReferenceTypeKey(value: string) {
   return key as TYPES_OF_REFERENCES;
 }
 
-export const Reference = z.object({
-  field: z.string(),
-  content: z.string(),
+export const Source = z.object({
   dateObtained: z.string(),
   referenceType: z.nativeEnum(TYPES_OF_REFERENCES),
   comments: z.string(),
 });
-export type ReferenceType = z.infer<typeof Reference>;
+
+export type SourceType = z.infer<typeof Source>;

@@ -1,7 +1,7 @@
 import { Container, Grid } from "@mantine/core";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
-import { CareerType } from "../../../../../../data/career/CareerHistory";
+import { CareerType } from "../../../../../../model/career/Career";
 import { ReferencePopup } from "../ReferencesPopup";
 import { CurrentValue, Label } from "./styles";
 
@@ -15,7 +15,6 @@ export const AddReferences = ({ formMethods }: AddReferencesProps) => {
   const {
     appointment: currentAppointment,
     company: currentCompany,
-    lastSeen: currentLastSeen,
     skills: currentSkills,
   } = getValues();
 
@@ -79,19 +78,6 @@ export const AddReferences = ({ formMethods }: AddReferencesProps) => {
           </Grid.Col>
         </Grid>
       ))}
-      {currentLastSeen.length > 0 && (
-        <>
-          <Label>Last Seen</Label>
-          <Grid>
-            <Grid.Col span={7}>
-              <CurrentValue>{currentLastSeen}</CurrentValue>
-            </Grid.Col>
-            <Grid.Col span={4}>
-              <ReferencePopup field={"lastSeen"} parentControl={control} />
-            </Grid.Col>
-          </Grid>
-        </>
-      )}
     </Container>
   );
 };

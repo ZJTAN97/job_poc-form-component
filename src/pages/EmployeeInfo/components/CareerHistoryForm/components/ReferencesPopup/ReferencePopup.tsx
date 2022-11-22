@@ -10,11 +10,11 @@ import { useForm, useFieldArray, Control } from "react-hook-form";
 import {
   Reference,
   ReferenceType,
-  TYPES_OF_REFERENCES,
-} from "../../../../../../data/common/Reference";
+} from "../../../../../../model/common/Reference";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../../../components/Form";
-import { CareerType } from "../../../../../../data/career/CareerHistory";
+import { CareerType } from "../../../../../../model/career/Career";
+import { TYPES_OF_REFERENCES } from "../../../../../../model/common/Source";
 
 interface ReferencePopupProps {
   field: string;
@@ -38,34 +38,32 @@ export const ReferencePopup = ({
     resolver: zodResolver(Reference),
     mode: "onChange",
     defaultValues: {
-      comments: "",
       content: "",
-      dateObtained: "",
-      field,
-      referenceType: TYPES_OF_REFERENCES.REDDIT,
+      field: "",
+      sources: [],
     },
   });
 
   const { control, handleSubmit } = referenceFormMethods;
 
-  const existingReference = React.useMemo(() => {
-    const filtered = fields.find((item) => item.field === field);
-    if (filtered) {
-      const { referenceType, comments, dateObtained } = filtered;
-      return `${referenceType} | ${comments} | ${dateObtained}`;
-    }
-    return undefined;
-  }, [fields]);
+  // const existingReference = React.useMemo(() => {
+  //   const filtered = fields.find((item) => item.field === field);
+  //   if (filtered) {
+  //     const { content, field, sources } = filtered;
+  //     return `${referenceType} | ${comments} | ${dateObtained}`;
+  //   }
+  //   return undefined;
+  // }, [fields]);
 
-  const appendReference = handleSubmit(async (data) => {
-    if (existingReference) {
-      const filtered = fields.find((item) => item.field === field);
-      if (filtered) update(fields.indexOf(filtered), data);
-    } else {
-      append(data);
-    }
-    setOpen(false);
-  });
+  // const appendReference = handleSubmit(async (data) => {
+  //   if (existingReference) {
+  //     const filtered = fields.find((item) => item.field === field);
+  //     if (filtered) update(fields.indexOf(filtered), data);
+  //   } else {
+  //     append(data);
+  //   }
+  //   setOpen(false);
+  // });
 
   console.warn("[WARNING] Rerender cause: ReferencePopup Component");
 
@@ -83,7 +81,8 @@ export const ReferencePopup = ({
     >
       <Popover.Target>
         <AddReferenceTrigger onClick={() => setOpen(true)}>
-          {existingReference ? existingReference : "Add references"}
+          Add references
+          {/* {existingReference ? existingReference : "Add references"} */}
         </AddReferenceTrigger>
       </Popover.Target>
       <Popover.Dropdown>
@@ -116,9 +115,9 @@ export const ReferencePopup = ({
           <Button variant="default" size="xs" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          <Button size="xs" onClick={appendReference}>
+          {/* <Button size="xs" onClick={appendReference}>
             Apply
-          </Button>
+          </Button> */}
         </ButtonGroup>
       </Popover.Dropdown>
     </Popover>
