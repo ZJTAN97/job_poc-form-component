@@ -1,19 +1,17 @@
-import { Server } from "miragejs";
-
-new Server({
-  routes() {
-    this.namespace = "api";
-    this.get("/employees/", () => {
-      return [
-        { name: "Aran" },
-        { name: "Evan" },
-        { name: "Luminous" },
-        { name: "Mercedes" },
-        { name: "Phantom" },
-      ];
-    });
-  },
-});
+// new Server({
+//   routes() {
+//     this.namespace = "api";
+//     this.get("/employees/", () => {
+//       return [
+//         { name: "Aran" },
+//         { name: "Evan" },
+//         { name: "Luminous" },
+//         { name: "Mercedes" },
+//         { name: "Phantom" },
+//       ];
+//     });
+//   },
+// });
 
 export default function mockSearchEmployee(
   searchValue: string,
