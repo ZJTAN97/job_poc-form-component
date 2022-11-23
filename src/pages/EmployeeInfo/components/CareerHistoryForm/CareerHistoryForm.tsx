@@ -7,6 +7,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../components/Form";
 import { IconX } from "@tabler/icons";
 import { ReferencePopup } from "./components/ReferencesPopup";
+import {
+  CertificationType,
+  Certification,
+} from "../../../../model/career/Certification";
 
 export const CareerHistoryForm = () => {
   const careerFormMethods = useForm<CareerType>({
@@ -26,10 +30,36 @@ export const CareerHistoryForm = () => {
     },
   });
 
-  const { control, getValues, setValue, handleSubmit, formState } =
-    careerFormMethods;
+  const {
+    control: careerControl,
+    getValues: careerGetValue,
+    setValue: careerSetValue,
+    handleSubmit: careerHandleSubmit,
+    formState: careerFormState,
+    watch: careerWatch,
+  } = careerFormMethods;
 
-  const { skills: currentSkills } = getValues();
+  careerWatch(["skills", "certs"]);
+
+  const certFormMethods = useForm<CertificationType>({
+    resolver: zodResolver(Certification),
+    mode: "onChange",
+    defaultValues: {
+      issuedBy: "",
+      name: "",
+      references: [],
+    },
+  });
+
+  const {
+    control: certControl,
+    getValues: certGetValues,
+    setValue: certSetValue,
+    handleSubmit: certHandleSubmit,
+    formState: certFormState,
+  } = certFormMethods;
+
+  const { skills: currentSkills, certs: currentCerts } = careerGetValue();
 
   const [showAddSkill, setShowAddSkill] = React.useState(false);
   const [currentSkillTextInput, setCurrentSkillTextInput] = React.useState("");
@@ -37,20 +67,28 @@ export const CareerHistoryForm = () => {
   const [showAddCert, setShowAddCert] = React.useState(false);
 
   const appendToSkillArray = () => {
-    setValue("skills", [...currentSkills, currentSkillTextInput]);
+    careerSetValue("skills", [...currentSkills, currentSkillTextInput]);
     setCurrentSkillTextInput("");
     setShowAddSkill(false);
   };
 
   const removeFromSkillArray = (skill: string) => {
     console.log("skill to remove: " + skill);
-    setValue(
+    careerSetValue(
       "skills",
       currentSkills.filter((item) => item !== skill),
     );
   };
 
-  const submitFormHandler = handleSubmit(async (data) => {
+  const certSubmitHandler = certHandleSubmit(async (data) => {
+    console.log(data);
+    careerSetValue("certs", [...currentCerts, data]);
+    certSetValue("issuedBy", "");
+    certSetValue("name", "");
+    setShowAddCert(false);
+  });
+
+  const submitFormHandler = careerHandleSubmit(async (data) => {
     console.log(data);
   });
 
@@ -65,13 +103,16 @@ export const CareerHistoryForm = () => {
           <ColTitle>Company Details</ColTitle>
           <Col>
             <Form.TextInput
-              control={control}
+              control={careerControl}
               label={"Company name"}
               required
               name={"company"}
               mb={35}
               rightSection={
-                <ReferencePopup field={"company"} parentControl={control} />
+                <ReferencePopup
+                  field={"company"}
+                  parentControl={careerControl}
+                />
               }
             />
           </Col>
@@ -80,7 +121,7 @@ export const CareerHistoryForm = () => {
           <ColTitle>Appointment Details</ColTitle>
           <Col>
             <Form.TextInput
-              control={control}
+              control={careerControl}
               label={"Position"}
               required
               name={"appointment.position"}
@@ -88,19 +129,19 @@ export const CareerHistoryForm = () => {
               rightSection={
                 <ReferencePopup
                   field={"appointment.position"}
-                  parentControl={control}
+                  parentControl={careerControl}
                 />
               }
             />
             <Form.TextInput
-              control={control}
+              control={careerControl}
               label={"Rank"}
               required
               name={"appointment.rank"}
               rightSection={
                 <ReferencePopup
                   field={"appointment.position"}
-                  parentControl={control}
+                  parentControl={careerControl}
                 />
               }
             />
@@ -123,7 +164,8 @@ export const CareerHistoryForm = () => {
               </SkillLabel>
             ))}
             <ErrorLabel>
-              {formState.errors.skills && formState.errors.skills.message}
+              {careerFormState.errors.skills &&
+                careerFormState.errors.skills.message}
             </ErrorLabel>
             {showAddSkill ? (
               <TextInput
@@ -160,23 +202,26 @@ export const CareerHistoryForm = () => {
           <ColTitle>Other details</ColTitle>
           <Col>
             <Form.TextInput
-              control={control}
+              control={careerControl}
               label={"Last Drawn Salary"}
               name={"lastDrawnSalary"}
               mb={25}
               rightSection={
                 <ReferencePopup
                   field={"lastDrawnSalary"}
-                  parentControl={control}
+                  parentControl={careerControl}
                 />
               }
             />
             <Form.TextInput
-              control={control}
+              control={careerControl}
               label={"Duration"}
               name={"duration"}
               rightSection={
-                <ReferencePopup field={"duration"} parentControl={control} />
+                <ReferencePopup
+                  field={"duration"}
+                  parentControl={careerControl}
+                />
               }
             />
           </Col>
@@ -188,43 +233,53 @@ export const CareerHistoryForm = () => {
             {showAddCert ? (
               <>
                 <Form.TextInput
-                  control={control}
+                  control={certControl}
                   label={"Name"}
+                  name={"name"}
                   mb={25}
                   rightSection={
                     <ReferencePopup
-                      field={"certification"}
-                      parentControl={control}
+                      field={"name"}
+                      parentControl={careerControl}
                     />
                   }
                 />
                 <Form.TextInput
-                  control={control}
+                  control={certControl}
                   label={"Issued By"}
+                  name={"issuedBy"}
                   rightSection={
                     <ReferencePopup
-                      field={"certification"}
-                      parentControl={control}
+                      field={"issuedBy"}
+                      parentControl={careerControl}
                     />
                   }
                 />
                 <Button
                   size="xs"
                   variant="light"
-                  onClick={() => setShowAddCert(false)}
+                  onClick={certSubmitHandler}
                   mt={25}
                 >
                   Add
                 </Button>
               </>
             ) : (
-              <Button
-                size="xs"
-                variant="light"
-                onClick={() => setShowAddCert(true)}
-              >
-                Add Certifications
-              </Button>
+              <>
+                {currentCerts.map((cert, id) => (
+                  <div key={cert.toString() + id}>
+                    <div>{cert.name}</div>
+                    <div>{cert.issuedBy}</div>
+                  </div>
+                ))}
+                <Button
+                  size="xs"
+                  variant="light"
+                  onClick={() => setShowAddCert(true)}
+                >
+                  Add Certifications
+                </Button>
+              </>
             )}
           </Col>
         </Row>
