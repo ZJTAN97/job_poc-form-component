@@ -7,13 +7,14 @@ export const useStyles = createStyles(() => ({
   },
 }));
 
-export const AddReferenceTrigger = styled("button")(({ theme }) => ({
+export const AddReferenceTrigger = styled("div")(({ theme }) => ({
   fontSize: theme.fontSizes.xs,
   cursor: "pointer",
   ":hover": {
     color: "red",
   },
   border: "none",
+  paddingTop: "5px",
 }));
 
 export const ReferenceHeader = styled("div")(() => ({

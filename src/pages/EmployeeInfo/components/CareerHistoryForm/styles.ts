@@ -1,12 +1,4 @@
 import styled from "@emotion/styled";
-import { createPolymorphicComponent, Grid, GridProps } from "@mantine/core";
-import { createStyles } from "@mantine/styles";
-
-export const useStyles = createStyles(() => ({
-  textInput: {
-    margin: "0 0 35px 0",
-  },
-}));
 
 export const SkillLabel = styled("div")(({ theme }) => ({
   display: "flex",
@@ -21,8 +13,18 @@ export const ErrorLabel = styled("div")(({ theme }) => ({
   margin: `${theme.spacing.sm} 0`,
 }));
 
-const _GridRow = styled(Grid)(({}) => ({
+export const Row = styled("div")(({}) => ({
+  display: "flex",
   margin: `40px 0`,
+  gap: "25px",
 }));
 
-export const GridRow = createPolymorphicComponent<"div", GridProps>(_GridRow);
+export const ColTitle = styled("div")(({}) => ({
+  padding: "10px",
+  width: "20%",
+}));
+
+export const Col = styled("div")(({}) => ({
+  padding: "10px",
+  width: "45%",
+}));

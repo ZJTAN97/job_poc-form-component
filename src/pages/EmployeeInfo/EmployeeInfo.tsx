@@ -1,18 +1,12 @@
 import { Button, Drawer } from "@mantine/core";
 import React from "react";
-import { getAllCareers } from "../../api/career";
 import { Base } from "../../components/Base";
 import { CareerHistoryForm } from "./components/CareerHistoryForm";
 import { useStyles } from "./styles";
 
 export const EmployeeInfo = () => {
   const { classes } = useStyles();
-
   const [openOption, setOpenOption] = React.useState(false);
-
-  React.useEffect(() => {
-    const data = getAllCareers();
-  }, []);
 
   return (
     <Base>

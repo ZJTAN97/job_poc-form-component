@@ -13,7 +13,7 @@
 //   },
 // });
 
-export default function mockSearchEmployee(
+export function mockSearchEmployee(
   searchValue: string,
   setError: (arg: string) => void,
 ) {

@@ -15,6 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../../../components/Form";
 import { CareerType } from "../../../../../../model/career/Career";
 import { TYPES_OF_REFERENCES } from "../../../../../../model/common/Source";
+import { IconInfoCircle } from "@tabler/icons";
 
 interface ReferencePopupProps {
   field: string;
@@ -45,6 +46,8 @@ export const ReferencePopup = ({
   });
 
   const { control, handleSubmit } = referenceFormMethods;
+
+  const existingReference = false;
 
   // const existingReference = React.useMemo(() => {
   //   const filtered = fields.find((item) => item.field === field);
@@ -77,12 +80,10 @@ export const ReferencePopup = ({
       closeOnEscape
       onClose={() => setOpen(false)}
       opened={open}
-      withinPortal={true}
     >
       <Popover.Target>
         <AddReferenceTrigger onClick={() => setOpen(true)}>
-          Add references
-          {/* {existingReference ? existingReference : "Add references"} */}
+          {existingReference ? existingReference : <IconInfoCircle />}
         </AddReferenceTrigger>
       </Popover.Target>
       <Popover.Dropdown>

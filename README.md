@@ -307,3 +307,10 @@ Career History
 }
 
 ```
+
+<br>
+
+# 8. Queries & Clarifications
+
+- CORS Origin error
+- For POST request, `CareerHistoryDto` if the field is not mentioned in the `@ValidReference` what does it mean?

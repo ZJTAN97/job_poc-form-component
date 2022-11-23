@@ -3,12 +3,12 @@ import styles from "./index.module.css";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@mantine/core";
-import mockSearchCharacterNames from "../../mock";
 import { debounce } from "lodash";
 import { useNavigate } from "@tanstack/react-location";
 import { Base } from "../../components/Base";
 import { Form } from "../../components/Form";
 import { Employee, EmployeeType } from "../../model/employee/Employee";
+import { mockSearchEmployee } from "../../api/mock";
 
 export const CreateEmployee = () => {
   const navigate = useNavigate();
@@ -31,7 +31,7 @@ export const CreateEmployee = () => {
   const [characterNameError, setCharacterNameError] = React.useState("");
 
   const debouncedSearch = debounce((criteria: string) => {
-    mockSearchCharacterNames(criteria, setCharacterNameError);
+    mockSearchEmployee(criteria, setCharacterNameError);
   }, 500);
 
   const submitForm = handleSubmit(async (data) => {
