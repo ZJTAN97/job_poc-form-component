@@ -17,6 +17,7 @@ import {
   Appointment,
   AppointmentType,
 } from "../../../../model/career/Appointment";
+import { NestedObjectForm } from "./components/NestedObjectForm";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -48,19 +49,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     formState: careerFormState,
     watch: careerWatch,
   } = careerFormMethods;
-
-  const appointmentFormMethods = useForm<AppointmentType>({
-    resolver: zodResolver(Appointment),
-    mode: "onChange",
-    defaultValues: {
-      position: "",
-      rank: "",
-      references: [],
-    },
-  });
-
-  const { control: appointmentControl, getValues: appointmentGetValues } =
-    appointmentFormMethods;
 
   const certFormMethods = useForm<CertificationType>({
     resolver: zodResolver(Certification),
@@ -165,7 +153,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     certs: [],
   };
 
-  const { saveOrCreateCareer } = useSaveOrCreateCareer(validPOST);
+  const { saveOrCreateCareer } = useSaveOrCreateCareer(careerGetValue());
 
   const certSubmitHandler = certHandleSubmit(async (data) => {
     careerSetValue("certs", [...currentCerts, data]);
@@ -175,6 +163,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   });
 
   const submitFormHandler = careerHandleSubmit(async (data) => {
+    saveOrCreateCareer();
     console.log(data);
   });
 
@@ -210,32 +199,31 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             />
           </Col>
         </Row>
+
         <Row>
-          <ColTitle>Appointment Details</ColTitle>
+          <ColTitle>Other details</ColTitle>
           <Col>
             <Form.TextInput
               control={careerControl}
-              label={"Position"}
-              required
-              name={"appointment.position"}
-              mb={20}
+              label={"Last Drawn Salary"}
+              name={"lastDrawnSalary"}
+              mb={25}
               rightSection={
                 <ReferencePopup
-                  field={"appointment.position"}
-                  content={currentAppointment.position}
+                  field={"lastDrawnSalary"}
+                  content={currentLastDrawnSalary}
                   parentControl={careerControl}
                 />
               }
             />
             <Form.TextInput
               control={careerControl}
-              label={"Rank"}
-              required
-              name={"appointment.rank"}
+              label={"Duration"}
+              name={"duration"}
               rightSection={
                 <ReferencePopup
-                  field={"appointment.rank"}
-                  content={currentAppointment.rank}
+                  field={"duration"}
+                  content={currentDuration}
                   parentControl={careerControl}
                 />
               }
@@ -300,36 +288,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
           </Col>
         </Row>
 
-        <Row>
-          <ColTitle>Other details</ColTitle>
-          <Col>
-            <Form.TextInput
-              control={careerControl}
-              label={"Last Drawn Salary"}
-              name={"lastDrawnSalary"}
-              mb={25}
-              rightSection={
-                <ReferencePopup
-                  field={"lastDrawnSalary"}
-                  content={currentLastDrawnSalary}
-                  parentControl={careerControl}
-                />
-              }
-            />
-            <Form.TextInput
-              control={careerControl}
-              label={"Duration"}
-              name={"duration"}
-              rightSection={
-                <ReferencePopup
-                  field={"duration"}
-                  content={currentDuration}
-                  parentControl={careerControl}
-                />
-              }
-            />
-          </Col>
-        </Row>
+        <NestedObjectForm parentFormMethods={careerFormMethods} />
 
         <Row>
           <ColTitle>Certification</ColTitle>

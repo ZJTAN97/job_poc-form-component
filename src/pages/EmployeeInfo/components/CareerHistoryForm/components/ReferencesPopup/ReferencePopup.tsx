@@ -6,14 +6,18 @@ import {
   ReferenceHeader,
   useStyles,
 } from "./styles";
-import { useForm, useFieldArray, Control } from "react-hook-form";
+import {
+  useForm,
+  useFieldArray,
+  Control,
+  UseFormSetValue,
+} from "react-hook-form";
 import {
   Reference,
   ReferenceType,
 } from "../../../../../../model/common/Reference";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../../../components/Form";
-import { CareerType } from "../../../../../../model/career/Career";
 import {
   Source,
   SourceType,
@@ -23,7 +27,8 @@ import { IconInfoCircle } from "@tabler/icons";
 
 interface ReferencePopupProps {
   field: string;
-  parentControl: Control<CareerType>;
+  parentControl: Control<any>;
+  setParentValue?: any;
   content: string;
 }
 
@@ -31,6 +36,7 @@ export const ReferencePopup = ({
   field,
   content,
   parentControl,
+  setParentValue,
 }: ReferencePopupProps) => {
   const { classes } = useStyles();
 
@@ -57,7 +63,7 @@ export const ReferencePopup = ({
     mode: "onChange",
     defaultValues: {
       comment: "",
-      dateObtained: "",
+      dateObtained: "2022-11-11T12:19:54.52",
       referenceType: TYPES_OF_REFERENCES.LINKED_IN,
     },
   });
@@ -87,6 +93,8 @@ export const ReferencePopup = ({
   const appendReference = sourceHandleSubmit(async (sourceData) => {
     sourcesAppend(sourceData);
     referencesAppend(referencesGetValues());
+    if (setParentValue) setParentValue();
+
     setOpen(false);
   });
 

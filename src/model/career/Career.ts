@@ -9,6 +9,7 @@ export const Career = z.object({
   skills: z
     .string()
     .array()
+    .min(1, "Minimally 1 skill")
     .superRefine((val, ctx) => {
       if (val.length !== new Set(val).size) {
         ctx.addIssue({
