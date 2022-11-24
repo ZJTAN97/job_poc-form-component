@@ -1,12 +1,12 @@
 import z from "zod";
 
 export enum TYPES_OF_REFERENCES {
-  LINKED_IN = "Linkedin",
-  FACEBOOK = "Facebook",
-  GLASS_DOOR = "Glassdoor",
-  REDDIT = "Reddit",
-  INDEED = "Indeed",
-  TWITTER = "Twitter",
+  LINKED_IN = "LINKED_IN",
+  FACEBOOK = "FACEBOOK",
+  GLASS_DOOR = "GLASSDOOR",
+  REDDIT = "REDDIT",
+  INDEED = "INDEED",
+  TWITTER = "TWITTER",
 }
 
 export function GetReferenceTypeKey(value: string) {
@@ -20,7 +20,7 @@ export function GetReferenceTypeKey(value: string) {
 export const Source = z.object({
   dateObtained: z.string(),
   referenceType: z.nativeEnum(TYPES_OF_REFERENCES),
-  comments: z.string(),
+  comment: z.string(),
 });
 
 export type SourceType = z.infer<typeof Source>;

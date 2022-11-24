@@ -312,5 +312,12 @@ Career History
 
 # 8. Queries & Clarifications
 
+Domain Questions
+
 - CORS Origin error
 - For POST request, `CareerHistoryDto` if the field is not mentioned in the `@ValidReference` what does it mean?
+- Is it for Object type (certs, appointment) the references are stored within?
+
+Spring Boot / Java / Lombok Questions
+
+- What is SuperBuilder, is it used when you extend a class, then normally its just builder

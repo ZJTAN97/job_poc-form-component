@@ -14,61 +14,100 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../../../components/Form";
 import { CareerType } from "../../../../../../model/career/Career";
-import { TYPES_OF_REFERENCES } from "../../../../../../model/common/Source";
+import {
+  Source,
+  SourceType,
+  TYPES_OF_REFERENCES,
+} from "../../../../../../model/common/Source";
 import { IconInfoCircle } from "@tabler/icons";
 
 interface ReferencePopupProps {
   field: string;
   parentControl: Control<CareerType>;
+  content: string;
 }
 
 export const ReferencePopup = ({
   field,
+  content,
   parentControl,
 }: ReferencePopupProps) => {
   const { classes } = useStyles();
 
   const [open, setOpen] = React.useState(false);
 
-  const { fields, update, append, remove } = useFieldArray({
-    control: parentControl,
-    name: "references",
-  });
-
   const referenceFormMethods = useForm<ReferenceType>({
     resolver: zodResolver(Reference),
     mode: "onChange",
     defaultValues: {
-      content: "",
-      field: "",
+      content,
+      field,
       sources: [],
     },
   });
 
-  const { control, handleSubmit } = referenceFormMethods;
+  const {
+    control: referenceControl,
+    handleSubmit: referenceHandleSubmit,
+    getValues: referencesGetValues,
+  } = referenceFormMethods;
 
-  const existingReference = false;
+  const sourceFormMethods = useForm<SourceType>({
+    resolver: zodResolver(Source),
+    mode: "onChange",
+    defaultValues: {
+      comment: "",
+      dateObtained: "",
+      referenceType: TYPES_OF_REFERENCES.LINKED_IN,
+    },
+  });
 
-  // const existingReference = React.useMemo(() => {
-  //   const filtered = fields.find((item) => item.field === field);
-  //   if (filtered) {
-  //     const { content, field, sources } = filtered;
-  //     return `${referenceType} | ${comments} | ${dateObtained}`;
-  //   }
-  //   return undefined;
-  // }, [fields]);
+  const {
+    control: sourceControl,
+    handleSubmit: sourceHandleSubmit,
+    getValues: sourcesGetValues,
+  } = sourceFormMethods;
 
-  // const appendReference = handleSubmit(async (data) => {
-  //   if (existingReference) {
-  //     const filtered = fields.find((item) => item.field === field);
-  //     if (filtered) update(fields.indexOf(filtered), data);
-  //   } else {
-  //     append(data);
-  //   }
-  //   setOpen(false);
-  // });
+  const {
+    fields: referencesField,
+    update: referencesUpdate,
+    append: referencesAppend,
+    remove: referencesRemove,
+  } = useFieldArray({
+    control: parentControl,
+    name: "references",
+  });
 
-  console.warn("[WARNING] Rerender cause: ReferencePopup Component");
+  const {
+    fields: sourcesField,
+    update: sourcesUpdate,
+    append: sourcesAppend,
+    remove: sourcesRemove,
+  } = useFieldArray({
+    control: referenceControl,
+    name: "sources",
+  });
+
+  const existingReference = false; // TODO: Check for existing references
+
+  const appendReference = () => {
+    console.log(referencesGetValues());
+    console.log(sourcesGetValues());
+    sourceHandleSubmit((sourceData) => {
+      console.log("--sourceData--");
+      console.log(sourceData);
+      sourcesAppend(sourceData);
+    });
+    referenceHandleSubmit((referencesData) => {
+      console.log("--referenceData--");
+      console.log(referencesData);
+      referencesAppend(referencesData);
+    });
+    setOpen(false);
+  };
+
+  // TODO: Optimize this component rendering
+  // console.warn("[WARNING] Rerender cause: ReferencePopup Component");
 
   return (
     <Popover
@@ -89,36 +128,36 @@ export const ReferencePopup = ({
       <Popover.Dropdown>
         <ReferenceHeader>Add References</ReferenceHeader>
         <Form
-          methods={referenceFormMethods}
+          methods={sourceFormMethods}
           preventLeaving={false}
           useLocalStorage={false}
         >
           <Form.Dropdown
             label={"Reference Type"}
-            control={control}
+            control={sourceControl}
             name="referenceType"
             data={Object.values(TYPES_OF_REFERENCES)}
           />
           <Form.TextInput
             className={classes.formTextInput}
             label="Comments"
-            name="comments"
-            control={control}
+            name="comment"
+            control={sourceControl}
           />
           <Form.TextInput
             className={classes.formTextInput}
             label="Date obtained"
             name="dateObtained"
-            control={control}
+            control={sourceControl}
           />
         </Form>
         <ButtonGroup>
           <Button variant="default" size="xs" onClick={() => setOpen(false)}>
             Cancel
           </Button>
-          {/* <Button size="xs" onClick={appendReference}>
+          <Button size="xs" onClick={appendReference}>
             Apply
-          </Button> */}
+          </Button>
         </ButtonGroup>
       </Popover.Dropdown>
     </Popover>

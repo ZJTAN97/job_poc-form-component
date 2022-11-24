@@ -1,3 +1,4 @@
+import styled from "@emotion/styled";
 import { createStyles } from "@mantine/styles";
 
 export const useStyles = createStyles(() => ({

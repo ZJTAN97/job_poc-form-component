@@ -1,6 +1,7 @@
 import { useQuery, useMutation } from "react-query";
 import { getAllCareers, postNewCareer } from "../api/career";
 import { queryClient } from "../App";
+import { CareerType } from "../model/career/Career";
 
 export function useQueryCareerData() {
   const {
@@ -15,13 +16,21 @@ export function useQueryCareerData() {
   };
 }
 
-export function useSaveOrCreateCareer() {
+export function useSaveOrCreateCareer(newCareer: CareerType) {
   const { mutateAsync: saveOrCreateCareer } = useMutation(
-    () => postNewCareer(),
+    () => postNewCareer(newCareer),
     {
       onSuccess: () => {
+        console.log("-- success --");
         queryClient.invalidateQueries(["career"]);
+      },
+      onError: (error) => {
+        console.log("error leh");
+        console.log(error);
       },
     },
   );
+  return {
+    saveOrCreateCareer,
+  };
 }

@@ -11,8 +11,14 @@ import {
   CertificationType,
   Certification,
 } from "../../../../model/career/Certification";
+import { useSaveOrCreateCareer } from "../../../../react-query/career";
+import { TYPES_OF_REFERENCES } from "../../../../model/common/Source";
 
-export const CareerHistoryForm = () => {
+interface CareerHistoryFormProps {
+  setDrawer: (arg: boolean) => void;
+}
+
+export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   const careerFormMethods = useForm<CareerType>({
     resolver: zodResolver(Career),
     mode: "onChange",
@@ -39,8 +45,6 @@ export const CareerHistoryForm = () => {
     watch: careerWatch,
   } = careerFormMethods;
 
-  careerWatch(["skills", "certs"]);
-
   const certFormMethods = useForm<CertificationType>({
     resolver: zodResolver(Certification),
     mode: "onChange",
@@ -59,7 +63,14 @@ export const CareerHistoryForm = () => {
     formState: certFormState,
   } = certFormMethods;
 
-  const { skills: currentSkills, certs: currentCerts } = careerGetValue();
+  const {
+    skills: currentSkills,
+    certs: currentCerts,
+    company: currentCompany,
+    appointment: currentAppointment,
+  } = careerGetValue();
+
+  careerWatch(["skills", "certs", "company"]);
 
   const [showAddSkill, setShowAddSkill] = React.useState(false);
   const [currentSkillTextInput, setCurrentSkillTextInput] = React.useState("");
@@ -80,8 +91,58 @@ export const CareerHistoryForm = () => {
     );
   };
 
+  const validPOST: CareerType = {
+    company: "Digital Ocean",
+    duration: "1Y",
+    lastDrawnSalary: "10K",
+    skills: ["Systems Design"],
+    references: [
+      {
+        field: "company",
+        content: "Digital Ocean",
+        sources: [
+          {
+            dateObtained: "2022-11-11T12:19:54.52",
+            referenceType: TYPES_OF_REFERENCES.LINKED_IN,
+            comment: "Obtained via LinkedIn learning",
+          },
+        ],
+      },
+      {
+        field: "skills[*]",
+        content: "Systems Design",
+        sources: [
+          {
+            dateObtained: "2022-11-11T12:19:54.52",
+            referenceType: TYPES_OF_REFERENCES.LINKED_IN,
+            comment: "Obtained via LinkedIn learning",
+          },
+        ],
+      },
+    ],
+    appointment: {
+      position: "DevOps",
+      rank: "Senior",
+      references: [
+        {
+          field: "position",
+          content: "DevOps",
+          sources: [
+            {
+              dateObtained: "2022-11-11T12:19:54.52",
+              referenceType: TYPES_OF_REFERENCES.LINKED_IN,
+              comment: "Obtained via LinkedIn learning",
+            },
+          ],
+        },
+      ],
+    },
+    certs: [],
+  };
+
+  const { saveOrCreateCareer } = useSaveOrCreateCareer(careerGetValue());
+
   const certSubmitHandler = certHandleSubmit(async (data) => {
-    console.log(data);
     careerSetValue("certs", [...currentCerts, data]);
     certSetValue("issuedBy", "");
     certSetValue("name", "");
@@ -90,7 +151,13 @@ export const CareerHistoryForm = () => {
 
   const submitFormHandler = careerHandleSubmit(async (data) => {
     console.log(data);
+    // saveOrCreateCareer();
   });
+
+  const validFormHandler = () => {
+    saveOrCreateCareer();
+    setDrawer(false);
+  };
 
   return (
     <Form
@@ -110,7 +177,9 @@ export const CareerHistoryForm = () => {
               mb={35}
               rightSection={
                 <ReferencePopup
+                  key={currentCompany}
                   field={"company"}
+                  content={currentCompany}
                   parentControl={careerControl}
                 />
               }
@@ -129,6 +198,7 @@ export const CareerHistoryForm = () => {
               rightSection={
                 <ReferencePopup
                   field={"appointment.position"}
+                  content={currentAppointment.position}
                   parentControl={careerControl}
                 />
               }
@@ -140,7 +210,8 @@ export const CareerHistoryForm = () => {
               name={"appointment.rank"}
               rightSection={
                 <ReferencePopup
-                  field={"appointment.position"}
+                  field={"appointment.rank"}
+                  content={currentAppointment.rank}
                   parentControl={careerControl}
                 />
               }
@@ -209,6 +280,7 @@ export const CareerHistoryForm = () => {
               rightSection={
                 <ReferencePopup
                   field={"lastDrawnSalary"}
+                  content={""}
                   parentControl={careerControl}
                 />
               }
@@ -220,6 +292,7 @@ export const CareerHistoryForm = () => {
               rightSection={
                 <ReferencePopup
                   field={"duration"}
+                  content={""}
                   parentControl={careerControl}
                 />
               }
@@ -240,6 +313,7 @@ export const CareerHistoryForm = () => {
                   rightSection={
                     <ReferencePopup
                       field={"name"}
+                      content={""}
                       parentControl={careerControl}
                     />
                   }
@@ -251,6 +325,7 @@ export const CareerHistoryForm = () => {
                   rightSection={
                     <ReferencePopup
                       field={"issuedBy"}
+                      content={""}
                       parentControl={careerControl}
                     />
                   }
@@ -286,6 +361,10 @@ export const CareerHistoryForm = () => {
 
         <Button mt={20} onClick={submitFormHandler}>
           Add Career
+        </Button>
+
+        <Button mt={20} ml={20} onClick={validFormHandler}>
+          Valid Data Sample
         </Button>
       </Container>
     </Form>

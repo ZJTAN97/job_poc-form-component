@@ -2,7 +2,6 @@ import { Container, Grid } from "@mantine/core";
 import React from "react";
 import { UseFormReturn } from "react-hook-form";
 import { CareerType } from "../../../../../../model/career/Career";
-import { ReferencePopup } from "../ReferencesPopup";
 import { CurrentValue, Label } from "./styles";
 
 interface AddReferencesProps {
@@ -30,7 +29,7 @@ export const AddReferences = ({ formMethods }: AddReferencesProps) => {
               <CurrentValue>{currentCompany}</CurrentValue>
             </Grid.Col>
             <Grid.Col span={4}>
-              <ReferencePopup field={"company"} parentControl={control} />
+              {/* <ReferencePopup field={"company"} parentControl={control} /> */}
             </Grid.Col>
           </Grid>
         </>
@@ -43,10 +42,10 @@ export const AddReferences = ({ formMethods }: AddReferencesProps) => {
               <CurrentValue>{currentAppointment.position}</CurrentValue>
             </Grid.Col>
             <Grid.Col span={4}>
-              <ReferencePopup
+              {/* <ReferencePopup
                 field={"appointment.position"}
                 parentControl={control}
-              />
+              /> */}
             </Grid.Col>
           </Grid>
         </>
@@ -59,10 +58,10 @@ export const AddReferences = ({ formMethods }: AddReferencesProps) => {
               <CurrentValue>{currentAppointment.rank}</CurrentValue>
             </Grid.Col>
             <Grid.Col span={4}>
-              <ReferencePopup
+              {/* <ReferencePopup
                 field={"appointment.rank"}
                 parentControl={control}
-              />
+              /> */}
             </Grid.Col>
           </Grid>
         </>
@@ -74,7 +73,7 @@ export const AddReferences = ({ formMethods }: AddReferencesProps) => {
             <CurrentValue>{skill}</CurrentValue>
           </Grid.Col>
           <Grid.Col span={4}>
-            <ReferencePopup field={"skills"} parentControl={control} />
+            {/* <ReferencePopup field={"skills"} parentControl={control} /> */}
           </Grid.Col>
         </Grid>
       ))}
