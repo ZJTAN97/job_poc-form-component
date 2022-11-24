@@ -13,6 +13,10 @@ import {
 } from "../../../../model/career/Certification";
 import { useSaveOrCreateCareer } from "../../../../react-query/career";
 import { TYPES_OF_REFERENCES } from "../../../../model/common/Source";
+import {
+  Appointment,
+  AppointmentType,
+} from "../../../../model/career/Appointment";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -45,6 +49,19 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     watch: careerWatch,
   } = careerFormMethods;
 
+  const appointmentFormMethods = useForm<AppointmentType>({
+    resolver: zodResolver(Appointment),
+    mode: "onChange",
+    defaultValues: {
+      position: "",
+      rank: "",
+      references: [],
+    },
+  });
+
+  const { control: appointmentControl, getValues: appointmentGetValues } =
+    appointmentFormMethods;
+
   const certFormMethods = useForm<CertificationType>({
     resolver: zodResolver(Certification),
     mode: "onChange",
@@ -57,10 +74,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
 
   const {
     control: certControl,
-    getValues: certGetValues,
     setValue: certSetValue,
     handleSubmit: certHandleSubmit,
-    formState: certFormState,
   } = certFormMethods;
 
   const {
@@ -68,9 +83,19 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     certs: currentCerts,
     company: currentCompany,
     appointment: currentAppointment,
+    lastDrawnSalary: currentLastDrawnSalary,
+    duration: currentDuration,
   } = careerGetValue();
 
-  careerWatch(["skills", "certs", "company"]);
+  careerWatch([
+    "skills",
+    "certs",
+    "company",
+    "appointment.position",
+    "appointment.rank",
+    "lastDrawnSalary",
+    "duration",
+  ]);
 
   const [showAddSkill, setShowAddSkill] = React.useState(false);
   const [currentSkillTextInput, setCurrentSkillTextInput] = React.useState("");
@@ -109,7 +134,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
         ],
       },
       {
-        field: "skills[*]",
+        field: "skills",
         content: "Systems Design",
         sources: [
           {
@@ -140,7 +165,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     certs: [],
   };
 
-  const { saveOrCreateCareer } = useSaveOrCreateCareer(careerGetValue());
+  const { saveOrCreateCareer } = useSaveOrCreateCareer(validPOST);
 
   const certSubmitHandler = certHandleSubmit(async (data) => {
     careerSetValue("certs", [...currentCerts, data]);
@@ -151,7 +176,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
 
   const submitFormHandler = careerHandleSubmit(async (data) => {
     console.log(data);
-    // saveOrCreateCareer();
   });
 
   const validFormHandler = () => {
@@ -223,16 +247,23 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
           <ColTitle>Skill Sets</ColTitle>
           <Col>
             {currentSkills.map((skill, id) => (
-              <SkillLabel key={skill + id}>
-                {skill}
-                <ActionIcon
-                  pb={6}
-                  ml={5}
-                  onClick={() => removeFromSkillArray(skill)}
-                >
-                  <IconX size={10} />
-                </ActionIcon>
-              </SkillLabel>
+              <Row key={skill.toString() + id}>
+                <SkillLabel key={skill + id}>
+                  {skill}
+                  <ActionIcon
+                    pb={6}
+                    ml={5}
+                    onClick={() => removeFromSkillArray(skill)}
+                  >
+                    <IconX size={10} />
+                  </ActionIcon>
+                </SkillLabel>
+                <ReferencePopup
+                  field={"skills"}
+                  content={skill}
+                  parentControl={careerControl}
+                />
+              </Row>
             ))}
             <ErrorLabel>
               {careerFormState.errors.skills &&
@@ -280,7 +311,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               rightSection={
                 <ReferencePopup
                   field={"lastDrawnSalary"}
-                  content={""}
+                  content={currentLastDrawnSalary}
                   parentControl={careerControl}
                 />
               }
@@ -292,7 +323,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               rightSection={
                 <ReferencePopup
                   field={"duration"}
-                  content={""}
+                  content={currentDuration}
                   parentControl={careerControl}
                 />
               }

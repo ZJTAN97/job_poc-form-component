@@ -20,7 +20,7 @@ export function GetReferenceTypeKey(value: string) {
 export const Source = z.object({
   dateObtained: z.string(),
   referenceType: z.nativeEnum(TYPES_OF_REFERENCES),
-  comment: z.string(),
+  comment: z.string().min(1, "Comment cannot be empty"),
 });
 
 export type SourceType = z.infer<typeof Source>;

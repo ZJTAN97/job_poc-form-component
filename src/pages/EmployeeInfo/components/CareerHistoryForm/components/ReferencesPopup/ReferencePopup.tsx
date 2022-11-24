@@ -62,49 +62,33 @@ export const ReferencePopup = ({
     },
   });
 
-  const {
-    control: sourceControl,
-    handleSubmit: sourceHandleSubmit,
-    getValues: sourcesGetValues,
-  } = sourceFormMethods;
+  const { control: sourceControl, handleSubmit: sourceHandleSubmit } =
+    sourceFormMethods;
 
-  const {
-    fields: referencesField,
-    update: referencesUpdate,
-    append: referencesAppend,
-    remove: referencesRemove,
-  } = useFieldArray({
+  const { append: referencesAppend, remove: referencesRemove } = useFieldArray({
     control: parentControl,
     name: "references",
   });
 
-  const {
-    fields: sourcesField,
-    update: sourcesUpdate,
-    append: sourcesAppend,
-    remove: sourcesRemove,
-  } = useFieldArray({
+  const { append: sourcesAppend, remove: sourcesRemove } = useFieldArray({
     control: referenceControl,
     name: "sources",
   });
 
-  const existingReference = false; // TODO: Check for existing references
+  const existingReference = React.useMemo(() => {
+    if (referencesGetValues().sources.length > 0) {
+      return `${referencesGetValues().sources[0].referenceType} | ${
+        referencesGetValues().sources[0].comment
+      } | ${referencesGetValues().sources[0].dateObtained}`;
+    }
+    return "";
+  }, [referencesGetValues().sources]);
 
-  const appendReference = () => {
-    console.log(referencesGetValues());
-    console.log(sourcesGetValues());
-    sourceHandleSubmit((sourceData) => {
-      console.log("--sourceData--");
-      console.log(sourceData);
-      sourcesAppend(sourceData);
-    });
-    referenceHandleSubmit((referencesData) => {
-      console.log("--referenceData--");
-      console.log(referencesData);
-      referencesAppend(referencesData);
-    });
+  const appendReference = sourceHandleSubmit(async (sourceData) => {
+    sourcesAppend(sourceData);
+    referencesAppend(referencesGetValues());
     setOpen(false);
-  };
+  });
 
   // TODO: Optimize this component rendering
   // console.warn("[WARNING] Rerender cause: ReferencePopup Component");
