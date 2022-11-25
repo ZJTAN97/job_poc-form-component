@@ -9,7 +9,7 @@ import {
 } from "../../../../../../model/career/Certification";
 import { Col, ColTitle, Row, useStyles } from "../../styles";
 import { ReferencePopup } from "../ReferencesPopup";
-import { CertRow } from "./styles";
+import { CertContainer, CertLabel, CertRow } from "./styles";
 
 interface NestedArrayObjectFormProps {
   parentFormMethods: UseFormReturn<any>;
@@ -65,17 +65,26 @@ export const NestedArrayObjectForm = ({
         <ColTitle>Certifications</ColTitle>
         <Col>
           {currentCerts.map((cert: CertificationType, id: number) => (
-            <CertRow key={cert.toString() + id}>
-              <Text>
-                {cert.name} | {cert.issuedBy}
-              </Text>
-              <ReferencePopup
-                key={""}
-                field={""}
-                parentControl={certControl}
-                content={""}
-              />
-            </CertRow>
+            <CertContainer key={cert.toString() + id}>
+              <CertRow>
+                <CertLabel>Name: {cert.name}</CertLabel>
+                <ReferencePopup
+                  key={""}
+                  field={"name"}
+                  parentControl={certControl}
+                  content={""}
+                />
+              </CertRow>
+              <CertRow>
+                <CertLabel>Issuer: {cert.issuedBy}</CertLabel>
+                <ReferencePopup
+                  key={""}
+                  field={"issuedBy"}
+                  parentControl={certControl}
+                  content={""}
+                />
+              </CertRow>
+            </CertContainer>
           ))}
           {showAddCert ? (
             <>

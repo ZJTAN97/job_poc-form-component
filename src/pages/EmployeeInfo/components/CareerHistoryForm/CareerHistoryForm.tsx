@@ -17,8 +17,12 @@ import { Form } from "../../../../components/Form";
 import { IconX } from "@tabler/icons";
 import { ReferencePopup } from "./components/ReferencesPopup";
 import { useSaveOrCreateCareer } from "../../../../react-query/career";
-import { NestedObjectForm } from "./components/NestedObjectForm";
 import { NestedArrayObjectForm } from "./components/NestedArrayObjectForm";
+import { ObjectForm } from "./components/ObjectForm";
+import {
+  Appointment,
+  AppointmentType,
+} from "../../../../model/career/Appointment";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -61,6 +65,16 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     duration: currentDuration,
   } = careerGetValue();
 
+  const appointmentFormMethods = useForm<AppointmentType>({
+    resolver: zodResolver(Appointment),
+    mode: "onChange",
+    defaultValues: {
+      position: "",
+      rank: "",
+      references: [],
+    },
+  });
+
   const [showAddSkill, setShowAddSkill] = React.useState(false);
   const [currentSkillTextInput, setCurrentSkillTextInput] = React.useState("");
 
@@ -71,7 +85,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   };
 
   const removeFromSkillArray = (skill: string) => {
-    console.log("skill to remove: " + skill);
     careerSetValue(
       "skills",
       currentSkills.filter((item) => item !== skill),
@@ -81,7 +94,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   const { saveOrCreateCareer } = useSaveOrCreateCareer();
 
   const submitFormHandler = careerHandleSubmit(async (data) => {
-    console.log(data);
     saveOrCreateCareer(data);
     setDrawer(false);
   });
@@ -104,12 +116,14 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 className={classes.formTextInput}
                 required
               />
-              <ReferencePopup
-                key={currentCompany}
-                field={"company"}
-                content={currentCompany}
-                parentControl={careerControl}
-              />
+              {currentCompany.length !== 0 && (
+                <ReferencePopup
+                  key={currentCompany}
+                  field={"company"}
+                  content={currentCompany}
+                  parentControl={careerControl}
+                />
+              )}
             </InputRow>
           </Col>
         </Row>
@@ -124,12 +138,14 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 name={"duration"}
                 className={classes.formTextInput}
               />
-              <ReferencePopup
-                key={currentDuration}
-                field={"duration"}
-                content={currentDuration}
-                parentControl={careerControl}
-              />
+              {currentDuration.length !== 0 && (
+                <ReferencePopup
+                  key={currentDuration}
+                  field={"duration"}
+                  content={currentDuration}
+                  parentControl={careerControl}
+                />
+              )}
             </InputRow>
             <Form.TextInput
               control={careerControl}
@@ -167,28 +183,25 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 careerFormState.errors.skills.message}
             </ErrorLabel>
             {showAddSkill ? (
-              <InputRow>
-                <TextInput
-                  value={currentSkillTextInput}
-                  className={classes.formTextInput}
-                  onChange={(e) => setCurrentSkillTextInput(e.target.value)}
-                  onKeyUp={(e) => {
-                    if (e.key === "Enter") appendToSkillArray();
-                  }}
-                  rightSection={
-                    <Button
-                      disabled={currentSkillTextInput.length === 0}
-                      size="xs"
-                      variant="light"
-                      onClick={appendToSkillArray}
-                    >
-                      Add
-                    </Button>
-                  }
-                  rightSectionWidth={60}
-                />
-                <div style={{ width: "25px" }}></div>
-              </InputRow>
+              <TextInput
+                value={currentSkillTextInput}
+                className={classes.formTextInput}
+                onChange={(e) => setCurrentSkillTextInput(e.target.value)}
+                onKeyUp={(e) => {
+                  if (e.key === "Enter") appendToSkillArray();
+                }}
+                rightSection={
+                  <Button
+                    disabled={currentSkillTextInput.length === 0}
+                    size="xs"
+                    variant="light"
+                    onClick={appendToSkillArray}
+                  >
+                    Add
+                  </Button>
+                }
+                rightSectionWidth={60}
+              />
             ) : (
               <Button
                 size="xs"
@@ -201,7 +214,18 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
           </Col>
         </Row>
 
-        <NestedObjectForm parentFormMethods={careerFormMethods} />
+        <Row>
+          <ColTitle>Appointment Details</ColTitle>
+          <ObjectForm<CareerType, AppointmentType>
+            parentFormMethods={careerFormMethods}
+            childFormMethods={appointmentFormMethods}
+            objectName={"appointment"}
+            inputLabels={["Position", "Rank"]}
+            inputNames={["position", "rank"]}
+            requireRefs={[true, false]}
+            requiredFields={[true, true]}
+          />
+        </Row>
 
         <NestedArrayObjectForm parentFormMethods={careerFormMethods} />
 

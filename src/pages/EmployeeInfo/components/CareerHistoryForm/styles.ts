@@ -9,6 +9,7 @@ export const useStyles = createStyles(() => ({
 
 export const MainContainer = styled("div")(({}) => ({
   padding: "0 50px",
+  marginBottom: "50px",
 }));
 
 export const SkillLabel = styled("div")(({ theme }) => ({
