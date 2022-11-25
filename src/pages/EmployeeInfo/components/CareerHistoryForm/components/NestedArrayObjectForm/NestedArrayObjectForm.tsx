@@ -68,21 +68,21 @@ export const NestedArrayObjectForm = ({
             <CertContainer key={cert.toString() + id}>
               <CertRow>
                 <CertLabel>Name: {cert.name}</CertLabel>
-                <ReferencePopup
+                {/* <ReferencePopup
                   key={""}
                   field={"name"}
                   parentControl={certControl}
                   content={""}
-                />
+                /> */}
               </CertRow>
               <CertRow>
                 <CertLabel>Issuer: {cert.issuedBy}</CertLabel>
-                <ReferencePopup
+                {/* <ReferencePopup
                   key={""}
                   field={"issuedBy"}
                   parentControl={certControl}
                   content={""}
-                />
+                /> */}
               </CertRow>
             </CertContainer>
           ))}

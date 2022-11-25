@@ -7,12 +7,7 @@ import {
   ReferenceHeader,
   useStyles,
 } from "./styles";
-import {
-  useForm,
-  useFieldArray,
-  Control,
-  UseFormSetValue,
-} from "react-hook-form";
+import { useForm, useFieldArray, Control } from "react-hook-form";
 import {
   Reference,
   ReferenceType,
@@ -24,13 +19,13 @@ import {
   SourceType,
   TYPES_OF_REFERENCES,
 } from "../../../../../../model/common/Source";
-import { IconInfoCircle } from "@tabler/icons";
 
 interface ReferencePopupProps {
   field: string;
   parentControl: Control<any>;
   setParentValue?: any;
   content: string;
+  setEditMode: (arg: boolean) => void;
 }
 
 export const ReferencePopup = ({
@@ -38,6 +33,7 @@ export const ReferencePopup = ({
   content,
   parentControl,
   setParentValue,
+  setEditMode,
 }: ReferencePopupProps) => {
   const { classes } = useStyles();
 
@@ -95,8 +91,8 @@ export const ReferencePopup = ({
     sourcesAppend(sourceData);
     referencesAppend(referencesGetValues());
     if (setParentValue) setParentValue();
-
     setOpen(false);
+    setEditMode(true);
   });
 
   // TODO: Optimize this component rendering
@@ -110,11 +106,19 @@ export const ReferencePopup = ({
       shadow="md"
       closeOnClickOutside
       closeOnEscape
-      onClose={() => setOpen(false)}
+      onClose={() => {
+        setOpen(false);
+        setEditMode(true);
+      }}
       opened={open}
     >
       <Popover.Target>
-        <AddReferenceTrigger onClick={() => setOpen(true)}>
+        <AddReferenceTrigger
+          onClick={() => {
+            setEditMode(false);
+            setOpen(true);
+          }}
+        >
           {existingReference ? (
             <AddRef>{existingReference}</AddRef>
           ) : (
@@ -149,7 +153,14 @@ export const ReferencePopup = ({
           />
         </Form>
         <ButtonGroup>
-          <Button variant="default" size="xs" onClick={() => setOpen(false)}>
+          <Button
+            variant="default"
+            size="xs"
+            onClick={() => {
+              setOpen(false);
+              setEditMode(true);
+            }}
+          >
             Cancel
           </Button>
           <Button size="xs" onClick={appendReference}>

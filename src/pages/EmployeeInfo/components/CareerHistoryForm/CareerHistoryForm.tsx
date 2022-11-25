@@ -31,6 +31,8 @@ interface CareerHistoryFormProps {
 export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   const { classes } = useStyles();
 
+  const [editMode, setEditMode] = React.useState(true);
+
   const careerFormMethods = useForm<CareerType>({
     resolver: zodResolver(Career),
     mode: "onChange",
@@ -113,6 +115,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 control={careerControl}
                 label={"Company name"}
                 name={"company"}
+                disabled={!editMode}
+                variant={editMode ? "default" : "unstyled"}
                 className={classes.formTextInput}
                 required
               />
@@ -122,6 +126,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                   field={"company"}
                   content={currentCompany}
                   parentControl={careerControl}
+                  setEditMode={setEditMode}
                 />
               )}
             </InputRow>
@@ -136,6 +141,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 control={careerControl}
                 label={"Duration"}
                 name={"duration"}
+                disabled={!editMode}
+                variant={editMode ? "default" : "unstyled"}
                 className={classes.formTextInput}
               />
               {currentDuration.length !== 0 && (
@@ -144,6 +151,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                   field={"duration"}
                   content={currentDuration}
                   parentControl={careerControl}
+                  setEditMode={setEditMode}
                 />
               )}
             </InputRow>
@@ -151,6 +159,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               control={careerControl}
               label={"Last Drawn Salary"}
               name={"lastDrawnSalary"}
+              disabled={!editMode}
+              variant={editMode ? "default" : "unstyled"}
               className={classes.formTextInput}
             />
           </Col>
@@ -172,6 +182,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                   </ActionIcon>
                 </SkillLabel>
                 <ReferencePopup
+                  setEditMode={setEditMode}
                   field={"skills"}
                   content={skill}
                   parentControl={careerControl}
@@ -224,6 +235,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             inputNames={["position", "rank"]}
             requireRefs={[true, false]}
             requiredFields={[true, true]}
+            setEditMode={setEditMode}
+            editMode={editMode}
           />
         </Row>
 

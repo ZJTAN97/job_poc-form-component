@@ -11,6 +11,8 @@ interface ObjectForm<T extends FieldValues, K extends FieldValues> {
   inputNames: Path<K>[];
   requireRefs: boolean[];
   requiredFields: boolean[];
+  setEditMode: (arg: boolean) => void;
+  editMode: boolean;
 }
 
 export const ObjectForm = <T extends FieldValues, K extends FieldValues>({
@@ -21,11 +23,18 @@ export const ObjectForm = <T extends FieldValues, K extends FieldValues>({
   inputNames,
   requireRefs,
   requiredFields,
+  setEditMode,
+  editMode,
 }: ObjectForm<T, K>) => {
   const { classes } = useStyles();
 
   const { control: childControl, getValues: childGetValues } = childFormMethods;
-  const { setValue: parentSetValue } = parentFormMethods;
+  const { setValue: parentSetValue, formState: parentFormState } =
+    parentFormMethods;
+
+  const errorType = parentFormState.errors[objectName] as unknown as {
+    [key: string]: { [key: string]: string };
+  };
 
   return (
     <Form
@@ -42,12 +51,15 @@ export const ObjectForm = <T extends FieldValues, K extends FieldValues>({
               label={inputLabels[id]}
               required={requiredFields[id]}
               name={name}
+              disabled={!editMode}
+              variant={editMode ? "default" : "unstyled"}
               onBlur={() => {
                 parentSetValue(
                   objectName,
                   childGetValues() as PathValue<T, Path<T>>,
                 );
               }}
+              error={Boolean(errorType) ? errorType[name].message : ""}
             />
             {requireRefs[id] && childGetValues()[name].length !== 0 ? (
               <ReferencePopup
@@ -59,6 +71,7 @@ export const ObjectForm = <T extends FieldValues, K extends FieldValues>({
                   objectName,
                   childGetValues() as PathValue<T, Path<T>>,
                 )}
+                setEditMode={setEditMode}
               />
             ) : null}
           </InputRow>
