@@ -26,14 +26,8 @@ export const NestedObjectForm = ({
     },
   });
 
-  const {
-    control: appointmentControl,
-    getValues: appointmentGetValues,
-    handleSubmit: appointmentHandleSubmit,
-    watch,
-  } = appointmentFormMethods;
-
-  watch();
+  const { control: appointmentControl, getValues: appointmentGetValues } =
+    appointmentFormMethods;
 
   const { position: currentPosition, rank: currentRank } =
     appointmentGetValues();
@@ -61,6 +55,7 @@ export const NestedObjectForm = ({
             }}
             rightSection={
               <ReferencePopup
+                key={currentPosition}
                 field={"position"}
                 content={currentPosition}
                 parentControl={appointmentControl}
@@ -79,13 +74,6 @@ export const NestedObjectForm = ({
             onBlur={() => {
               setParentValue("appointment", appointmentGetValues());
             }}
-            rightSection={
-              <ReferencePopup
-                field={"rank"}
-                content={currentRank}
-                parentControl={appointmentControl}
-              />
-            }
           />
         </Col>
       </Form>

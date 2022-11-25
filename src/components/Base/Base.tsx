@@ -20,11 +20,11 @@ export const Base = ({ children }: BaseProps) => {
       }
       navbar={
         <Navbar width={{ base: 200 }} p="xs">
-          <Container onClick={() => navigate({ to: "/create-employee" })}>
-            <div className={styles.selector}>Create Employee</div>
-          </Container>
           <Container onClick={() => navigate({ to: "/employee" })}>
             <div className={styles.selector}>Employee Info</div>
+          </Container>
+          <Container onClick={() => navigate({ to: "/create-employee" })}>
+            <div className={styles.selector}>Create Employee</div>
           </Container>
         </Navbar>
       }

@@ -16,16 +16,19 @@ export function useQueryCareerData() {
   };
 }
 
-export function useSaveOrCreateCareer(newCareer: CareerType) {
+export function useSaveOrCreateCareer() {
   const { mutateAsync: saveOrCreateCareer } = useMutation(
-    () => postNewCareer(newCareer),
+    (newCareer: CareerType) => postNewCareer(newCareer),
     {
-      onSuccess: () => {
-        console.log("-- success --");
-        queryClient.invalidateQueries(["career"]);
+      onSuccess: (response) => {
+        if (!response.ok) {
+          console.log(response);
+        } else {
+          console.log("[SUCCESS] Created new Career History");
+          queryClient.invalidateQueries(["career"]);
+        }
       },
       onError: (error) => {
-        console.log("error leh");
         console.log(error);
       },
     },

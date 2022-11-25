@@ -62,7 +62,7 @@ export const ReferencePopup = ({
     resolver: zodResolver(Source),
     mode: "onChange",
     defaultValues: {
-      comment: "",
+      comment: "Default",
       dateObtained: "2022-11-11T12:19:54.52",
       referenceType: TYPES_OF_REFERENCES.LINKED_IN,
     },

@@ -30,7 +30,7 @@ const App = () => {
             element: <EmployeeInfo />,
           },
           {
-            element: <CreateEmployee />, // default fallback
+            element: <EmployeeInfo />, // default fallback
           },
         ]}
       />
