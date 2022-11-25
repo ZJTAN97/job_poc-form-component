@@ -6,9 +6,8 @@ import {
   Appointment,
   AppointmentType,
 } from "../../../../../../model/career/Appointment";
-import { InputRow, InputRowRef } from "../../styles";
+import { Col, ColTitle, InputRow, Row, useStyles } from "../../styles";
 import { ReferencePopup } from "../ReferencesPopup";
-import { Col, ColTitle, Row } from "./styles";
 
 interface NestedObjectFormProps {
   parentFormMethods: UseFormReturn<any>;
@@ -17,6 +16,8 @@ interface NestedObjectFormProps {
 export const NestedObjectForm = ({
   parentFormMethods,
 }: NestedObjectFormProps) => {
+  const { classes } = useStyles();
+
   const appointmentFormMethods = useForm<AppointmentType>({
     resolver: zodResolver(Appointment),
     mode: "onChange",
@@ -30,8 +31,7 @@ export const NestedObjectForm = ({
   const { control: appointmentControl, getValues: appointmentGetValues } =
     appointmentFormMethods;
 
-  const { position: currentPosition, rank: currentRank } =
-    appointmentGetValues();
+  const { position: currentPosition } = appointmentGetValues();
 
   const { control: parentControl, setValue: setParentValue } =
     parentFormMethods;
@@ -47,12 +47,7 @@ export const NestedObjectForm = ({
         <Col>
           <InputRow>
             <Form.TextInput
-              styles={{
-                root: {
-                  width: "100%",
-                  maxWidth: "355px",
-                },
-              }}
+              className={classes.formTextInput}
               control={appointmentControl}
               label={"Position"}
               required
@@ -61,26 +56,19 @@ export const NestedObjectForm = ({
                 setParentValue("appointment", appointmentGetValues());
               }}
             />
-            <InputRowRef>
-              <ReferencePopup
-                key={currentPosition}
-                field={"position"}
-                content={currentPosition}
-                parentControl={appointmentControl}
-                setParentValue={setParentValue(
-                  "appointment",
-                  appointmentGetValues(),
-                )}
-              />
-            </InputRowRef>
+            <ReferencePopup
+              key={currentPosition}
+              field={"position"}
+              content={currentPosition}
+              parentControl={appointmentControl}
+              setParentValue={setParentValue(
+                "appointment",
+                appointmentGetValues(),
+              )}
+            />
           </InputRow>
           <Form.TextInput
-            styles={{
-              root: {
-                width: "100%",
-                maxWidth: "355px",
-              },
-            }}
+            className={classes.formTextInput}
             control={appointmentControl}
             label={"Rank"}
             required

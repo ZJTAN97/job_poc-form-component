@@ -7,13 +7,21 @@ export const useStyles = createStyles(() => ({
   },
 }));
 
+export const AddRef = styled("span")(({ theme }) => ({
+  fontSize: theme.fontSizes.xs,
+}));
+
 export const AddReferenceTrigger = styled("div")(({ theme }) => ({
   fontSize: theme.fontSizes.xs,
+  color: "#8b98e5",
   cursor: "pointer",
   ":hover": {
     color: "red",
   },
   border: "none",
+  display: "flex",
+  flexDirection: "column",
+  justifyContent: "center",
 }));
 
 export const ReferenceHeader = styled("div")(() => ({

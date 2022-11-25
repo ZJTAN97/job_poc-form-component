@@ -7,9 +7,9 @@ import {
   Certification,
   CertificationType,
 } from "../../../../../../model/career/Certification";
-import { ColTitle } from "../../styles";
+import { Col, ColTitle, Row, useStyles } from "../../styles";
 import { ReferencePopup } from "../ReferencesPopup";
-import { CertRow, Col, Row } from "./styles";
+import { CertRow } from "./styles";
 
 interface NestedArrayObjectFormProps {
   parentFormMethods: UseFormReturn<any>;
@@ -18,6 +18,8 @@ interface NestedArrayObjectFormProps {
 export const NestedArrayObjectForm = ({
   parentFormMethods,
 }: NestedArrayObjectFormProps) => {
+  const { classes } = useStyles();
+
   const { control: parentControl, getValues: parentGetValues } =
     parentFormMethods;
 
@@ -78,12 +80,14 @@ export const NestedArrayObjectForm = ({
           {showAddCert ? (
             <>
               <Form.TextInput
+                className={classes.formTextInput}
                 control={certControl}
                 label={"Name"}
                 name={"name"}
                 mb={20}
               />
               <Form.TextInput
+                className={classes.formTextInput}
                 control={certControl}
                 label={"Issued by"}
                 name={"issuedBy"}

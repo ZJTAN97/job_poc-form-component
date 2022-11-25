@@ -1,6 +1,7 @@
 import { Button, Popover } from "@mantine/core";
 import React from "react";
 import {
+  AddRef,
   AddReferenceTrigger,
   ButtonGroup,
   ReferenceHeader,
@@ -114,7 +115,11 @@ export const ReferencePopup = ({
     >
       <Popover.Target>
         <AddReferenceTrigger onClick={() => setOpen(true)}>
-          {existingReference ? existingReference : <IconInfoCircle />}
+          {existingReference ? (
+            <AddRef>{existingReference}</AddRef>
+          ) : (
+            <AddRef>Add References</AddRef>
+          )}
         </AddReferenceTrigger>
       </Popover.Target>
       <Popover.Dropdown>

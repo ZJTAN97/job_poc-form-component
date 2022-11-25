@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Container, ActionIcon, TextInput } from "@mantine/core";
+import { Button, ActionIcon, TextInput } from "@mantine/core";
 import {
   ErrorLabel,
   Row,
@@ -7,7 +7,8 @@ import {
   Col,
   ColTitle,
   InputRow,
-  InputRowRef,
+  useStyles,
+  MainContainer,
 } from "./styles";
 import { useForm } from "react-hook-form";
 import { Career, CareerType } from "../../../../model/career/Career";
@@ -24,6 +25,8 @@ interface CareerHistoryFormProps {
 }
 
 export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
+  const { classes } = useStyles();
+
   const careerFormMethods = useForm<CareerType>({
     resolver: zodResolver(Career),
     mode: "onChange",
@@ -89,31 +92,24 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
       preventLeaving={true}
       useLocalStorage={true}
     >
-      <Container mb={50}>
+      <MainContainer>
         <Row>
           <ColTitle>Company Details</ColTitle>
           <Col>
             <InputRow>
               <Form.TextInput
-                styles={{
-                  root: {
-                    width: "100%",
-                  },
-                }}
                 control={careerControl}
                 label={"Company name"}
-                required
                 name={"company"}
-                mb={35}
+                className={classes.formTextInput}
+                required
               />
-              <InputRowRef>
-                <ReferencePopup
-                  key={currentCompany}
-                  field={"company"}
-                  content={currentCompany}
-                  parentControl={careerControl}
-                />
-              </InputRowRef>
+              <ReferencePopup
+                key={currentCompany}
+                field={"company"}
+                content={currentCompany}
+                parentControl={careerControl}
+              />
             </InputRow>
           </Col>
         </Row>
@@ -123,37 +119,23 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
           <Col>
             <InputRow>
               <Form.TextInput
-                styles={{
-                  root: {
-                    width: "100%",
-                    maxWidth: "355px",
-                  },
-                }}
                 control={careerControl}
                 label={"Duration"}
                 name={"duration"}
-                width={800}
+                className={classes.formTextInput}
               />
-              <InputRowRef>
-                <ReferencePopup
-                  key={currentDuration}
-                  field={"duration"}
-                  content={currentDuration}
-                  parentControl={careerControl}
-                />
-              </InputRowRef>
+              <ReferencePopup
+                key={currentDuration}
+                field={"duration"}
+                content={currentDuration}
+                parentControl={careerControl}
+              />
             </InputRow>
             <Form.TextInput
-              styles={{
-                root: {
-                  width: "100%",
-                  maxWidth: "355px",
-                },
-              }}
               control={careerControl}
               label={"Last Drawn Salary"}
               name={"lastDrawnSalary"}
-              mb={25}
+              className={classes.formTextInput}
             />
           </Col>
         </Row>
@@ -185,24 +167,28 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 careerFormState.errors.skills.message}
             </ErrorLabel>
             {showAddSkill ? (
-              <TextInput
-                value={currentSkillTextInput}
-                onChange={(e) => setCurrentSkillTextInput(e.target.value)}
-                onKeyUp={(e) => {
-                  if (e.key === "Enter") appendToSkillArray();
-                }}
-                rightSection={
-                  <Button
-                    disabled={currentSkillTextInput.length === 0}
-                    size="xs"
-                    variant="light"
-                    onClick={appendToSkillArray}
-                  >
-                    Add
-                  </Button>
-                }
-                rightSectionWidth={60}
-              />
+              <InputRow>
+                <TextInput
+                  value={currentSkillTextInput}
+                  className={classes.formTextInput}
+                  onChange={(e) => setCurrentSkillTextInput(e.target.value)}
+                  onKeyUp={(e) => {
+                    if (e.key === "Enter") appendToSkillArray();
+                  }}
+                  rightSection={
+                    <Button
+                      disabled={currentSkillTextInput.length === 0}
+                      size="xs"
+                      variant="light"
+                      onClick={appendToSkillArray}
+                    >
+                      Add
+                    </Button>
+                  }
+                  rightSectionWidth={60}
+                />
+                <div style={{ width: "25px" }}></div>
+              </InputRow>
             ) : (
               <Button
                 size="xs"
@@ -222,7 +208,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
         <Button mt={20} onClick={submitFormHandler}>
           Add Career
         </Button>
-      </Container>
+      </MainContainer>
     </Form>
   );
 };
