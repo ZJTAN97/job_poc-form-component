@@ -6,6 +6,7 @@ import {
   Appointment,
   AppointmentType,
 } from "../../../../../../model/career/Appointment";
+import { InputRow, InputRowRef } from "../../styles";
 import { ReferencePopup } from "../ReferencesPopup";
 import { Col, ColTitle, Row } from "./styles";
 
@@ -44,16 +45,23 @@ export const NestedObjectForm = ({
       >
         <ColTitle>Appointment Details</ColTitle>
         <Col>
-          <Form.TextInput
-            control={appointmentControl}
-            label={"Position"}
-            required
-            name={"position"}
-            mb={20}
-            onBlur={() => {
-              setParentValue("appointment", appointmentGetValues());
-            }}
-            rightSection={
+          <InputRow>
+            <Form.TextInput
+              styles={{
+                root: {
+                  width: "100%",
+                  maxWidth: "355px",
+                },
+              }}
+              control={appointmentControl}
+              label={"Position"}
+              required
+              name={"position"}
+              onBlur={() => {
+                setParentValue("appointment", appointmentGetValues());
+              }}
+            />
+            <InputRowRef>
               <ReferencePopup
                 key={currentPosition}
                 field={"position"}
@@ -64,9 +72,15 @@ export const NestedObjectForm = ({
                   appointmentGetValues(),
                 )}
               />
-            }
-          />
+            </InputRowRef>
+          </InputRow>
           <Form.TextInput
+            styles={{
+              root: {
+                width: "100%",
+                maxWidth: "355px",
+              },
+            }}
             control={appointmentControl}
             label={"Rank"}
             required

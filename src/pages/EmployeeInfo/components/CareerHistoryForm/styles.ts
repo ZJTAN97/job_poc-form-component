@@ -2,9 +2,17 @@ import styled from "@emotion/styled";
 
 export const SkillLabel = styled("div")(({ theme }) => ({
   display: "flex",
-  marginTop: theme.spacing.xs,
-  paddingBottom: theme.spacing.xs,
   fontSize: theme.fontSizes.sm,
+}));
+
+export const InputRow = styled("div")(({}) => ({
+  display: "flex",
+  gap: "20px",
+  marginBottom: "20px",
+}));
+
+export const InputRowRef = styled("div")(({}) => ({
+  marginTop: "28px",
 }));
 
 export const ErrorLabel = styled("div")(({ theme }) => ({

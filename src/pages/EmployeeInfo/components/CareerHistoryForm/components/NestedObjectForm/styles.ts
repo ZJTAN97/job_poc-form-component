@@ -15,3 +15,9 @@ export const Col = styled("div")(({}) => ({
   padding: "10px",
   width: "45%",
 }));
+
+export const InputRow = styled("div")(({}) => ({
+  display: "flex",
+  gap: "20px",
+  marginBottom: "20px",
+}));

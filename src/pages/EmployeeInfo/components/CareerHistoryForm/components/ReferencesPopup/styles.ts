@@ -14,7 +14,6 @@ export const AddReferenceTrigger = styled("div")(({ theme }) => ({
     color: "red",
   },
   border: "none",
-  paddingTop: "5px",
 }));
 
 export const ReferenceHeader = styled("div")(() => ({

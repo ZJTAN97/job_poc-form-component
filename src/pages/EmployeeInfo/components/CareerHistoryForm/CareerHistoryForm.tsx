@@ -1,18 +1,23 @@
 import React from "react";
 import { Button, Container, ActionIcon, TextInput } from "@mantine/core";
-import { ErrorLabel, Row, SkillLabel, Col, ColTitle } from "./styles";
+import {
+  ErrorLabel,
+  Row,
+  SkillLabel,
+  Col,
+  ColTitle,
+  InputRow,
+  InputRowRef,
+} from "./styles";
 import { useForm } from "react-hook-form";
 import { Career, CareerType } from "../../../../model/career/Career";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../components/Form";
 import { IconX } from "@tabler/icons";
 import { ReferencePopup } from "./components/ReferencesPopup";
-import {
-  CertificationType,
-  Certification,
-} from "../../../../model/career/Certification";
 import { useSaveOrCreateCareer } from "../../../../react-query/career";
 import { NestedObjectForm } from "./components/NestedObjectForm";
+import { NestedArrayObjectForm } from "./components/NestedArrayObjectForm";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -42,35 +47,19 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     setValue: careerSetValue,
     handleSubmit: careerHandleSubmit,
     formState: careerFormState,
+    watch: watchCareer,
   } = careerFormMethods;
 
-  const certFormMethods = useForm<CertificationType>({
-    resolver: zodResolver(Certification),
-    mode: "onChange",
-    defaultValues: {
-      issuedBy: "",
-      name: "",
-      references: [],
-    },
-  });
-
-  const {
-    control: certControl,
-    setValue: certSetValue,
-    handleSubmit: certHandleSubmit,
-  } = certFormMethods;
+  watchCareer("skills");
 
   const {
     skills: currentSkills,
-    certs: currentCerts,
     company: currentCompany,
     duration: currentDuration,
   } = careerGetValue();
 
   const [showAddSkill, setShowAddSkill] = React.useState(false);
   const [currentSkillTextInput, setCurrentSkillTextInput] = React.useState("");
-
-  const [showAddCert, setShowAddCert] = React.useState(false);
 
   const appendToSkillArray = () => {
     careerSetValue("skills", [...currentSkills, currentSkillTextInput]);
@@ -88,17 +77,10 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
 
   const { saveOrCreateCareer } = useSaveOrCreateCareer();
 
-  const certSubmitHandler = certHandleSubmit(async (data) => {
-    careerSetValue("certs", [...currentCerts, data]);
-    certSetValue("issuedBy", "");
-    certSetValue("name", "");
-    setShowAddCert(false);
-  });
-
   const submitFormHandler = careerHandleSubmit(async (data) => {
     console.log(data);
     saveOrCreateCareer(data);
-    // setDrawer(false);
+    setDrawer(false);
   });
 
   return (
@@ -111,55 +93,77 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
         <Row>
           <ColTitle>Company Details</ColTitle>
           <Col>
-            <Form.TextInput
-              control={careerControl}
-              label={"Company name"}
-              required
-              name={"company"}
-              mb={35}
-              rightSection={
+            <InputRow>
+              <Form.TextInput
+                styles={{
+                  root: {
+                    width: "100%",
+                  },
+                }}
+                control={careerControl}
+                label={"Company name"}
+                required
+                name={"company"}
+                mb={35}
+              />
+              <InputRowRef>
                 <ReferencePopup
                   key={currentCompany}
                   field={"company"}
                   content={currentCompany}
                   parentControl={careerControl}
                 />
-              }
-            />
+              </InputRowRef>
+            </InputRow>
           </Col>
         </Row>
 
         <Row>
           <ColTitle>Other details</ColTitle>
           <Col>
-            <Form.TextInput
-              control={careerControl}
-              label={"Last Drawn Salary"}
-              name={"lastDrawnSalary"}
-              mb={25}
-            />
-            <Form.TextInput
-              control={careerControl}
-              label={"Duration"}
-              name={"duration"}
-              rightSection={
+            <InputRow>
+              <Form.TextInput
+                styles={{
+                  root: {
+                    width: "100%",
+                    maxWidth: "355px",
+                  },
+                }}
+                control={careerControl}
+                label={"Duration"}
+                name={"duration"}
+                width={800}
+              />
+              <InputRowRef>
                 <ReferencePopup
                   key={currentDuration}
                   field={"duration"}
                   content={currentDuration}
                   parentControl={careerControl}
                 />
-              }
+              </InputRowRef>
+            </InputRow>
+            <Form.TextInput
+              styles={{
+                root: {
+                  width: "100%",
+                  maxWidth: "355px",
+                },
+              }}
+              control={careerControl}
+              label={"Last Drawn Salary"}
+              name={"lastDrawnSalary"}
+              mb={25}
             />
           </Col>
         </Row>
 
         <Row>
-          <ColTitle>Skill Sets*</ColTitle>
+          <ColTitle>Skill Sets</ColTitle>
           <Col>
             {currentSkills.map((skill, id) => (
-              <Row key={skill.toString() + id}>
-                <SkillLabel key={skill + id}>
+              <InputRow key={skill + id}>
+                <SkillLabel>
                   {skill}
                   <ActionIcon
                     pb={6}
@@ -174,7 +178,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                   content={skill}
                   parentControl={careerControl}
                 />
-              </Row>
+              </InputRow>
             ))}
             <ErrorLabel>
               {careerFormState.errors.skills &&
@@ -205,7 +209,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 variant="light"
                 onClick={() => setShowAddSkill(true)}
               >
-                Add Skills
+                Add skills
               </Button>
             )}
           </Col>
@@ -213,64 +217,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
 
         <NestedObjectForm parentFormMethods={careerFormMethods} />
 
-        <Row>
-          <ColTitle>Certification</ColTitle>
-          <Col>
-            {showAddCert ? (
-              <>
-                <Form.TextInput
-                  control={certControl}
-                  label={"Name"}
-                  name={"name"}
-                  mb={25}
-                  rightSection={
-                    <ReferencePopup
-                      field={"name"}
-                      content={""}
-                      parentControl={careerControl}
-                    />
-                  }
-                />
-                <Form.TextInput
-                  control={certControl}
-                  label={"Issued By"}
-                  name={"issuedBy"}
-                  rightSection={
-                    <ReferencePopup
-                      field={"issuedBy"}
-                      content={""}
-                      parentControl={careerControl}
-                    />
-                  }
-                />
-                <Button
-                  size="xs"
-                  variant="light"
-                  onClick={certSubmitHandler}
-                  mt={25}
-                >
-                  Add
-                </Button>
-              </>
-            ) : (
-              <>
-                {currentCerts.map((cert, id) => (
-                  <div key={cert.toString() + id}>
-                    <div>{cert.name}</div>
-                    <div>{cert.issuedBy}</div>
-                  </div>
-                ))}
-                <Button
-                  size="xs"
-                  variant="light"
-                  onClick={() => setShowAddCert(true)}
-                >
-                  Add Certifications
-                </Button>
-              </>
-            )}
-          </Col>
-        </Row>
+        <NestedArrayObjectForm parentFormMethods={careerFormMethods} />
 
         <Button mt={20} onClick={submitFormHandler}>
           Add Career
