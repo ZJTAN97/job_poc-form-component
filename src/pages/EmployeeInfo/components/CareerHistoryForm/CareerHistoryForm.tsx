@@ -17,12 +17,12 @@ import { Form } from "../../../../components/Form";
 import { IconX } from "@tabler/icons";
 import { ReferencePopup } from "./components/ReferencesPopup";
 import { useSaveOrCreateCareer } from "../../../../react-query/career";
-import { NestedArrayObjectForm } from "./components/NestedArrayObjectForm";
 import { ObjectForm } from "./components/ObjectForm";
 import {
   Appointment,
   AppointmentType,
 } from "../../../../model/career/Appointment";
+import { ArrayObjectForm } from "./components/ArrayObjectForm";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -96,8 +96,9 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   const { saveOrCreateCareer } = useSaveOrCreateCareer();
 
   const submitFormHandler = careerHandleSubmit(async (data) => {
-    saveOrCreateCareer(data);
-    setDrawer(false);
+    // saveOrCreateCareer(data);
+    console.log(data);
+    // setDrawer(false);
   });
 
   return (
@@ -240,7 +241,11 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
           />
         </Row>
 
-        <NestedArrayObjectForm parentFormMethods={careerFormMethods} />
+        <ArrayObjectForm
+          parentFormMethods={careerFormMethods}
+          setEditMode={setEditMode}
+          editMode={editMode}
+        />
 
         <Button mt={20} onClick={submitFormHandler}>
           Add Career

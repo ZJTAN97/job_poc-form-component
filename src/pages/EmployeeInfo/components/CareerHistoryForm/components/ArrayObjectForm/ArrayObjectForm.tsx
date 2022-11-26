@@ -11,13 +11,17 @@ import { Col, ColTitle, Row, useStyles } from "../../styles";
 import { ReferencePopup } from "../ReferencesPopup";
 import { CertContainer, CertLabel, CertRow } from "./styles";
 
-interface NestedArrayObjectFormProps {
+interface ArrayObjectFormProps {
   parentFormMethods: UseFormReturn<any>;
+  setEditMode: (arg: boolean) => void;
+  editMode: boolean;
 }
 
-export const NestedArrayObjectForm = ({
+export const ArrayObjectForm = ({
   parentFormMethods,
-}: NestedArrayObjectFormProps) => {
+  setEditMode,
+  editMode,
+}: ArrayObjectFormProps) => {
   const { classes } = useStyles();
 
   const { control: parentControl, getValues: parentGetValues } =
@@ -39,7 +43,10 @@ export const NestedArrayObjectForm = ({
     control: certControl,
     setValue: certSetValue,
     handleSubmit: certHandleSubmit,
+    getValues: certGetValues,
   } = certFormMethods;
+
+  const { issuedBy: currentIssuedBy, name: currentName } = certGetValues();
 
   const [showAddCert, setShowAddCert] = React.useState(false);
 
@@ -68,21 +75,23 @@ export const NestedArrayObjectForm = ({
             <CertContainer key={cert.toString() + id}>
               <CertRow>
                 <CertLabel>Name: {cert.name}</CertLabel>
-                {/* <ReferencePopup
-                  key={""}
+                <ReferencePopup
+                  key={currentName}
                   field={"name"}
                   parentControl={certControl}
-                  content={""}
-                /> */}
+                  content={currentName}
+                  setEditMode={setEditMode}
+                />
               </CertRow>
               <CertRow>
                 <CertLabel>Issuer: {cert.issuedBy}</CertLabel>
-                {/* <ReferencePopup
-                  key={""}
+                <ReferencePopup
+                  key={currentIssuedBy}
                   field={"issuedBy"}
                   parentControl={certControl}
-                  content={""}
-                /> */}
+                  content={currentIssuedBy}
+                  setEditMode={setEditMode}
+                />
               </CertRow>
             </CertContainer>
           ))}
@@ -102,6 +111,14 @@ export const NestedArrayObjectForm = ({
                 name={"issuedBy"}
                 mb={20}
               />
+              <Button
+                size="xs"
+                variant="outline"
+                mr={10}
+                onClick={() => setShowAddCert(false)}
+              >
+                Cancel
+              </Button>
               <Button size="xs" variant="light" onClick={certSubmitHandler}>
                 Append
               </Button>
