@@ -5,6 +5,7 @@ import {
   AddReferenceTrigger,
   ButtonGroup,
   ReferenceHeader,
+  RefList,
   useStyles,
 } from "./styles";
 import { useForm, useFieldArray, Control } from "react-hook-form";
@@ -65,8 +66,11 @@ export const ReferencePopup = ({
     },
   });
 
-  const { control: sourceControl, handleSubmit: sourceHandleSubmit } =
-    sourceFormMethods;
+  const {
+    control: sourceControl,
+    handleSubmit: sourceHandleSubmit,
+    setValue: sourceSetValue,
+  } = sourceFormMethods;
 
   const {
     append: referencesAppend,
@@ -102,6 +106,10 @@ export const ReferencePopup = ({
     return "";
   }, [referencesGetValues().sources]);
 
+  const [addMode, setAddMode] = React.useState(
+    existingReference.length > 0 ? false : true,
+  );
+
   const appendReference = sourceHandleSubmit(async (sourceData) => {
     sourcesAppend(sourceData);
     if (existingReference.length > 0) {
@@ -112,7 +120,22 @@ export const ReferencePopup = ({
     if (setParentValue) setParentValue();
     setOpen(false);
     setEditMode(true);
+    setAddMode(false);
   });
+
+  const editReference = (id: number) => {
+    console.log("appending this id: " + id);
+    sourceSetValue(
+      "referenceType",
+      referencesGetValues().sources[id].referenceType,
+    );
+    sourceSetValue("comment", referencesGetValues().sources[id].comment);
+    sourceSetValue(
+      "dateObtained",
+      referencesGetValues().sources[id].dateObtained,
+    );
+    setAddMode(true);
+  };
 
   return (
     <Popover
@@ -142,48 +165,65 @@ export const ReferencePopup = ({
           )}
         </AddReferenceTrigger>
       </Popover.Target>
-      <Popover.Dropdown>
-        <ReferenceHeader>Add References</ReferenceHeader>
-        <Form
-          methods={sourceFormMethods}
-          preventLeaving={false}
-          useLocalStorage={false}
-        >
-          <Form.Dropdown
-            label={"Reference Type"}
-            control={sourceControl}
-            name="referenceType"
-            data={Object.values(TYPES_OF_REFERENCES)}
-          />
-          <Form.TextInput
-            className={classes.formTextInput}
-            label="Comments"
-            name="comment"
-            control={sourceControl}
-          />
-          <Form.TextInput
-            className={classes.formTextInput}
-            label="Date obtained"
-            name="dateObtained"
-            control={sourceControl}
-          />
-        </Form>
-        <ButtonGroup>
-          <Button
-            variant="default"
-            size="xs"
-            onClick={() => {
-              setOpen(false);
-              setEditMode(true);
-            }}
+      {addMode ? (
+        <Popover.Dropdown p={20}>
+          <ReferenceHeader>Add References</ReferenceHeader>
+          <Form
+            methods={sourceFormMethods}
+            preventLeaving={false}
+            useLocalStorage={false}
           >
-            Cancel
+            <Form.Dropdown
+              label={"Reference Type"}
+              control={sourceControl}
+              name="referenceType"
+              data={Object.values(TYPES_OF_REFERENCES)}
+            />
+            <Form.TextInput
+              className={classes.formTextInput}
+              label="Comments"
+              name="comment"
+              control={sourceControl}
+            />
+            <Form.TextInput
+              className={classes.formTextInput}
+              label="Date obtained"
+              name="dateObtained"
+              control={sourceControl}
+            />
+          </Form>
+          <ButtonGroup>
+            <Button
+              variant="default"
+              size="xs"
+              onClick={() => {
+                setOpen(false);
+                setEditMode(true);
+                if (existingReference) setAddMode(false);
+              }}
+            >
+              Cancel
+            </Button>
+            <Button size="xs" onClick={appendReference}>
+              Apply
+            </Button>
+          </ButtonGroup>
+        </Popover.Dropdown>
+      ) : (
+        <Popover.Dropdown>
+          {referencesGetValues().sources.map((source, id) => (
+            <RefList
+              onClick={() => editReference(id)}
+              key={source.toString() + id}
+            >
+              {`${source.referenceType} | ${source.comment} | ${source.dateObtained}`}
+            </RefList>
+          ))}
+          <Button fullWidth size="xs" mt={20} onClick={() => setAddMode(true)}>
+            Add more References
           </Button>
-          <Button size="xs" onClick={appendReference}>
-            Apply
-          </Button>
-        </ButtonGroup>
-      </Popover.Dropdown>
+        </Popover.Dropdown>
+      )}
     </Popover>
   );
 };

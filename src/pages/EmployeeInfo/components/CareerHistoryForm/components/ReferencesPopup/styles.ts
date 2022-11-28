@@ -35,3 +35,12 @@ export const ButtonGroup = styled("div")(({ theme }) => ({
   alignItems: "center",
   gap: theme.spacing.lg,
 }));
+
+export const RefList = styled("div")(({ theme }) => ({
+  fontSize: theme.fontSizes.xs,
+  padding: "10px",
+  ":hover": {
+    backgroundColor: "#dfdfdf",
+  },
+  cursor: "pointer",
+}));
