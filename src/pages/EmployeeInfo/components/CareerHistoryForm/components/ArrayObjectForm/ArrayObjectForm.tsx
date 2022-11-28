@@ -24,8 +24,11 @@ export const ArrayObjectForm = ({
 }: ArrayObjectFormProps) => {
   const { classes } = useStyles();
 
-  const { control: parentControl, getValues: parentGetValues } =
-    parentFormMethods;
+  const {
+    control: parentControl,
+    getValues: parentGetValues,
+    setValue: parentSetValue,
+  } = parentFormMethods;
 
   const { certs: currentCerts } = parentGetValues();
 

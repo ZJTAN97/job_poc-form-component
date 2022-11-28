@@ -10,7 +10,7 @@ import {
   useStyles,
   MainContainer,
 } from "./styles";
-import { useForm } from "react-hook-form";
+import { useForm, FieldErrorsImpl } from "react-hook-form";
 import { Career, CareerType } from "../../../../model/career/Career";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../components/Form";
@@ -96,10 +96,17 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   const { saveOrCreateCareer } = useSaveOrCreateCareer();
 
   const submitFormHandler = careerHandleSubmit(async (data) => {
-    // saveOrCreateCareer(data);
     console.log(data);
-    // setDrawer(false);
+    saveOrCreateCareer(data);
+    setDrawer(false);
   });
+
+  const totalErrors = careerFormState.errors as Partial<
+    FieldErrorsImpl<{ references_error: { [key: string]: string } }>
+  >;
+
+  console.log(totalErrors);
+  console.log(careerGetValue());
 
   return (
     <Form
@@ -196,6 +203,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             </ErrorLabel>
             {showAddSkill ? (
               <TextInput
+                disabled={!editMode}
                 value={currentSkillTextInput}
                 className={classes.formTextInput}
                 onChange={(e) => setCurrentSkillTextInput(e.target.value)}
@@ -229,6 +237,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
         <Row>
           <ColTitle>Appointment Details</ColTitle>
           <ObjectForm<CareerType, AppointmentType>
+            key={careerFormMethods.formState.errors.toString()}
             parentFormMethods={careerFormMethods}
             childFormMethods={appointmentFormMethods}
             objectName={"appointment"}

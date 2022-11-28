@@ -68,35 +68,51 @@ export const ReferencePopup = ({
   const { control: sourceControl, handleSubmit: sourceHandleSubmit } =
     sourceFormMethods;
 
-  const { append: referencesAppend, remove: referencesRemove } = useFieldArray({
+  const {
+    append: referencesAppend,
+    update: referencesUpdate,
+    remove: referencesRemove,
+  } = useFieldArray({
     control: parentControl,
     name: "references",
   });
 
-  const { append: sourcesAppend, remove: sourcesRemove } = useFieldArray({
+  const {
+    append: sourcesAppend,
+    update: sourcesUpdate,
+    remove: sourcesRemove,
+  } = useFieldArray({
     control: referenceControl,
     name: "sources",
   });
 
   const existingReference = React.useMemo(() => {
-    if (referencesGetValues().sources.length > 0) {
+    const numberOfSources = referencesGetValues().sources.length;
+    if (numberOfSources === 1) {
       return `${referencesGetValues().sources[0].referenceType} | ${
         referencesGetValues().sources[0].comment
       } | ${referencesGetValues().sources[0].dateObtained}`;
+    } else if (numberOfSources > 1) {
+      return `${referencesGetValues().sources[0].referenceType} | ${
+        referencesGetValues().sources[0].comment
+      } | ${referencesGetValues().sources[0].dateObtained} + ${
+        numberOfSources - 1
+      } more sources`;
     }
     return "";
   }, [referencesGetValues().sources]);
 
   const appendReference = sourceHandleSubmit(async (sourceData) => {
     sourcesAppend(sourceData);
-    referencesAppend(referencesGetValues());
+    if (existingReference.length > 0) {
+      referencesUpdate(0, referencesGetValues());
+    } else {
+      referencesAppend(referencesGetValues());
+    }
     if (setParentValue) setParentValue();
     setOpen(false);
     setEditMode(true);
   });
-
-  // TODO: Optimize this component rendering
-  // console.warn("[WARNING] Rerender cause: ReferencePopup Component");
 
   return (
     <Popover

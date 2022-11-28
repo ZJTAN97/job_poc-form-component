@@ -59,12 +59,12 @@ export const ObjectForm = <T extends FieldValues, K extends FieldValues>({
                   childGetValues() as PathValue<T, Path<T>>,
                 );
               }}
-              error={Boolean(errorType) ? errorType[name].message : ""}
+              error={Boolean(errorType) ? errorType[name].message : undefined}
             />
             {requireRefs[id] && childGetValues()[name].length !== 0 ? (
               <ReferencePopup
                 key={childGetValues()[name]}
-                field={"position"}
+                field={name}
                 content={childGetValues()[name]}
                 parentControl={childControl}
                 setParentValue={parentSetValue(

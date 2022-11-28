@@ -6,4 +6,5 @@ export const Reference = z.object({
   content: z.string(),
   sources: z.array(Source),
 });
+
 export type ReferenceType = z.infer<typeof Reference>;

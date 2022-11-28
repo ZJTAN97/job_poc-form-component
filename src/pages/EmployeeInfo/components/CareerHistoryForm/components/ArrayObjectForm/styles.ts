@@ -14,4 +14,6 @@ export const CertLabel = styled("div")(({ theme }) => ({
 
 export const CertContainer = styled("div")(({}) => ({
   marginBottom: "30px",
+  padding: "10px",
+  width: "fit-content",
 }));
