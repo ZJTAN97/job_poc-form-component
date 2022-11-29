@@ -7,10 +7,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../components/Form";
 import { ReferencePopup } from "./components/ReferencesPopup";
 import { useSaveOrCreateCareer } from "../../../../react-query/career";
-import {
-  Appointment,
-  AppointmentType,
-} from "../../../../model/career/Appointment";
 import { PrimitiveArray } from "./components/PrimitiveArray";
 
 interface CareerHistoryFormProps {
@@ -50,16 +46,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
 
   const { company: currentCompany, duration: currentDuration } =
     careerGetValue();
-
-  const appointmentFormMethods = useForm<AppointmentType>({
-    resolver: zodResolver(Appointment),
-    mode: "onChange",
-    defaultValues: {
-      position: "",
-      rank: "",
-      references: [],
-    },
-  });
 
   const { saveOrCreateCareer } = useSaveOrCreateCareer();
 
