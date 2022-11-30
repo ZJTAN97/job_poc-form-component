@@ -6,6 +6,13 @@ export const useStyles = createStyles(() => ({
     width: "400px",
     marginBottom: "10px",
   },
+  reference: {
+    fontSize: "12px",
+    cursor: "pointer",
+    height: "36px",
+    padding: "0",
+    overflow: "hidden",
+  },
 }));
 
 export const MainContainer = styled("div")(({}) => ({
@@ -19,5 +26,5 @@ export const Label = styled("div")(({}) => ({
 
 export const Row = styled("div")(({}) => ({
   display: "flex",
-  gap: "20px",
+  gap: "10px",
 }));
