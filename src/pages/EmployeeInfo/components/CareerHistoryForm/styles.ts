@@ -5,6 +5,10 @@ export const useStyles = createStyles((theme) => ({
   formTextInput: {
     width: "400px",
   },
+  skillTextInput: {
+    width: "400px",
+    marginBottom: "10px",
+  },
   reference: {
     fontSize: "12px",
     cursor: "pointer",
@@ -24,12 +28,6 @@ export const SkillLabel = styled("div")(({ theme }) => ({
   display: "flex",
   fontSize: theme.fontSizes.sm,
   paddingTop: "8px",
-}));
-
-export const ErrorLabel = styled("div")(({ theme }) => ({
-  fontSize: theme.spacing.sm,
-  color: "red",
-  margin: `${theme.spacing.sm} 0`,
 }));
 
 export const Row = styled("div")(({}) => ({

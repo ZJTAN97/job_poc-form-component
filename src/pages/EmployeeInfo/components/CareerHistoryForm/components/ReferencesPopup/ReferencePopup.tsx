@@ -1,10 +1,6 @@
-import { Button, Popover } from "@mantine/core";
+import { Button, Popover, Select, TextInput } from "@mantine/core";
 import React from "react";
-import {
-  Source,
-  SourceType,
-  TYPES_OF_REFERENCES,
-} from "../../../../../../model/common/Source";
+import { TYPES_OF_REFERENCES } from "../../../../../../model/common/Source";
 import {
   ButtonRow,
   ReferenceCard,
@@ -17,7 +13,6 @@ import { IconArrowLeft, IconCirclePlus, IconEdit } from "@tabler/icons";
 import { CareerType } from "../../../../../../model/career/Career";
 import { useFieldArray, useFormContext, useForm, Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "../../../../../../components/Form";
 import {
   Reference,
   ReferenceType,
@@ -27,12 +22,14 @@ interface ReferencePopupProps {
   setIsOpenPopover: (arg: boolean) => void;
   setEditMode: (arg: boolean) => void;
   selectedRef?: Path<CareerType>;
+  content: string;
 }
 
 export const ReferencePopup = ({
   setIsOpenPopover,
   setEditMode,
   selectedRef,
+  content,
 }: ReferencePopupProps) => {
   const { classes } = useStyles();
 
@@ -41,25 +38,22 @@ export const ReferencePopup = ({
 
   const careerFormMethod = useFormContext<CareerType>();
 
+  // const selectedReference = React.useMemo(() => {
+
+  // }, [])
+
   const referenceFormMethod = useForm<ReferenceType>({
     resolver: zodResolver(Reference),
     mode: "onChange",
     defaultValues: {
-      content: "",
+      content: content,
       field: selectedRef,
       sources: [],
     },
   });
 
-  const sourceFormMethod = useForm<SourceType>({
-    resolver: zodResolver(Source),
-    mode: "onChange",
-    defaultValues: {
-      comment: "",
-      dateObtained: "",
-      referenceType: TYPES_OF_REFERENCES.REDDIT,
-    },
-  });
+  // console.log(content);
+  // console.log(referenceFormMethod.getValues());
 
   const referenceArrayMethods = useFieldArray<CareerType>({
     control: careerFormMethod.control,
@@ -69,13 +63,6 @@ export const ReferencePopup = ({
   const sourceArrayMethods = useFieldArray<ReferenceType>({
     control: referenceFormMethod.control,
     name: "sources",
-  });
-
-  const appendSources = sourceFormMethod.handleSubmit(async (data) => {
-    sourceArrayMethods.append(data);
-    console.log(referenceFormMethod.getValues());
-    referenceArrayMethods.append(referenceFormMethod.getValues());
-    setMode("read");
   });
 
   const saveReferencesAndReturn = referenceFormMethod.handleSubmit(
@@ -89,40 +76,32 @@ export const ReferencePopup = ({
     <Popover.Dropdown p={30}>
       <TitleContainer>
         <Title>References</Title>
-        <IconCirclePlus
+        {/* <IconCirclePlus
           size={20}
           style={{ cursor: "pointer" }}
           onClick={() => setMode("edit")}
-        />
+        /> */}
       </TitleContainer>
 
       {mode === "edit" ? (
-        <Form
-          methods={sourceFormMethod}
-          preventLeaving={true}
-          useLocalStorage={true}
-        >
-          <Form.Dropdown
+        <>
+          <Select
             name={"referenceType"}
-            control={sourceFormMethod.control}
             mt={20}
             mb={20}
             label={"Select source"}
             data={Object.values(TYPES_OF_REFERENCES)}
+            onChange={(value) =>
+              sourceArrayMethods.append({
+                comment: "",
+                dateObtained: "",
+                referenceType: value as TYPES_OF_REFERENCES,
+              })
+            }
           />
-          <Form.TextInput
-            name={"dateObtained"}
-            control={sourceFormMethod.control}
-            mb={20}
-            label={"Date Obtained"}
-          />
+          <TextInput name={"dateObtained"} mb={20} label={"Date Obtained"} />
           {showCommentsInput ? (
-            <Form.TextInput
-              name={"comment"}
-              control={sourceFormMethod.control}
-              mb={20}
-              label={"Comments"}
-            />
+            <TextInput name={"comment"} mb={20} label={"Comments"} />
           ) : (
             <Button
               leftIcon={<IconCirclePlus />}
@@ -133,7 +112,7 @@ export const ReferencePopup = ({
               Comment
             </Button>
           )}
-        </Form>
+        </>
       ) : (
         <div>
           {referenceFormMethod.getValues().sources.map((item) => (
@@ -165,7 +144,6 @@ export const ReferencePopup = ({
           }}
           size={"xs"}
           variant="outline"
-          onClick={appendSources}
         >
           Apply
         </Button>

@@ -1,15 +1,16 @@
 import React from "react";
-import { Button, Popover, Textarea } from "@mantine/core";
-import { Row, useStyles, MainContainer, AddRefButton } from "./styles";
+import { Button, Popover } from "@mantine/core";
+import { Row, useStyles, MainContainer } from "./styles";
 import { useForm, Path } from "react-hook-form";
 import { Career, CareerType } from "../../../../model/career/Career";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../components/Form";
 import { ReferencePopup } from "./components/ReferencesPopup";
 import { useSaveOrCreateCareer } from "../../../../react-query/career";
-import { PrimitiveArray } from "./components/PrimitiveArray";
-import { TYPES_OF_REFERENCES } from "../../../../model/common/Source";
 import { ReferenceTrigger } from "./components/ReferenceTrigger";
+import { StringArrayInput } from "./components/StringArrayInput";
+import { ObjectArrayInput } from "./components/ObjectArrayInput";
+import { CertificationType } from "../../../../model/career/Certification";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -18,7 +19,12 @@ interface CareerHistoryFormProps {
 export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   const { classes } = useStyles();
 
+  const { saveOrCreateCareer } = useSaveOrCreateCareer();
+
   const [editMode, setEditMode] = React.useState(true);
+  const [isOpenPopover, setIsOpenPopover] = React.useState(false);
+  const [selectedRefOption, setSelectedRefOption] =
+    React.useState<Path<CareerType>>("company");
 
   const careerFormMethods = useForm<CareerType>({
     resolver: zodResolver(Career),
@@ -37,19 +43,13 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     },
   });
 
-  careerFormMethods.watch();
-
-  const { saveOrCreateCareer } = useSaveOrCreateCareer();
+  const { dirtyFields } = careerFormMethods.formState;
 
   const submitFormHandler = careerFormMethods.handleSubmit(async (data) => {
-    console.log(data);
-    saveOrCreateCareer(data);
-    setDrawer(false);
+    console.info("[SUCCESS]", data);
+    // saveOrCreateCareer(data);
+    // setDrawer(false);
   });
-
-  const [isOpenPopover, setIsOpenPopover] = React.useState(false);
-  const [selectedRefOption, setSelectedRefOption] =
-    React.useState<Path<CareerType>>();
 
   return (
     <Form
@@ -67,11 +67,27 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             height: "-webkit-fill-available",
             border: "none",
             borderLeft: "solid 1px #dfdfdf",
+            minHeight: "95vh",
           },
         }}
       >
+        <ReferencePopup
+          key={
+            selectedRefOption +
+            careerFormMethods
+              .getValues()
+              [selectedRefOption as keyof CareerType].toString()
+          }
+          content={careerFormMethods
+            .getValues()
+            [selectedRefOption as keyof CareerType].toString()}
+          selectedRef={selectedRefOption}
+          setIsOpenPopover={setIsOpenPopover}
+          setEditMode={setEditMode}
+        />
         <Popover.Target>
           <MainContainer>
+            {/* Company Name */}
             <Row>
               <Form.TextInput
                 control={careerFormMethods.control}
@@ -85,14 +101,16 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               <ReferenceTrigger<CareerType>
                 isOpenPopover={isOpenPopover}
                 name={"company"}
+                content={careerFormMethods.getValues().company}
                 selectedRefOption={selectedRefOption}
                 setSelectedRefOption={setSelectedRefOption}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
-                disabled={careerFormMethods.getValues().company.length < 1}
+                disabled={!dirtyFields.company}
               />
             </Row>
 
+            {/* Duration */}
             <Row>
               <Form.TextInput
                 control={careerFormMethods.control}
@@ -105,14 +123,40 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               <ReferenceTrigger<CareerType>
                 isOpenPopover={isOpenPopover}
                 name={"duration"}
+                content={careerFormMethods.getValues().duration}
                 selectedRefOption={selectedRefOption}
                 setSelectedRefOption={setSelectedRefOption}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
-                disabled={careerFormMethods.getValues().duration.length < 1}
+                disabled={!dirtyFields.duration}
               />
             </Row>
 
+            {/* Last Drawn Salary */}
+            <Row>
+              <Form.TextInput
+                control={careerFormMethods.control}
+                label={"Last Drawn Salary"}
+                name={"lastDrawnSalary"}
+                disabled={!editMode}
+                variant={editMode ? "default" : "unstyled"}
+                className={classes.formTextInput}
+              />
+              <ReferenceTrigger<CareerType>
+                isOpenPopover={isOpenPopover}
+                name={"lastDrawnSalary"}
+                content={careerFormMethods.getValues().lastDrawnSalary}
+                selectedRefOption={selectedRefOption}
+                setSelectedRefOption={setSelectedRefOption}
+                setIsOpenPopover={setIsOpenPopover}
+                setEditMode={setEditMode}
+                disabled={
+                  careerFormMethods.getValues().lastDrawnSalary.length < 1
+                }
+              />
+            </Row>
+
+            {/* APPOINTMENT (POSITION, RANK) */}
             <Row>
               <Form.TextInput
                 control={careerFormMethods.control}
@@ -126,6 +170,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               <ReferenceTrigger<CareerType>
                 isOpenPopover={isOpenPopover}
                 name={"appointment.position"}
+                content={careerFormMethods.getValues().appointment.position}
                 selectedRefOption={selectedRefOption}
                 setSelectedRefOption={setSelectedRefOption}
                 setIsOpenPopover={setIsOpenPopover}
@@ -149,6 +194,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               <ReferenceTrigger<CareerType>
                 isOpenPopover={isOpenPopover}
                 name={"appointment.rank"}
+                content={careerFormMethods.getValues().appointment.rank}
                 selectedRefOption={selectedRefOption}
                 setSelectedRefOption={setSelectedRefOption}
                 setIsOpenPopover={setIsOpenPopover}
@@ -159,35 +205,31 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               />
             </Row>
 
+            {/* SKILLS  */}
             <Row>
-              <Form.TextInput
-                control={careerFormMethods.control}
-                label={"Last Drawn Salary"}
-                name={"lastDrawnSalary"}
-                disabled={!editMode}
-                variant={editMode ? "default" : "unstyled"}
-                className={classes.formTextInput}
-              />
-              <ReferenceTrigger<CareerType>
-                isOpenPopover={isOpenPopover}
-                name={"lastDrawnSalary"}
-                selectedRefOption={selectedRefOption}
-                setSelectedRefOption={setSelectedRefOption}
-                setIsOpenPopover={setIsOpenPopover}
-                setEditMode={setEditMode}
-                disabled={
-                  careerFormMethods.getValues().lastDrawnSalary.length < 1
-                }
+              <StringArrayInput<CareerType>
+                name="skills"
+                editMode={editMode}
+                rightSection={(id) => (
+                  <ReferenceTrigger<CareerType>
+                    isOpenPopover={isOpenPopover}
+                    name={"skills"}
+                    content={careerFormMethods.getValues().skills[id] || ""}
+                    selectedRefOption={"skills"}
+                    setSelectedRefOption={setSelectedRefOption}
+                    setIsOpenPopover={setIsOpenPopover}
+                    setEditMode={setEditMode}
+                  />
+                )}
               />
             </Row>
 
+            {/* Certs  */}
             <Row>
-              <PrimitiveArray
-                isOpenPopover={isOpenPopover}
-                setIsOpenPopover={setIsOpenPopover}
-                setSelectedRefOption={setSelectedRefOption}
+              <ObjectArrayInput<CareerType, CertificationType>
+                name="certs"
+                objectKeys={["name", "issuedBy"]}
                 editMode={editMode}
-                setEditMode={setEditMode}
               />
             </Row>
 
@@ -196,12 +238,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             </Button>
           </MainContainer>
         </Popover.Target>
-        <ReferencePopup
-          key={selectedRefOption}
-          selectedRef={selectedRefOption}
-          setIsOpenPopover={setIsOpenPopover}
-          setEditMode={setEditMode}
-        />
       </Popover>
     </Form>
   );
