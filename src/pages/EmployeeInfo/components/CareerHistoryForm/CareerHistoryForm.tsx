@@ -1,28 +1,16 @@
 import React from "react";
-import { Button, ActionIcon, TextInput } from "@mantine/core";
-import {
-  ErrorLabel,
-  Row,
-  SkillLabel,
-  Col,
-  ColTitle,
-  InputRow,
-  useStyles,
-  MainContainer,
-} from "./styles";
-import { useForm, FieldErrorsImpl } from "react-hook-form";
+import { Button, Popover } from "@mantine/core";
+import { Row, useStyles, MainContainer } from "./styles";
+import { useForm, Path } from "react-hook-form";
 import { Career, CareerType } from "../../../../model/career/Career";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../components/Form";
-import { IconX } from "@tabler/icons";
 import { ReferencePopup } from "./components/ReferencesPopup";
 import { useSaveOrCreateCareer } from "../../../../react-query/career";
-import { ObjectForm } from "./components/ObjectForm";
-import {
-  Appointment,
-  AppointmentType,
-} from "../../../../model/career/Appointment";
-import { ArrayObjectForm } from "./components/ArrayObjectForm";
+import { ReferenceTrigger } from "./components/ReferenceTrigger";
+import { StringArrayInput } from "./components/StringArrayInput";
+import { ObjectArrayInput } from "./components/ObjectArrayInput";
+import { CertificationType } from "../../../../model/career/Certification";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -31,7 +19,12 @@ interface CareerHistoryFormProps {
 export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   const { classes } = useStyles();
 
+  const { saveOrCreateCareer } = useSaveOrCreateCareer();
+
   const [editMode, setEditMode] = React.useState(true);
+  const [isOpenPopover, setIsOpenPopover] = React.useState(false);
+  const [selectedRefOption, setSelectedRefOption] =
+    React.useState<Path<CareerType>>("company");
 
   const careerFormMethods = useForm<CareerType>({
     resolver: zodResolver(Career),
@@ -50,63 +43,13 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     },
   });
 
-  const {
-    control: careerControl,
-    getValues: careerGetValue,
-    setValue: careerSetValue,
-    handleSubmit: careerHandleSubmit,
-    formState: careerFormState,
-    watch: watchCareer,
-  } = careerFormMethods;
+  const { dirtyFields } = careerFormMethods.formState;
 
-  watchCareer("skills");
-
-  const {
-    skills: currentSkills,
-    company: currentCompany,
-    duration: currentDuration,
-  } = careerGetValue();
-
-  const appointmentFormMethods = useForm<AppointmentType>({
-    resolver: zodResolver(Appointment),
-    mode: "onChange",
-    defaultValues: {
-      position: "",
-      rank: "",
-      references: [],
-    },
+  const submitFormHandler = careerFormMethods.handleSubmit(async (data) => {
+    console.info("[SUCCESS]", data);
+    // saveOrCreateCareer(data);
+    // setDrawer(false);
   });
-
-  const [showAddSkill, setShowAddSkill] = React.useState(false);
-  const [currentSkillTextInput, setCurrentSkillTextInput] = React.useState("");
-
-  const appendToSkillArray = () => {
-    careerSetValue("skills", [...currentSkills, currentSkillTextInput]);
-    setCurrentSkillTextInput("");
-    setShowAddSkill(false);
-  };
-
-  const removeFromSkillArray = (skill: string) => {
-    careerSetValue(
-      "skills",
-      currentSkills.filter((item) => item !== skill),
-    );
-  };
-
-  const { saveOrCreateCareer } = useSaveOrCreateCareer();
-
-  const submitFormHandler = careerHandleSubmit(async (data) => {
-    console.log(data);
-    saveOrCreateCareer(data);
-    setDrawer(false);
-  });
-
-  const totalErrors = careerFormState.errors as Partial<
-    FieldErrorsImpl<{ references_error: { [key: string]: string } }>
-  >;
-
-  console.log(totalErrors);
-  console.log(careerGetValue());
 
   return (
     <Form
@@ -114,13 +57,40 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
       preventLeaving={true}
       useLocalStorage={true}
     >
-      <MainContainer>
-        <Row>
-          <ColTitle>Company Details</ColTitle>
-          <Col>
-            <InputRow>
+      <Popover
+        opened={isOpenPopover}
+        position="right"
+        closeOnClickOutside={false}
+        width={320}
+        styles={{
+          dropdown: {
+            height: "-webkit-fill-available",
+            border: "none",
+            borderLeft: "solid 1px #dfdfdf",
+            minHeight: "95vh",
+          },
+        }}
+      >
+        <ReferencePopup
+          key={
+            selectedRefOption +
+            careerFormMethods
+              .getValues()
+              [selectedRefOption as keyof CareerType].toString()
+          }
+          content={careerFormMethods
+            .getValues()
+            [selectedRefOption as keyof CareerType].toString()}
+          selectedRef={selectedRefOption}
+          setIsOpenPopover={setIsOpenPopover}
+          setEditMode={setEditMode}
+        />
+        <Popover.Target>
+          <MainContainer>
+            {/* Company Name */}
+            <Row>
               <Form.TextInput
-                control={careerControl}
+                control={careerFormMethods.control}
                 label={"Company name"}
                 name={"company"}
                 disabled={!editMode}
@@ -128,138 +98,147 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 className={classes.formTextInput}
                 required
               />
-              {currentCompany.length !== 0 && (
-                <ReferencePopup
-                  key={currentCompany}
-                  field={"company"}
-                  content={currentCompany}
-                  parentControl={careerControl}
-                  setEditMode={setEditMode}
-                />
-              )}
-            </InputRow>
-          </Col>
-        </Row>
+              <ReferenceTrigger<CareerType>
+                isOpenPopover={isOpenPopover}
+                name={"company"}
+                content={careerFormMethods.getValues().company}
+                selectedRefOption={selectedRefOption}
+                setSelectedRefOption={setSelectedRefOption}
+                setIsOpenPopover={setIsOpenPopover}
+                setEditMode={setEditMode}
+                disabled={!dirtyFields.company}
+              />
+            </Row>
 
-        <Row>
-          <ColTitle>Other details</ColTitle>
-          <Col>
-            <InputRow>
+            {/* Duration */}
+            <Row>
               <Form.TextInput
-                control={careerControl}
+                control={careerFormMethods.control}
                 label={"Duration"}
                 name={"duration"}
                 disabled={!editMode}
                 variant={editMode ? "default" : "unstyled"}
                 className={classes.formTextInput}
               />
-              {currentDuration.length !== 0 && (
-                <ReferencePopup
-                  key={currentDuration}
-                  field={"duration"}
-                  content={currentDuration}
-                  parentControl={careerControl}
-                  setEditMode={setEditMode}
-                />
-              )}
-            </InputRow>
-            <Form.TextInput
-              control={careerControl}
-              label={"Last Drawn Salary"}
-              name={"lastDrawnSalary"}
-              disabled={!editMode}
-              variant={editMode ? "default" : "unstyled"}
-              className={classes.formTextInput}
-            />
-          </Col>
-        </Row>
-
-        <Row>
-          <ColTitle>Skill Sets</ColTitle>
-          <Col>
-            {currentSkills.map((skill, id) => (
-              <InputRow key={skill + id}>
-                <SkillLabel>
-                  {skill}
-                  <ActionIcon
-                    pb={6}
-                    ml={5}
-                    onClick={() => removeFromSkillArray(skill)}
-                  >
-                    <IconX size={10} />
-                  </ActionIcon>
-                </SkillLabel>
-                <ReferencePopup
-                  setEditMode={setEditMode}
-                  field={"skills"}
-                  content={skill}
-                  parentControl={careerControl}
-                />
-              </InputRow>
-            ))}
-            <ErrorLabel>
-              {careerFormState.errors.skills &&
-                careerFormState.errors.skills.message}
-            </ErrorLabel>
-            {showAddSkill ? (
-              <TextInput
-                disabled={!editMode}
-                value={currentSkillTextInput}
-                className={classes.formTextInput}
-                onChange={(e) => setCurrentSkillTextInput(e.target.value)}
-                onKeyUp={(e) => {
-                  if (e.key === "Enter") appendToSkillArray();
-                }}
-                rightSection={
-                  <Button
-                    disabled={currentSkillTextInput.length === 0}
-                    size="xs"
-                    variant="light"
-                    onClick={appendToSkillArray}
-                  >
-                    Add
-                  </Button>
-                }
-                rightSectionWidth={60}
+              <ReferenceTrigger<CareerType>
+                isOpenPopover={isOpenPopover}
+                name={"duration"}
+                content={careerFormMethods.getValues().duration}
+                selectedRefOption={selectedRefOption}
+                setSelectedRefOption={setSelectedRefOption}
+                setIsOpenPopover={setIsOpenPopover}
+                setEditMode={setEditMode}
+                disabled={!dirtyFields.duration}
               />
-            ) : (
-              <Button
-                size="xs"
-                variant="light"
-                onClick={() => setShowAddSkill(true)}
-              >
-                Add skills
-              </Button>
-            )}
-          </Col>
-        </Row>
+            </Row>
 
-        <Row>
-          <ColTitle>Appointment Details</ColTitle>
-          <ObjectForm<CareerType, AppointmentType>
-            key={careerFormMethods.formState.errors.toString()}
-            parentFormMethods={careerFormMethods}
-            childFormMethods={appointmentFormMethods}
-            objectName={"appointment"}
-            inputLabels={["Position", "Rank"]}
-            inputNames={["position", "rank"]}
-            requireRefs={[true, false]}
-            requiredFields={[true, true]}
-            setEditMode={setEditMode}
-            editMode={editMode}
-          />
-        </Row>
+            {/* Last Drawn Salary */}
+            <Row>
+              <Form.TextInput
+                control={careerFormMethods.control}
+                label={"Last Drawn Salary"}
+                name={"lastDrawnSalary"}
+                disabled={!editMode}
+                variant={editMode ? "default" : "unstyled"}
+                className={classes.formTextInput}
+              />
+              <ReferenceTrigger<CareerType>
+                isOpenPopover={isOpenPopover}
+                name={"lastDrawnSalary"}
+                content={careerFormMethods.getValues().lastDrawnSalary}
+                selectedRefOption={selectedRefOption}
+                setSelectedRefOption={setSelectedRefOption}
+                setIsOpenPopover={setIsOpenPopover}
+                setEditMode={setEditMode}
+                disabled={
+                  careerFormMethods.getValues().lastDrawnSalary.length < 1
+                }
+              />
+            </Row>
 
-        <ArrayObjectForm
-          parentFormMethods={careerFormMethods}
-          setEditMode={setEditMode}
-          editMode={editMode}
-        />
+            {/* APPOINTMENT (POSITION, RANK) */}
+            <Row>
+              <Form.TextInput
+                control={careerFormMethods.control}
+                label={"Position"}
+                name={"appointment.position"}
+                disabled={!editMode}
+                variant={editMode ? "default" : "unstyled"}
+                className={classes.formTextInput}
+                required
+              />
+              <ReferenceTrigger<CareerType>
+                isOpenPopover={isOpenPopover}
+                name={"appointment.position"}
+                content={careerFormMethods.getValues().appointment.position}
+                selectedRefOption={selectedRefOption}
+                setSelectedRefOption={setSelectedRefOption}
+                setIsOpenPopover={setIsOpenPopover}
+                setEditMode={setEditMode}
+                disabled={
+                  careerFormMethods.getValues().appointment.position.length < 1
+                }
+              />
+            </Row>
 
-        <Button mt={20} onClick={submitFormHandler}>
-          Add Career
-        </Button>
-      </MainContainer>
+            <Row>
+              <Form.TextInput
+                control={careerFormMethods.control}
+                label={"Rank"}
+                name={"appointment.rank"}
+                disabled={!editMode}
+                variant={editMode ? "default" : "unstyled"}
+                className={classes.formTextInput}
+                required={true}
+              />
+              <ReferenceTrigger<CareerType>
+                isOpenPopover={isOpenPopover}
+                name={"appointment.rank"}
+                content={careerFormMethods.getValues().appointment.rank}
+                selectedRefOption={selectedRefOption}
+                setSelectedRefOption={setSelectedRefOption}
+                setIsOpenPopover={setIsOpenPopover}
+                setEditMode={setEditMode}
+                disabled={
+                  careerFormMethods.getValues().appointment.rank.length < 1
+                }
+              />
+            </Row>
+
+            {/* SKILLS  */}
+            <Row>
+              <StringArrayInput<CareerType>
+                name="skills"
+                editMode={editMode}
+                rightSection={(id) => (
+                  <ReferenceTrigger<CareerType>
+                    isOpenPopover={isOpenPopover}
+                    name={"skills"}
+                    content={careerFormMethods.getValues().skills[id] || ""}
+                    selectedRefOption={"skills"}
+                    setSelectedRefOption={setSelectedRefOption}
+                    setIsOpenPopover={setIsOpenPopover}
+                    setEditMode={setEditMode}
+                  />
+                )}
+              />
+            </Row>
+
+            {/* Certs  */}
+            <Row>
+              <ObjectArrayInput<CareerType, CertificationType>
+                name="certs"
+                objectKeys={["name", "issuedBy"]}
+                editMode={editMode}
+              />
+            </Row>
+
+            <Button mt={20} onClick={submitFormHandler}>
+              Add Career
+            </Button>
+          </MainContainer>
+        </Popover.Target>
+      </Popover>
     </Form>
   );
 };

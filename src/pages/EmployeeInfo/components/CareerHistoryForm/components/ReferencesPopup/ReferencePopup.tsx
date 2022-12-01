@@ -1,229 +1,165 @@
-import { Button, Popover } from "@mantine/core";
+import { Button, Popover, Select, TextInput } from "@mantine/core";
 import React from "react";
+import { TYPES_OF_REFERENCES } from "../../../../../../model/common/Source";
 import {
-  AddRef,
-  AddReferenceTrigger,
-  ButtonGroup,
-  ReferenceHeader,
-  RefList,
+  ButtonRow,
+  ReferenceCard,
+  ReferenceCardRow,
+  Title,
+  TitleContainer,
   useStyles,
 } from "./styles";
-import { useForm, useFieldArray, Control } from "react-hook-form";
+import { IconArrowLeft, IconCirclePlus, IconEdit } from "@tabler/icons";
+import { CareerType } from "../../../../../../model/career/Career";
+import { useFieldArray, useFormContext, useForm, Path } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Reference,
   ReferenceType,
 } from "../../../../../../model/common/Reference";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form } from "../../../../../../components/Form";
-import {
-  Source,
-  SourceType,
-  TYPES_OF_REFERENCES,
-} from "../../../../../../model/common/Source";
 
 interface ReferencePopupProps {
-  field: string;
-  parentControl: Control<any>;
-  setParentValue?: any;
-  content: string;
+  setIsOpenPopover: (arg: boolean) => void;
   setEditMode: (arg: boolean) => void;
+  selectedRef?: Path<CareerType>;
+  content: string;
 }
 
 export const ReferencePopup = ({
-  field,
-  content,
-  parentControl,
-  setParentValue,
+  setIsOpenPopover,
   setEditMode,
+  selectedRef,
+  content,
 }: ReferencePopupProps) => {
   const { classes } = useStyles();
 
-  const [open, setOpen] = React.useState(false);
+  const [mode, setMode] = React.useState<"edit" | "read">("edit");
+  const [showCommentsInput, setShowCommentsInput] = React.useState(false);
 
-  const referenceFormMethods = useForm<ReferenceType>({
+  const careerFormMethod = useFormContext<CareerType>();
+
+  // const selectedReference = React.useMemo(() => {
+
+  // }, [])
+
+  const referenceFormMethod = useForm<ReferenceType>({
     resolver: zodResolver(Reference),
     mode: "onChange",
     defaultValues: {
-      content,
-      field,
+      content: content,
+      field: selectedRef,
       sources: [],
     },
   });
 
-  const {
-    control: referenceControl,
-    handleSubmit: referenceHandleSubmit,
-    getValues: referencesGetValues,
-  } = referenceFormMethods;
+  // console.log(content);
+  // console.log(referenceFormMethod.getValues());
 
-  const sourceFormMethods = useForm<SourceType>({
-    resolver: zodResolver(Source),
-    mode: "onChange",
-    defaultValues: {
-      comment: "Default",
-      dateObtained: "2022-11-11T12:19:54.52",
-      referenceType: TYPES_OF_REFERENCES.LINKED_IN,
-    },
-  });
-
-  const {
-    control: sourceControl,
-    handleSubmit: sourceHandleSubmit,
-    setValue: sourceSetValue,
-  } = sourceFormMethods;
-
-  const {
-    append: referencesAppend,
-    update: referencesUpdate,
-    remove: referencesRemove,
-  } = useFieldArray({
-    control: parentControl,
+  const referenceArrayMethods = useFieldArray<CareerType>({
+    control: careerFormMethod.control,
     name: "references",
   });
 
-  const {
-    append: sourcesAppend,
-    update: sourcesUpdate,
-    remove: sourcesRemove,
-  } = useFieldArray({
-    control: referenceControl,
+  const sourceArrayMethods = useFieldArray<ReferenceType>({
+    control: referenceFormMethod.control,
     name: "sources",
   });
 
-  const existingReference = React.useMemo(() => {
-    const numberOfSources = referencesGetValues().sources.length;
-    if (numberOfSources === 1) {
-      return `${referencesGetValues().sources[0].referenceType} | ${
-        referencesGetValues().sources[0].comment
-      } | ${referencesGetValues().sources[0].dateObtained}`;
-    } else if (numberOfSources > 1) {
-      return `${referencesGetValues().sources[0].referenceType} | ${
-        referencesGetValues().sources[0].comment
-      } | ${referencesGetValues().sources[0].dateObtained} + ${
-        numberOfSources - 1
-      } more sources`;
-    }
-    return "";
-  }, [referencesGetValues().sources]);
-
-  const [addMode, setAddMode] = React.useState(
-    existingReference.length > 0 ? false : true,
+  const saveReferencesAndReturn = referenceFormMethod.handleSubmit(
+    async (data) => {
+      setIsOpenPopover(false);
+      setEditMode(true);
+    },
   );
 
-  const appendReference = sourceHandleSubmit(async (sourceData) => {
-    sourcesAppend(sourceData);
-    if (existingReference.length > 0) {
-      referencesUpdate(0, referencesGetValues());
-    } else {
-      referencesAppend(referencesGetValues());
-    }
-    if (setParentValue) setParentValue();
-    setOpen(false);
-    setEditMode(true);
-    setAddMode(false);
-  });
-
-  const editReference = (id: number) => {
-    console.log("appending this id: " + id);
-    sourceSetValue(
-      "referenceType",
-      referencesGetValues().sources[id].referenceType,
-    );
-    sourceSetValue("comment", referencesGetValues().sources[id].comment);
-    sourceSetValue(
-      "dateObtained",
-      referencesGetValues().sources[id].dateObtained,
-    );
-    setAddMode(true);
-  };
-
   return (
-    <Popover
-      width={200}
-      position="right"
-      withArrow
-      shadow="md"
-      closeOnClickOutside
-      closeOnEscape
-      onClose={() => {
-        setOpen(false);
-        setEditMode(true);
-      }}
-      opened={open}
-    >
-      <Popover.Target>
-        <AddReferenceTrigger
-          onClick={() => {
-            setEditMode(false);
-            setOpen(true);
-          }}
-        >
-          {existingReference ? (
-            <AddRef>{existingReference}</AddRef>
+    <Popover.Dropdown p={30}>
+      <TitleContainer>
+        <Title>References</Title>
+        {/* <IconCirclePlus
+          size={20}
+          style={{ cursor: "pointer" }}
+          onClick={() => setMode("edit")}
+        /> */}
+      </TitleContainer>
+
+      {mode === "edit" ? (
+        <>
+          <Select
+            name={"referenceType"}
+            mt={20}
+            mb={20}
+            label={"Select source"}
+            data={Object.values(TYPES_OF_REFERENCES)}
+            onChange={(value) =>
+              sourceArrayMethods.append({
+                comment: "",
+                dateObtained: "",
+                referenceType: value as TYPES_OF_REFERENCES,
+              })
+            }
+          />
+          <TextInput name={"dateObtained"} mb={20} label={"Date Obtained"} />
+          {showCommentsInput ? (
+            <TextInput name={"comment"} mb={20} label={"Comments"} />
           ) : (
-            <AddRef>Add References</AddRef>
-          )}
-        </AddReferenceTrigger>
-      </Popover.Target>
-      {addMode ? (
-        <Popover.Dropdown p={20}>
-          <ReferenceHeader>Add References</ReferenceHeader>
-          <Form
-            methods={sourceFormMethods}
-            preventLeaving={false}
-            useLocalStorage={false}
-          >
-            <Form.Dropdown
-              label={"Reference Type"}
-              control={sourceControl}
-              name="referenceType"
-              data={Object.values(TYPES_OF_REFERENCES)}
-            />
-            <Form.TextInput
-              className={classes.formTextInput}
-              label="Comments"
-              name="comment"
-              control={sourceControl}
-            />
-            <Form.TextInput
-              className={classes.formTextInput}
-              label="Date obtained"
-              name="dateObtained"
-              control={sourceControl}
-            />
-          </Form>
-          <ButtonGroup>
             <Button
-              variant="default"
-              size="xs"
-              onClick={() => {
-                setOpen(false);
-                setEditMode(true);
-                if (existingReference) setAddMode(false);
-              }}
+              leftIcon={<IconCirclePlus />}
+              size={"xs"}
+              variant={"subtle"}
+              onClick={() => setShowCommentsInput(true)}
             >
-              Cancel
+              Comment
             </Button>
-            <Button size="xs" onClick={appendReference}>
-              Apply
-            </Button>
-          </ButtonGroup>
-        </Popover.Dropdown>
+          )}
+        </>
       ) : (
-        <Popover.Dropdown>
-          {referencesGetValues().sources.map((source, id) => (
-            <RefList
-              onClick={() => editReference(id)}
-              key={source.toString() + id}
-            >
-              {`${source.referenceType} | ${source.comment} | ${source.dateObtained}`}
-            </RefList>
+        <div>
+          {referenceFormMethod.getValues().sources.map((item) => (
+            <ReferenceCard>
+              <div>{item.referenceType}</div>
+              <ReferenceCardRow>
+                <div>{item.dateObtained}</div>
+                <IconEdit
+                  size={20}
+                  style={{ cursor: "pointer" }}
+                  onClick={() => setMode("edit")}
+                />
+              </ReferenceCardRow>
+              <div>{item.comment}</div>
+            </ReferenceCard>
           ))}
-          <Button fullWidth size="xs" mt={20} onClick={() => setAddMode(true)}>
-            Add more References
-          </Button>
-        </Popover.Dropdown>
+        </div>
       )}
-    </Popover>
+
+      <ButtonRow>
+        {mode === "edit" && (
+          <Button size={"xs"} variant="subtle" onClick={() => setMode("read")}>
+            Cancel
+          </Button>
+        )}
+        <Button
+          classNames={{
+            root: classes.applyBtn,
+          }}
+          size={"xs"}
+          variant="outline"
+        >
+          Apply
+        </Button>
+      </ButtonRow>
+
+      <Button
+        classNames={{
+          root: classes.returnBtn,
+        }}
+        mt={50}
+        onClick={saveReferencesAndReturn}
+        variant={"subtle"}
+        leftIcon={<IconArrowLeft />}
+      >
+        Save references and return
+      </Button>
+    </Popover.Dropdown>
   );
 };
