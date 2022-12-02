@@ -50,19 +50,20 @@ To ensure the form can handle the following data structures
     appointment: {
       position: "Head Chef",
       rank: "A",
+      references: [
+        {
+          field: "position",
+          content: "Head Chef",
+          dateObtained: "12/12/2022",
+        },
+        {
+          field: "rank",
+          content: "A",
+          dateObtained: "12/12/2022",
+        },
+      ],
     },
-    references: [
-      {
-        field: "appointment.position",
-        content: "Head Chef",
-        dateObtained: "12/12/2022",
-      },
-      {
-        field: "appointment.rank",
-        content: "A",
-        dateObtained: "12/12/2022",
-      },
-    ],
+
   };
 
 ```
@@ -101,40 +102,43 @@ To ensure the form can handle the following data structures
 4. Multi Objects
 
 ```
+
 const multiObjectSample = {
-    certs: [
-      {
-        name: "Cooking101",
-        issuedBy: "Culinary School A",
-      },
-      {
-        name: "Coding",
-        issuedBy: "NUS ISS",
-      },
-    ],
-    references: [
-      {
-        field: "certs.name",
-        content: "Cooking101",
-        dateObtained: "12/12/2022",
-      },
-      {
-        field: "certs.issuedBy",
-        content: "Cooking101",
-        dateObtained: "Culinary School A",
-      },
-      {
-        field: "certs.name",
-        content: "Coding",
-        dateObtained: "12/12/2022",
-      },
-      {
-        field: "certs.issuedBy",
-        content: "NUS ISS",
-        dateObtained: "12/12/2022",
-      },
-    ],
-  };
+  certs: [
+    {
+      name: 'Cooking101',
+      issuedBy: 'Culinary School A',
+      references: [
+        {
+          field: 'name',
+          content: 'Cooking101',
+          dateObtained: '12/12/2022',
+        },
+        {
+          field: 'issuedBy',
+          content: 'Cooking101',
+          dateObtained: 'Culinary School A',
+        },
+      ],
+    },
+    {
+      name: 'Coding',
+      issuedBy: 'NUS ISS',
+      references: [
+        {
+          field: 'name',
+          content: 'Coding',
+          dateObtained: '12/12/2022',
+        },
+        {
+          field: 'issuedBy',
+          content: 'NUS ISS',
+          dateObtained: '12/12/2022',
+        },
+      ],
+    },
+  ],
+};
 
 ```
 
@@ -181,7 +185,7 @@ Go to: http://localhost:3000
 
 <br>
 
-This Proof of Concept consists of two main pages which demostrates how the form can be used
+This Proof of Concept consists of two main pages which demonstrates how the form can be used
 
 - Create Employee Page
 - Career History Page
@@ -195,23 +199,6 @@ This Proof of Concept consists of two main pages which demostrates how the form 
 3. Seperation of concerns between components (A form specific component/compound component is to be used as a context of a Form only).
 4. Extension of custom form components if required
 
-<br>
-
-### Create Employee Page
-
-A page to demo the basic validations and how the Abstracted/Custom Form component is used in a standard Form.
-
-![plot](./images/create_employee_page.png)
-
-<br>
-
-### Career History Page
-
-A page to demo more complicated validations and how the Abstracted/Custom Form component is used in a more nested Form.
-
-![plot](./images/career_history_page.png)
-
-<br>
 <br>
 
 # 5. Usage of Abstracted/Custom Form Component
@@ -266,58 +253,3 @@ const { control } = methods;
 - Literally just powers `Controller` https://react-hook-form.com/api/usecontroller/controller
 
 <br>
-
-# 7. Current Schema References for both pages
-
-Employee
-
-```
-
-{
-    employeName: string,
-    bio: string,
-    gender: enum,
-    password: string,
-    dateCreated: string
-}
-
-```
-
-<br>
-
-Career History
-
-```
-
-{
-    company: string,
-    position: string,
-    duration: string,
-    lastDrawnSalary: string,
-    skills: string[],
-    certs: string[],
-    references: [
-        {
-            appliedTo: string,
-            dateObtained: string,
-            referenceType: enum,
-            comments: string
-        }
-    ]
-}
-
-```
-
-<br>
-
-# 8. Queries & Clarifications
-
-Domain Questions
-
-- CORS Origin error
-- For POST request, `CareerHistoryDto` if the field is not mentioned in the `@ValidReference` what does it mean?
-- Is it for Object type (certs, appointment) the references are stored within?
-
-Spring Boot / Java / Lombok Questions
-
-- What is SuperBuilder, is it used when you extend a class, then normally its just builder
