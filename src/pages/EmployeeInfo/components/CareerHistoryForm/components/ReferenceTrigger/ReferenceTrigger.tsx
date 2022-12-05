@@ -6,22 +6,31 @@ import { IconCirclePlus } from "@tabler/icons";
 
 interface ReferenceTriggerProps<T extends FieldValues> {
   isOpenPopover: boolean;
+
+  /** Field Name required to filter which references to show */
   name: Path<T>;
+
+  /** Content required to filter which references to show */
   content: string;
-  selectedRefOption?: Path<T>;
-  setSelectedRefOption: (arg: Path<T>) => void;
+
+  /** Currently selected field to show references */
+  currentName?: Path<T>;
+
+  setCurrentName: (arg: Path<T>) => void;
+
   setIsOpenPopover: (arg: boolean) => void;
+
   setEditMode: (arg: boolean) => void;
-  // dont need expose this prop
-  disabled?: boolean; // https://react-hook-form.com/api/useform/getfieldstate
+
+  disabled?: boolean;
 }
 
 export const ReferenceTrigger = <T extends FieldValues>({
   isOpenPopover,
   name,
   content,
-  selectedRefOption,
-  setSelectedRefOption,
+  currentName,
+  setCurrentName,
   setIsOpenPopover,
   setEditMode,
   disabled,
@@ -30,8 +39,8 @@ export const ReferenceTrigger = <T extends FieldValues>({
 
   const formMethod = useFormContext<T>();
 
-  const referencePopoverTrigger = (selectedRefOption: Path<T>) => {
-    setSelectedRefOption(selectedRefOption);
+  const referencePopoverTrigger = (currentName: Path<T>) => {
+    setCurrentName(currentName);
     setIsOpenPopover(true);
     setEditMode(false);
   };
@@ -55,9 +64,6 @@ export const ReferenceTrigger = <T extends FieldValues>({
     }
   }, [formMethod.getValues().references]);
 
-  // console.log("-- existing reference --");
-  // console.log(existingReference);
-
   return (
     <>
       {isOpenPopover || existingReference ? (
@@ -67,12 +73,12 @@ export const ReferenceTrigger = <T extends FieldValues>({
           value={existingReference}
           size="xs"
           readOnly
-          autoFocus={selectedRefOption === name}
+          autoFocus={currentName === name}
           onClick={() => referencePopoverTrigger(name)}
           classNames={{
             input: classes.reference,
           }}
-          disabled={isOpenPopover && selectedRefOption !== name}
+          disabled={isOpenPopover && currentName !== name}
         />
       ) : (
         <Button

@@ -1,6 +1,10 @@
 import { Button, Popover, Select, TextInput } from "@mantine/core";
 import React from "react";
-import { TYPES_OF_REFERENCES } from "../../../../../../model/common/Source";
+import {
+  Source,
+  SourceType,
+  TYPES_OF_REFERENCES,
+} from "../../../../../../model/common/Source";
 import {
   ButtonRow,
   ReferenceCard,
@@ -9,7 +13,12 @@ import {
   TitleContainer,
   useStyles,
 } from "./styles";
-import { IconArrowLeft, IconCirclePlus, IconEdit } from "@tabler/icons";
+import {
+  IconArrowLeft,
+  IconCirclePlus,
+  IconEdit,
+  IconIdOff,
+} from "@tabler/icons";
 import { CareerType } from "../../../../../../model/career/Career";
 import { useFieldArray, useFormContext, useForm, Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -17,43 +26,69 @@ import {
   Reference,
   ReferenceType,
 } from "../../../../../../model/common/Reference";
+import { Form } from "../../../../../../components/Form";
 
 interface ReferencePopupProps {
   setIsOpenPopover: (arg: boolean) => void;
+
+  /** set main career form to be able to edit */
   setEditMode: (arg: boolean) => void;
-  selectedRef?: Path<CareerType>;
+
+  /** Field name required to populate reference object */
+  currentName?: Path<CareerType>;
+
+  /** Content required to populate reference object */
   content: string;
 }
 
 export const ReferencePopup = ({
   setIsOpenPopover,
   setEditMode,
-  selectedRef,
+  currentName,
   content,
 }: ReferencePopupProps) => {
   const { classes } = useStyles();
 
-  const [mode, setMode] = React.useState<"edit" | "read">("edit");
-  const [showCommentsInput, setShowCommentsInput] = React.useState(false);
-
   const careerFormMethod = useFormContext<CareerType>();
-
-  // const selectedReference = React.useMemo(() => {
-
-  // }, [])
 
   const referenceFormMethod = useForm<ReferenceType>({
     resolver: zodResolver(Reference),
     mode: "onChange",
     defaultValues: {
       content: content,
-      field: selectedRef,
+      field: currentName,
       sources: [],
     },
   });
 
-  // console.log(content);
-  // console.log(referenceFormMethod.getValues());
+  const existingReference = React.useMemo(() => {
+    return careerFormMethod
+      .getValues()
+      .references.filter(
+        (ref) => ref.field === currentName && ref.content === content,
+      )[0];
+  }, [careerFormMethod.getValues().references]);
+
+  console.log("--existingReference--");
+  console.log(existingReference);
+
+  const [popupMode, setPopupMode] = React.useState<"edit" | "read">(
+    existingReference ? "read" : "edit",
+  );
+
+  const [currentSourceId, setCurrentSourceId] = React.useState<number>();
+
+  const [showCommentsInput, setShowCommentsInput] = React.useState(false);
+
+  const sourceFormMethod = useForm<SourceType>({
+    resolver: zodResolver(Source),
+    mode: "onChange",
+    defaultValues: {
+      comment: "",
+      dateObtained: "",
+      referenceType: TYPES_OF_REFERENCES.FACEBOOK,
+    },
+  });
 
   const referenceArrayMethods = useFieldArray<CareerType>({
     control: careerFormMethod.control,
@@ -65,43 +100,92 @@ export const ReferencePopup = ({
     name: "sources",
   });
 
-  const saveReferencesAndReturn = referenceFormMethod.handleSubmit(
-    async (data) => {
-      setIsOpenPopover(false);
-      setEditMode(true);
-    },
-  );
+  const submitReferences = () => {
+    if (currentSourceId !== undefined) {
+      sourceArrayMethods.update(currentSourceId, sourceFormMethod.getValues());
+    } else {
+      sourceArrayMethods.append(sourceFormMethod.getValues());
+    }
+
+    if (existingReference) {
+      const id = careerFormMethod
+        .getValues()
+        .references.indexOf(existingReference);
+      referenceArrayMethods.update(id, referenceFormMethod.getValues());
+    } else {
+      referenceArrayMethods.append(referenceFormMethod.getValues());
+    }
+    sourceFormMethod.reset();
+    setPopupMode("read");
+    setCurrentSourceId(undefined);
+  };
+
+  const editSource = (id: number) => {
+    setCurrentSourceId(id);
+    const source = existingReference.sources[id];
+    setPopupMode("edit");
+    sourceFormMethod.setValue("referenceType", source.referenceType);
+    sourceFormMethod.setValue("comment", source.comment);
+    sourceFormMethod.setValue("dateObtained", source.dateObtained);
+  };
+
+  const deleteSource = (id: number) => {
+    sourceArrayMethods.remove(id);
+    const referenceId = careerFormMethod
+      .getValues()
+      .references.indexOf(existingReference);
+    referenceArrayMethods.update(referenceId, referenceFormMethod.getValues());
+
+    if (referenceFormMethod.getValues().sources.length === 0) {
+      setPopupMode("edit");
+    }
+  };
+
+  const handleClosePanel = () => {
+    setEditMode(true);
+    setIsOpenPopover(false);
+  };
+
+  console.log("-- currentSourceId --");
+  console.log(currentSourceId);
 
   return (
     <Popover.Dropdown p={30}>
       <TitleContainer>
         <Title>References</Title>
-        {/* <IconCirclePlus
-          size={20}
-          style={{ cursor: "pointer" }}
-          onClick={() => setMode("edit")}
-        /> */}
+        {referenceFormMethod.getValues().sources.length > 0 && (
+          <IconCirclePlus
+            size={20}
+            style={{ cursor: "pointer" }}
+            onClick={() => setPopupMode("edit")}
+            className={classes.addIconBtn}
+          />
+        )}
       </TitleContainer>
 
-      {mode === "edit" ? (
-        <>
-          <Select
+      {popupMode === "edit" ? (
+        <Form methods={sourceFormMethod}>
+          <Form.Dropdown
+            control={sourceFormMethod.control}
             name={"referenceType"}
             mt={20}
             mb={20}
             label={"Select source"}
             data={Object.values(TYPES_OF_REFERENCES)}
-            onChange={(value) =>
-              sourceArrayMethods.append({
-                comment: "",
-                dateObtained: "",
-                referenceType: value as TYPES_OF_REFERENCES,
-              })
-            }
           />
-          <TextInput name={"dateObtained"} mb={20} label={"Date Obtained"} />
+          <Form.TextInput
+            control={sourceFormMethod.control}
+            name={"dateObtained"}
+            mb={20}
+            label={"Date Obtained"}
+          />
           {showCommentsInput ? (
-            <TextInput name={"comment"} mb={20} label={"Comments"} />
+            <Form.TextInput
+              control={sourceFormMethod.control}
+              name={"comment"}
+              mb={20}
+              label={"Comments"}
+            />
           ) : (
             <Button
               leftIcon={<IconCirclePlus />}
@@ -112,19 +196,26 @@ export const ReferencePopup = ({
               Comment
             </Button>
           )}
-        </>
+        </Form>
       ) : (
         <div>
-          {referenceFormMethod.getValues().sources.map((item) => (
-            <ReferenceCard>
+          {existingReference.sources.map((item, id) => (
+            <ReferenceCard key={"refCard" + id}>
               <div>{item.referenceType}</div>
               <ReferenceCardRow>
                 <div>{item.dateObtained}</div>
-                <IconEdit
-                  size={20}
-                  style={{ cursor: "pointer" }}
-                  onClick={() => setMode("edit")}
-                />
+                <div>
+                  <IconEdit
+                    size={20}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => editSource(id)}
+                  />
+                  <IconIdOff
+                    size={20}
+                    style={{ cursor: "pointer" }}
+                    onClick={() => deleteSource(id)}
+                  />
+                </div>
               </ReferenceCardRow>
               <div>{item.comment}</div>
             </ReferenceCard>
@@ -133,8 +224,13 @@ export const ReferencePopup = ({
       )}
 
       <ButtonRow>
-        {mode === "edit" && (
-          <Button size={"xs"} variant="subtle" onClick={() => setMode("read")}>
+        {popupMode === "edit" && (
+          <Button
+            size={"xs"}
+            variant="subtle"
+            onClick={() => setPopupMode("read")}
+            disabled={referenceFormMethod.getValues().sources.length === 0}
+          >
             Cancel
           </Button>
         )}
@@ -144,6 +240,8 @@ export const ReferencePopup = ({
           }}
           size={"xs"}
           variant="outline"
+          onClick={submitReferences}
+          disabled={popupMode === "read"}
         >
           Apply
         </Button>
@@ -154,11 +252,11 @@ export const ReferencePopup = ({
           root: classes.returnBtn,
         }}
         mt={50}
-        onClick={saveReferencesAndReturn}
+        onClick={handleClosePanel}
         variant={"subtle"}
         leftIcon={<IconArrowLeft />}
       >
-        Save references and return
+        Confirm and close panel
       </Button>
     </Popover.Dropdown>
   );

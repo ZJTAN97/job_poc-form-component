@@ -23,7 +23,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
 
   const [editMode, setEditMode] = React.useState(true);
   const [isOpenPopover, setIsOpenPopover] = React.useState(false);
-  const [selectedRefOption, setSelectedRefOption] =
+  const [currentName, setCurrentName] =
     React.useState<Path<CareerType>>("company");
 
   const careerFormMethods = useForm<CareerType>({
@@ -51,6 +51,12 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     // setDrawer(false);
   });
 
+  // console.log("--current selected name--");
+  // console.log(currentName);
+
+  console.log("--careerForm--");
+  console.log(careerFormMethods.getValues());
+
   return (
     <Form
       methods={careerFormMethods}
@@ -73,15 +79,15 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
       >
         <ReferencePopup
           key={
-            selectedRefOption +
+            currentName +
             careerFormMethods
               .getValues()
-              [selectedRefOption as keyof CareerType].toString()
+              [currentName as keyof CareerType].toString()
           }
           content={careerFormMethods
             .getValues()
-            [selectedRefOption as keyof CareerType].toString()}
-          selectedRef={selectedRefOption}
+            [currentName as keyof CareerType].toString()}
+          currentName={currentName}
           setIsOpenPopover={setIsOpenPopover}
           setEditMode={setEditMode}
         />
@@ -102,8 +108,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 isOpenPopover={isOpenPopover}
                 name={"company"}
                 content={careerFormMethods.getValues().company}
-                selectedRefOption={selectedRefOption}
-                setSelectedRefOption={setSelectedRefOption}
+                currentName={currentName}
+                setCurrentName={setCurrentName}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={!dirtyFields.company}
@@ -124,8 +130,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 isOpenPopover={isOpenPopover}
                 name={"duration"}
                 content={careerFormMethods.getValues().duration}
-                selectedRefOption={selectedRefOption}
-                setSelectedRefOption={setSelectedRefOption}
+                currentName={currentName}
+                setCurrentName={setCurrentName}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={!dirtyFields.duration}
@@ -146,8 +152,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 isOpenPopover={isOpenPopover}
                 name={"lastDrawnSalary"}
                 content={careerFormMethods.getValues().lastDrawnSalary}
-                selectedRefOption={selectedRefOption}
-                setSelectedRefOption={setSelectedRefOption}
+                currentName={currentName}
+                setCurrentName={setCurrentName}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={
@@ -171,8 +177,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 isOpenPopover={isOpenPopover}
                 name={"appointment.position"}
                 content={careerFormMethods.getValues().appointment.position}
-                selectedRefOption={selectedRefOption}
-                setSelectedRefOption={setSelectedRefOption}
+                currentName={currentName}
+                setCurrentName={setCurrentName}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={
@@ -195,8 +201,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 isOpenPopover={isOpenPopover}
                 name={"appointment.rank"}
                 content={careerFormMethods.getValues().appointment.rank}
-                selectedRefOption={selectedRefOption}
-                setSelectedRefOption={setSelectedRefOption}
+                currentName={currentName}
+                setCurrentName={setCurrentName}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={
@@ -215,8 +221,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                     isOpenPopover={isOpenPopover}
                     name={"skills"}
                     content={careerFormMethods.getValues().skills[id] || ""}
-                    selectedRefOption={"skills"}
-                    setSelectedRefOption={setSelectedRefOption}
+                    currentName={"skills"}
+                    setCurrentName={setCurrentName}
                     setIsOpenPopover={setIsOpenPopover}
                     setEditMode={setEditMode}
                   />

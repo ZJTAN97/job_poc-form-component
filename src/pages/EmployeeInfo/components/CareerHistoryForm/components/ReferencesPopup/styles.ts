@@ -10,6 +10,9 @@ export const useStyles = createStyles(() => ({
   applyBtn: {
     backgroundColor: "white",
   },
+  addIconBtn: {
+    marginTop: "3px",
+  },
 }));
 
 export const TitleContainer = styled("div")(({ theme }) => ({

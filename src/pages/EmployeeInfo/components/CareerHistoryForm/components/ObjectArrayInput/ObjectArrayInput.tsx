@@ -1,13 +1,11 @@
 import { Button, TextInput } from "@mantine/core";
 import { IconCirclePlus, IconX } from "@tabler/icons";
 import React from "react";
-import { CareerType } from "../../../../../../model/career/Career";
 import {
   useFormContext,
   useController,
   Path,
   FieldValues,
-  useFieldArray,
   PathValue,
 } from "react-hook-form";
 import {

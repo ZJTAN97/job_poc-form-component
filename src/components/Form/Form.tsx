@@ -8,8 +8,8 @@ import { TextInput } from "./components/TextInput";
 
 interface FormProps {
   methods: UseFormReturn<any>;
-  useLocalStorage: boolean;
-  preventLeaving: boolean;
+  useLocalStorage?: boolean;
+  preventLeaving?: boolean;
   children: React.ReactNode;
 }
 
@@ -39,7 +39,6 @@ export const Form = ({
   );
 
   React.useEffect(() => {
-    console.log("[INFO] Side effect triggered");
     window.addEventListener("beforeunload", beforeUnload);
     return () => {
       window.removeEventListener("beforeunload", beforeUnload);
