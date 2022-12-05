@@ -229,7 +229,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                   <ReferenceTrigger<CareerType>
                     isOpenPopover={isOpenPopover}
                     name={"skills"}
-                    content={careerFormMethods.getValues().skills[id] || ""}
+                    content={careerFormMethods.getValues().skills[id]}
                     currentName={"skills"}
                     setCurrentName={setCurrentName}
                     currentContent={currentContent}

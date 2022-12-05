@@ -39,6 +39,10 @@ interface ReferencePopupProps {
 
   /** Content required to populate reference object */
   currentContent: string;
+
+  // references: ReferenceType;
+
+  // setReferences: (arg: ReferenceType) => void;
 }
 
 export const ReferencePopup = ({
