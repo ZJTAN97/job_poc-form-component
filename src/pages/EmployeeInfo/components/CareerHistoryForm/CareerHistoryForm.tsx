@@ -26,6 +26,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   const [currentName, setCurrentName] =
     React.useState<Path<CareerType>>("company");
 
+  const [currentContent, setCurrentContent] = React.useState("");
+
   const careerFormMethods = useForm<CareerType>({
     resolver: zodResolver(Career),
     mode: "onChange",
@@ -53,10 +55,10 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
 
   // console.log("--current selected name--");
   // console.log(currentName);
-
+  // console.log("-- current content --");
+  // console.log(currentContent);
   console.log("--careerForm--");
   console.log(careerFormMethods.getValues());
-
   return (
     <Form
       methods={careerFormMethods}
@@ -80,14 +82,11 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
         <ReferencePopup
           key={
             currentName +
-            careerFormMethods
-              .getValues()
-              [currentName as keyof CareerType].toString()
+            currentContent +
+            careerFormMethods.getValues().toString()
           }
-          content={careerFormMethods
-            .getValues()
-            [currentName as keyof CareerType].toString()}
           currentName={currentName}
+          currentContent={currentContent}
           setIsOpenPopover={setIsOpenPopover}
           setEditMode={setEditMode}
         />
@@ -110,6 +109,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 content={careerFormMethods.getValues().company}
                 currentName={currentName}
                 setCurrentName={setCurrentName}
+                currentContent={currentContent}
+                setCurrentContent={setCurrentContent}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={!dirtyFields.company}
@@ -132,6 +133,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 content={careerFormMethods.getValues().duration}
                 currentName={currentName}
                 setCurrentName={setCurrentName}
+                currentContent={currentContent}
+                setCurrentContent={setCurrentContent}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={!dirtyFields.duration}
@@ -154,6 +157,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 content={careerFormMethods.getValues().lastDrawnSalary}
                 currentName={currentName}
                 setCurrentName={setCurrentName}
+                currentContent={currentContent}
+                setCurrentContent={setCurrentContent}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={
@@ -179,6 +184,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 content={careerFormMethods.getValues().appointment.position}
                 currentName={currentName}
                 setCurrentName={setCurrentName}
+                currentContent={currentContent}
+                setCurrentContent={setCurrentContent}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={
@@ -203,6 +210,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 content={careerFormMethods.getValues().appointment.rank}
                 currentName={currentName}
                 setCurrentName={setCurrentName}
+                currentContent={currentContent}
+                setCurrentContent={setCurrentContent}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={
@@ -223,6 +232,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                     content={careerFormMethods.getValues().skills[id] || ""}
                     currentName={"skills"}
                     setCurrentName={setCurrentName}
+                    currentContent={currentContent}
+                    setCurrentContent={setCurrentContent}
                     setIsOpenPopover={setIsOpenPopover}
                     setEditMode={setEditMode}
                   />

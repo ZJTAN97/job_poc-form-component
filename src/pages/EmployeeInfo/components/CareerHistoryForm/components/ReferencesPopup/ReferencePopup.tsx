@@ -35,17 +35,17 @@ interface ReferencePopupProps {
   setEditMode: (arg: boolean) => void;
 
   /** Field name required to populate reference object */
-  currentName?: Path<CareerType>;
+  currentName: Path<CareerType>;
 
   /** Content required to populate reference object */
-  content: string;
+  currentContent: string;
 }
 
 export const ReferencePopup = ({
   setIsOpenPopover,
   setEditMode,
   currentName,
-  content,
+  currentContent,
 }: ReferencePopupProps) => {
   const { classes } = useStyles();
 
@@ -55,8 +55,8 @@ export const ReferencePopup = ({
     resolver: zodResolver(Reference),
     mode: "onChange",
     defaultValues: {
-      content: content,
       field: currentName,
+      content: currentContent,
       sources: [],
     },
   });
@@ -65,18 +65,13 @@ export const ReferencePopup = ({
     return careerFormMethod
       .getValues()
       .references.filter(
-        (ref) => ref.field === currentName && ref.content === content,
+        (ref) => ref.field === currentName && ref.content === currentContent,
       )[0];
   }, [careerFormMethod.getValues().references]);
-
-  console.log("--existingReference--");
-  console.log(existingReference);
 
   const [popupMode, setPopupMode] = React.useState<"edit" | "read">(
     existingReference ? "read" : "edit",
   );
-
-  const [currentSourceId, setCurrentSourceId] = React.useState<number>();
 
   const [showCommentsInput, setShowCommentsInput] = React.useState(false);
 
@@ -101,11 +96,7 @@ export const ReferencePopup = ({
   });
 
   const submitReferences = () => {
-    if (currentSourceId !== undefined) {
-      sourceArrayMethods.update(currentSourceId, sourceFormMethod.getValues());
-    } else {
-      sourceArrayMethods.append(sourceFormMethod.getValues());
-    }
+    sourceArrayMethods.append(sourceFormMethod.getValues());
 
     if (existingReference) {
       const id = careerFormMethod
@@ -117,16 +108,10 @@ export const ReferencePopup = ({
     }
     sourceFormMethod.reset();
     setPopupMode("read");
-    setCurrentSourceId(undefined);
   };
 
   const editSource = (id: number) => {
-    setCurrentSourceId(id);
-    const source = existingReference.sources[id];
-    setPopupMode("edit");
-    sourceFormMethod.setValue("referenceType", source.referenceType);
-    sourceFormMethod.setValue("comment", source.comment);
-    sourceFormMethod.setValue("dateObtained", source.dateObtained);
+    console.log("-- to be implemented --");
   };
 
   const deleteSource = (id: number) => {
@@ -145,9 +130,6 @@ export const ReferencePopup = ({
     setEditMode(true);
     setIsOpenPopover(false);
   };
-
-  console.log("-- currentSourceId --");
-  console.log(currentSourceId);
 
   return (
     <Popover.Dropdown p={30}>

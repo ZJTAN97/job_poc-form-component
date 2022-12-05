@@ -7,16 +7,21 @@ import { IconCirclePlus } from "@tabler/icons";
 interface ReferenceTriggerProps<T extends FieldValues> {
   isOpenPopover: boolean;
 
-  /** Field Name required to filter which references to show */
+  /** Field Name required to filter which references to show for this component instance */
   name: Path<T>;
 
-  /** Content required to filter which references to show */
+  /** Content required to filter which references to show for this component instance */
   content: string;
 
-  /** Currently selected field to show references */
-  currentName?: Path<T>;
+  /** Currently selected field to show references on the popup component */
+  currentName: Path<T>;
 
+  /** Set selected field to show references on the popup component */
   setCurrentName: (arg: Path<T>) => void;
+
+  currentContent: string;
+
+  setCurrentContent: (arg: string) => void;
 
   setIsOpenPopover: (arg: boolean) => void;
 
@@ -31,6 +36,8 @@ export const ReferenceTrigger = <T extends FieldValues>({
   content,
   currentName,
   setCurrentName,
+  currentContent,
+  setCurrentContent,
   setIsOpenPopover,
   setEditMode,
   disabled,
@@ -39,8 +46,9 @@ export const ReferenceTrigger = <T extends FieldValues>({
 
   const formMethod = useFormContext<T>();
 
-  const referencePopoverTrigger = (currentName: Path<T>) => {
-    setCurrentName(currentName);
+  const referencePopoverTrigger = (name: Path<T>, content: string) => {
+    setCurrentName(name);
+    setCurrentContent(content);
     setIsOpenPopover(true);
     setEditMode(false);
   };
@@ -62,6 +70,7 @@ export const ReferenceTrigger = <T extends FieldValues>({
         } more`;
       }
     }
+    return "";
   }, [formMethod.getValues().references]);
 
   return (
@@ -73,19 +82,21 @@ export const ReferenceTrigger = <T extends FieldValues>({
           value={existingReference}
           size="xs"
           readOnly
-          autoFocus={currentName === name}
-          onClick={() => referencePopoverTrigger(name)}
+          autoFocus={currentName === name && currentContent === content}
+          onClick={() => referencePopoverTrigger(name, content)}
           classNames={{
             input: classes.reference,
           }}
-          disabled={isOpenPopover && currentName !== name}
+          disabled={
+            isOpenPopover && currentName !== name && currentContent !== content
+          }
         />
       ) : (
         <Button
           leftIcon={<IconCirclePlus />}
           variant={"white"}
           mt={24}
-          onClick={() => referencePopoverTrigger(name)}
+          onClick={() => referencePopoverTrigger(name, content)}
           disabled={disabled}
         >
           References
