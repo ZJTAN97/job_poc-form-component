@@ -8,7 +8,6 @@ import {
   FieldValues,
   PathValue,
 } from "react-hook-form";
-import { CertificationType } from "../../../../../../model/career/Certification";
 import {
   ArrayContainer,
   ArrayRow,
@@ -18,17 +17,23 @@ import {
 } from "./styles";
 
 interface ObjectArrayInputProps<T extends FieldValues, K extends FieldValues> {
+  /** Available naming paths for Form Object */
   name: Path<T>;
-  objectKeys: (keyof K)[];
+
   editMode: boolean;
-  emptyObject: CertificationType;
+
+  /** To set empty objects when adding input fields on UI */
+  emptyObject: K;
+
+  /** Reference Trigger components to be tagged to each individual input field */
+  referenceTrigger: (id: number, name: Path<T> | Path<K>) => React.ReactNode;
 }
 
 export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
   name,
-  objectKeys,
   editMode,
   emptyObject,
+  referenceTrigger,
 }: ObjectArrayInputProps<T, K>) => {
   const { classes } = useStyles();
 
@@ -95,6 +100,7 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
                 field.onChange(current);
               }}
             />
+            {referenceTrigger(id, "name" as Path<K>)}
           </ArrayRow>
           <ArrayRow>
             <TextInput
@@ -107,6 +113,7 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
                 field.onChange(current);
               }}
             />
+            {referenceTrigger(id, "issuedBy" as Path<K>)}
           </ArrayRow>
         </ObjectArrayRow>
       ))}

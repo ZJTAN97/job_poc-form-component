@@ -11,13 +11,13 @@ import { ArrayContainer, ArrayRow, ErrorLabel, useStyles } from "./styles";
 interface StringArrayInputProps<T extends FieldValues> {
   name: Path<T>;
   editMode: boolean;
-  rightSection: (index: number) => React.ReactNode;
+  referenceTrigger: (index: number) => React.ReactNode;
 }
 
 export const StringArrayInput = <T extends FieldValues>({
   name,
   editMode,
-  rightSection,
+  referenceTrigger,
 }: StringArrayInputProps<T>) => {
   const { classes } = useStyles();
   const { control, formState } = useFormContext<T>();
@@ -69,7 +69,7 @@ export const StringArrayInput = <T extends FieldValues>({
               )
             }
           />
-          {rightSection(id)}
+          {referenceTrigger(id)}
         </ArrayRow>
       ))}
     </ArrayContainer>

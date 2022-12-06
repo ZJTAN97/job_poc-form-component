@@ -12,6 +12,7 @@ import { StringArrayInput } from "./components/StringArrayInput";
 import { ObjectArrayInput } from "./components/ObjectArrayInput";
 import { CertificationType } from "../../../../model/career/Certification";
 import { SourceType } from "../../../../model/common/Source";
+import { AppointmentType } from "../../../../model/career/Appointment";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -24,8 +25,9 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
 
   const [editMode, setEditMode] = React.useState(true);
   const [isOpenPopover, setIsOpenPopover] = React.useState(false);
-  const [currentName, setCurrentName] =
-    React.useState<Path<CareerType>>("company");
+  const [currentName, setCurrentName] = React.useState<
+    Path<CareerType> | Path<AppointmentType> | Path<CertificationType>
+  >("company");
   const [currentContent, setCurrentContent] = React.useState("");
 
   const [lastSource, setLastSource] = React.useState<SourceType>();
@@ -53,7 +55,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   const submitFormHandler = careerFormMethods.handleSubmit(async (data) => {
     console.info("[SUCCESS]", data);
     saveOrCreateCareer(data);
-    // setDrawer(false);
+    setDrawer(false);
   });
 
   console.log("--careerForm--");
@@ -167,7 +169,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               />
               <ReferenceTrigger
                 isOpenPopover={isOpenPopover}
-                name={"appointment.position"}
+                name={"position"}
                 content={careerFormMethods.getValues().appointment.position}
                 currentName={currentName}
                 setCurrentName={setCurrentName}
@@ -193,7 +195,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               />
               <ReferenceTrigger
                 isOpenPopover={isOpenPopover}
-                name={"appointment.rank"}
+                name={"rank"}
                 content={careerFormMethods.getValues().appointment.rank}
                 currentName={currentName}
                 setCurrentName={setCurrentName}
@@ -212,7 +214,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               <StringArrayInput<CareerType>
                 name="skills"
                 editMode={editMode}
-                rightSection={(id) => (
+                referenceTrigger={(id) => (
                   <ReferenceTrigger
                     isOpenPopover={isOpenPopover}
                     name={"skills"}
@@ -235,13 +237,29 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             <Row>
               <ObjectArrayInput<CareerType, CertificationType>
                 name="certs"
-                objectKeys={["name", "issuedBy"]}
                 editMode={editMode}
                 emptyObject={{
                   name: "",
                   issuedBy: "",
                   references: [],
                 }}
+                referenceTrigger={(id, name) => (
+                  <ReferenceTrigger
+                    isOpenPopover={isOpenPopover}
+                    name={name}
+                    content={
+                      name === "issuedBy"
+                        ? careerFormMethods.getValues().certs[id].issuedBy
+                        : careerFormMethods.getValues().certs[id].name
+                    }
+                    currentName={currentName}
+                    setCurrentName={setCurrentName}
+                    currentContent={currentContent}
+                    setCurrentContent={setCurrentContent}
+                    setIsOpenPopover={setIsOpenPopover}
+                    setEditMode={setEditMode}
+                  />
+                )}
               />
             </Row>
 

@@ -27,6 +27,8 @@ import {
   ReferenceType,
 } from "../../../../../../model/common/Reference";
 import { Form } from "../../../../../../components/Form";
+import { CertificationType } from "../../../../../../model/career/Certification";
+import { AppointmentType } from "../../../../../../model/career/Appointment";
 
 interface ReferencePopupProps {
   setIsOpenPopover: (arg: boolean) => void;
@@ -35,7 +37,10 @@ interface ReferencePopupProps {
   setEditMode: (arg: boolean) => void;
 
   /** Field name required to populate reference object */
-  currentName: Path<CareerType>;
+  currentName:
+    | Path<CareerType>
+    | Path<AppointmentType>
+    | Path<CertificationType>;
 
   /** Content required to populate reference object */
   currentContent: string;
@@ -61,16 +66,11 @@ export const ReferencePopup = ({
 
   const [showCommentsInput, setShowCommentsInput] = React.useState(false);
 
-  const field =
-    currentName.split(".").length === 2
-      ? currentName.split(".")[1]
-      : currentName;
-
   const referenceFormMethod = useForm<ReferenceType>({
     resolver: zodResolver(Reference),
     mode: "onChange",
     defaultValues: {
-      field: field,
+      field: currentName,
       content: currentContent,
       sources: [],
     },
@@ -80,9 +80,13 @@ export const ReferencePopup = ({
     const allReferences = [
       ...careerFormMethod.getValues().references,
       ...careerFormMethod.getValues().appointment.references,
+      ...careerFormMethod
+        .getValues()
+        .certs.map((cert) => cert.references)
+        .flat(),
     ];
     return allReferences.filter(
-      (ref) => ref.field === field && ref.content === currentContent,
+      (ref) => ref.field === currentName && ref.content === currentContent,
     )[0];
   }, [careerFormMethod.getValues()]);
 
@@ -95,7 +99,7 @@ export const ReferencePopup = ({
     mode: "onChange",
     defaultValues: {
       comment: "",
-      dateObtained: "2022-11-11T12:19:54.52",
+      dateObtained: "",
       referenceType: undefined,
     },
   });
@@ -103,7 +107,8 @@ export const ReferencePopup = ({
   const referenceArrayMethods = useFieldArray<CareerType>({
     control: careerFormMethod.control,
     name:
-      currentName.split(".").length === 2
+      // TODO
+      currentName === "rank" || currentName === "position"
         ? "appointment.references"
         : "references",
   });
@@ -116,28 +121,46 @@ export const ReferencePopup = ({
   const submitReferences = () => {
     sourceArrayMethods.append(sourceFormMethod.getValues());
 
-    const isNonRootReference = currentName.split(".").length === 2;
+    const isAppointmentReference =
+      currentName === "rank" || currentName === "position";
 
-    if (isNonRootReference) {
-      // Handling Object Type
+    const isCertReference =
+      currentName === "issuedBy" || currentName === "name";
+
+    if (isAppointmentReference) {
+      // Handling Object Type (Appointment)
       if (existingReference) {
-        console.log("-- handling object type (update) --");
+        // update
         const id = careerFormMethod
           .getValues()
           .appointment.references.indexOf(existingReference);
         referenceArrayMethods.update(id, referenceFormMethod.getValues());
       } else {
-        console.log("-- handling object type (append) --");
+        // append
+        referenceArrayMethods.append(referenceFormMethod.getValues());
+      }
+    } else if (isCertReference) {
+      // Handling Object Type (Certifications)
+      if (existingReference) {
+        // update
+        const id = careerFormMethod
+          .getValues()
+          .certs[0].references.indexOf(existingReference); // TODO
+        referenceArrayMethods.update(id, referenceFormMethod.getValues());
+      } else {
+        // append
         referenceArrayMethods.append(referenceFormMethod.getValues());
       }
     } else {
       // Handling Non Object Type
       if (existingReference) {
+        // update
         const id = careerFormMethod
           .getValues()
           .references.indexOf(existingReference);
         referenceArrayMethods.update(id, referenceFormMethod.getValues());
       } else {
+        // append
         referenceArrayMethods.append(referenceFormMethod.getValues());
       }
     }

@@ -5,21 +5,28 @@ import { useStyles } from "./styles";
 import { IconCirclePlus } from "@tabler/icons";
 import { CareerType } from "../../../../../../model/career/Career";
 import { ReferenceType } from "../../../../../../model/common/Reference";
+import { CertificationType } from "../../../../../../model/career/Certification";
+import { AppointmentType } from "../../../../../../model/career/Appointment";
 
 interface ReferenceTriggerProps {
   isOpenPopover: boolean;
 
   /** Field Name required to filter which references to show for this component instance */
-  name: Path<CareerType>;
+  name: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
 
   /** Content required to filter which references to show for this component instance */
   content: string;
 
   /** Currently selected field to show references on the popup component */
-  currentName: Path<CareerType>;
+  currentName:
+    | Path<CareerType>
+    | Path<AppointmentType>
+    | Path<CertificationType>;
 
   /** Set selected field to show references on the popup component */
-  setCurrentName: (arg: Path<CareerType>) => void;
+  setCurrentName: (
+    arg: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>,
+  ) => void;
 
   /** Currently selected content to show references on the popup component */
   currentContent: string;
@@ -52,7 +59,10 @@ export const ReferenceTrigger = ({
 
   const field = name.split(".").length === 2 ? name.split(".")[1] : name;
 
-  const referencePopoverTrigger = (name: Path<CareerType>, content: string) => {
+  const referencePopoverTrigger = (
+    name: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>,
+    content: string,
+  ) => {
     setCurrentName(name);
     setCurrentContent(content);
     setIsOpenPopover(true);
@@ -63,6 +73,10 @@ export const ReferenceTrigger = ({
     const allReferences = [
       ...careerFormMethod.getValues().references,
       ...careerFormMethod.getValues().appointment.references,
+      ...careerFormMethod
+        .getValues()
+        .certs.map((cert) => cert.references)
+        .flat(),
     ];
 
     const filteredReference: ReferenceType[] = allReferences.filter(
