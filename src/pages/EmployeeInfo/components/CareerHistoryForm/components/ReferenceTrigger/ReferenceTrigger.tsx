@@ -28,8 +28,6 @@ interface ReferenceTriggerProps<T extends FieldValues> {
   setEditMode: (arg: boolean) => void;
 
   disabled?: boolean;
-
-  // references: ReferenceType;
 }
 
 export const ReferenceTrigger = <T extends FieldValues>({

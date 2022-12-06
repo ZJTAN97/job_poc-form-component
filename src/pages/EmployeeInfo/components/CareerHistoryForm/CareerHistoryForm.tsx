@@ -36,6 +36,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
       appointment: {
         position: "",
         rank: "",
+        references: [],
       },
       skills: [],
       references: [],
@@ -53,10 +54,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     // setDrawer(false);
   });
 
-  // console.log("--current selected name--");
-  // console.log(currentName);
-  // console.log("-- current content --");
-  // console.log(currentContent);
   console.log("--careerForm--");
   console.log(careerFormMethods.getValues());
   return (
@@ -250,7 +247,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               />
             </Row>
 
-            <Button mt={20} onClick={submitFormHandler}>
+            <Button mt={20} onClick={submitFormHandler} disabled={!editMode}>
               Add Career
             </Button>
           </MainContainer>
