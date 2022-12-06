@@ -39,6 +39,12 @@ interface ReferencePopupProps {
 
   /** Content required to populate reference object */
   currentContent: string;
+
+  /** Last applied source */
+  lastSource?: SourceType;
+
+  /** Set last applied source */
+  setLastSource: (arg: SourceType) => void;
 }
 
 export const ReferencePopup = ({
@@ -46,10 +52,14 @@ export const ReferencePopup = ({
   setEditMode,
   currentName,
   currentContent,
+  lastSource,
+  setLastSource,
 }: ReferencePopupProps) => {
   const { classes } = useStyles();
 
   const careerFormMethod = useFormContext<CareerType>();
+
+  const [showCommentsInput, setShowCommentsInput] = React.useState(false);
 
   const field =
     currentName.split(".").length === 2
@@ -79,8 +89,6 @@ export const ReferencePopup = ({
   const [popupMode, setPopupMode] = React.useState<"edit" | "read">(
     existingReference ? "read" : "edit",
   );
-
-  const [showCommentsInput, setShowCommentsInput] = React.useState(false);
 
   const sourceFormMethod = useForm<SourceType>({
     resolver: zodResolver(Source),
@@ -134,6 +142,8 @@ export const ReferencePopup = ({
       }
     }
 
+    setLastSource(sourceFormMethod.getValues());
+
     sourceFormMethod.reset();
     setPopupMode("read");
   };
@@ -159,6 +169,18 @@ export const ReferencePopup = ({
     setIsOpenPopover(false);
   };
 
+  const applyLast = () => {
+    if (lastSource) {
+      sourceFormMethod.setValue("referenceType", lastSource.referenceType);
+      sourceFormMethod.setValue("dateObtained", lastSource.dateObtained);
+      if (lastSource.comment.length > 0) {
+        setShowCommentsInput(true);
+        sourceFormMethod.setValue("comment", lastSource.comment);
+      }
+      console.log("[INFO ] Applied last filled references");
+    }
+  };
+
   return (
     <Popover.Dropdown p={30}>
       <TitleContainer>
@@ -175,6 +197,9 @@ export const ReferencePopup = ({
 
       {popupMode === "edit" ? (
         <Form methods={sourceFormMethod}>
+          <Button size="xs" variant="subtle" p={0} mt={10} onClick={applyLast}>
+            Apply last source
+          </Button>
           <Form.Dropdown
             control={sourceFormMethod.control}
             name={"referenceType"}

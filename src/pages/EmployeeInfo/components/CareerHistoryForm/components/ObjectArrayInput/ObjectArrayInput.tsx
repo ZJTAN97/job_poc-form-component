@@ -8,6 +8,7 @@ import {
   FieldValues,
   PathValue,
 } from "react-hook-form";
+import { CertificationType } from "../../../../../../model/career/Certification";
 import {
   ArrayContainer,
   ArrayRow,
@@ -20,11 +21,14 @@ interface ObjectArrayInputProps<T extends FieldValues, K extends FieldValues> {
   name: Path<T>;
   objectKeys: (keyof K)[];
   editMode: boolean;
+  emptyObject: CertificationType;
 }
 
 export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
   name,
+  objectKeys,
   editMode,
+  emptyObject,
 }: ObjectArrayInputProps<T, K>) => {
   const { classes } = useStyles();
 
@@ -45,15 +49,7 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
           rightIcon={<IconCirclePlus />}
           variant="subtle"
           size="lg"
-          onClick={() =>
-            field.onChange([
-              ...field.value,
-              {
-                name: "",
-                issuedBy: "",
-              },
-            ])
-          }
+          onClick={() => field.onChange([...field.value, emptyObject])}
           color={"black"}
           disabled={!editMode}
         >
@@ -64,7 +60,7 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
         <ErrorLabel>Requires at least one certification</ErrorLabel>
       )}
       {field.value.map((item: PathValue<T, Path<T>>, id: number) => (
-        <ObjectArrayRow key={"cert" + id}>
+        <ObjectArrayRow key={"object_array_" + id}>
           <Button
             disabled={!editMode}
             onClick={() => {

@@ -11,6 +11,7 @@ import { ReferenceTrigger } from "./components/ReferenceTrigger";
 import { StringArrayInput } from "./components/StringArrayInput";
 import { ObjectArrayInput } from "./components/ObjectArrayInput";
 import { CertificationType } from "../../../../model/career/Certification";
+import { SourceType } from "../../../../model/common/Source";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -25,8 +26,9 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   const [isOpenPopover, setIsOpenPopover] = React.useState(false);
   const [currentName, setCurrentName] =
     React.useState<Path<CareerType>>("company");
-
   const [currentContent, setCurrentContent] = React.useState("");
+
+  const [lastSource, setLastSource] = React.useState<SourceType>();
 
   const careerFormMethods = useForm<CareerType>({
     resolver: zodResolver(Career),
@@ -86,10 +88,12 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
           currentContent={currentContent}
           setIsOpenPopover={setIsOpenPopover}
           setEditMode={setEditMode}
+          lastSource={lastSource}
+          setLastSource={setLastSource}
         />
         <Popover.Target>
           <MainContainer>
-            {/* Company Name */}
+            {/* COMPANY */}
             <Row>
               <Form.TextInput
                 control={careerFormMethods.control}
@@ -114,7 +118,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               />
             </Row>
 
-            {/* Duration */}
+            {/* DURATION */}
             <Row>
               <Form.TextInput
                 control={careerFormMethods.control}
@@ -138,7 +142,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               />
             </Row>
 
-            {/* Last Drawn Salary */}
+            {/* LAST DRAWN SALARY*/}
             <Row>
               <Form.TextInput
                 control={careerFormMethods.control}
@@ -227,12 +231,17 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               />
             </Row>
 
-            {/* Certs  */}
+            {/* CERTS  */}
             <Row>
               <ObjectArrayInput<CareerType, CertificationType>
                 name="certs"
                 objectKeys={["name", "issuedBy"]}
                 editMode={editMode}
+                emptyObject={{
+                  name: "",
+                  issuedBy: "",
+                  references: [],
+                }}
               />
             </Row>
 

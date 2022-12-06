@@ -34,7 +34,7 @@ export const Row = styled("div")(({}) => ({
   display: "flex",
   margin: "30px 0",
   gap: "10px",
-  padding: "0px",
+  padding: "15px 0",
 }));
 
 export const AddRefButton = styled("button")(({ theme }) => ({
