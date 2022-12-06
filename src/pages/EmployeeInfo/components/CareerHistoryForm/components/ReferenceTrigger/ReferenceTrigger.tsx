@@ -1,26 +1,30 @@
 import React from "react";
-import { FieldValues, Path, useFormContext } from "react-hook-form";
+import { Path, useFormContext } from "react-hook-form";
 import { Button, Textarea } from "@mantine/core";
 import { useStyles } from "./styles";
 import { IconCirclePlus } from "@tabler/icons";
+import { CareerType } from "../../../../../../model/career/Career";
+import { ReferenceType } from "../../../../../../model/common/Reference";
 
-interface ReferenceTriggerProps<T extends FieldValues> {
+interface ReferenceTriggerProps {
   isOpenPopover: boolean;
 
   /** Field Name required to filter which references to show for this component instance */
-  name: Path<T>;
+  name: Path<CareerType>;
 
   /** Content required to filter which references to show for this component instance */
   content: string;
 
   /** Currently selected field to show references on the popup component */
-  currentName: Path<T>;
+  currentName: Path<CareerType>;
 
   /** Set selected field to show references on the popup component */
-  setCurrentName: (arg: Path<T>) => void;
+  setCurrentName: (arg: Path<CareerType>) => void;
 
+  /** Currently selected content to show references on the popup component */
   currentContent: string;
 
+  /** Set selected content to show references on the popup component */
   setCurrentContent: (arg: string) => void;
 
   setIsOpenPopover: (arg: boolean) => void;
@@ -30,7 +34,7 @@ interface ReferenceTriggerProps<T extends FieldValues> {
   disabled?: boolean;
 }
 
-export const ReferenceTrigger = <T extends FieldValues>({
+export const ReferenceTrigger = ({
   isOpenPopover,
   name,
   content,
@@ -41,12 +45,14 @@ export const ReferenceTrigger = <T extends FieldValues>({
   setIsOpenPopover,
   setEditMode,
   disabled,
-}: ReferenceTriggerProps<T>) => {
+}: ReferenceTriggerProps) => {
   const { classes } = useStyles();
 
-  const formMethod = useFormContext<T>();
+  const careerFormMethod = useFormContext<CareerType>();
 
-  const referencePopoverTrigger = (name: Path<T>, content: string) => {
+  const field = name.split(".").length === 2 ? name.split(".")[1] : name;
+
+  const referencePopoverTrigger = (name: Path<CareerType>, content: string) => {
     setCurrentName(name);
     setCurrentContent(content);
     setIsOpenPopover(true);
@@ -54,11 +60,14 @@ export const ReferenceTrigger = <T extends FieldValues>({
   };
 
   const existingReference = React.useMemo(() => {
-    const filteredReference = formMethod
-      .getValues()
-      .references.filter(
-        (ref: T) => ref.field === name && ref.content === content,
-      );
+    const allReferences = [
+      ...careerFormMethod.getValues().references,
+      ...careerFormMethod.getValues().appointment.references,
+    ];
+
+    const filteredReference: ReferenceType[] = allReferences.filter(
+      (ref) => ref.field === field && ref.content === content,
+    );
     if (filteredReference.length > 0) {
       const numOfSource = filteredReference[0].sources.length;
       const source = filteredReference[0].sources[0];
@@ -71,7 +80,7 @@ export const ReferenceTrigger = <T extends FieldValues>({
       }
     }
     return "";
-  }, [formMethod.getValues().references]);
+  }, [careerFormMethod.getValues()]);
 
   return (
     <>

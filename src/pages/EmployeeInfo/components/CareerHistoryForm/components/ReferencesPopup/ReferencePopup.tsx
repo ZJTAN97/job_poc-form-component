@@ -51,23 +51,30 @@ export const ReferencePopup = ({
 
   const careerFormMethod = useFormContext<CareerType>();
 
+  const field =
+    currentName.split(".").length === 2
+      ? currentName.split(".")[1]
+      : currentName;
+
   const referenceFormMethod = useForm<ReferenceType>({
     resolver: zodResolver(Reference),
     mode: "onChange",
     defaultValues: {
-      field: currentName,
+      field: field,
       content: currentContent,
       sources: [],
     },
   });
 
   const existingReference = React.useMemo(() => {
-    return careerFormMethod
-      .getValues()
-      .references.filter(
-        (ref) => ref.field === currentName && ref.content === currentContent,
-      )[0];
-  }, [careerFormMethod.getValues().references]);
+    const allReferences = [
+      ...careerFormMethod.getValues().references,
+      ...careerFormMethod.getValues().appointment.references,
+    ];
+    return allReferences.filter(
+      (ref) => ref.field === field && ref.content === currentContent,
+    )[0];
+  }, [careerFormMethod.getValues()]);
 
   const [popupMode, setPopupMode] = React.useState<"edit" | "read">(
     existingReference ? "read" : "edit",
@@ -80,14 +87,17 @@ export const ReferencePopup = ({
     mode: "onChange",
     defaultValues: {
       comment: "",
-      dateObtained: "",
-      referenceType: TYPES_OF_REFERENCES.FACEBOOK,
+      dateObtained: "2022-11-11T12:19:54.52",
+      referenceType: undefined,
     },
   });
 
   const referenceArrayMethods = useFieldArray<CareerType>({
     control: careerFormMethod.control,
-    name: "references",
+    name:
+      currentName.split(".").length === 2
+        ? "appointment.references"
+        : "references",
   });
 
   const sourceArrayMethods = useFieldArray<ReferenceType>({
@@ -98,14 +108,32 @@ export const ReferencePopup = ({
   const submitReferences = () => {
     sourceArrayMethods.append(sourceFormMethod.getValues());
 
-    if (existingReference) {
-      const id = careerFormMethod
-        .getValues()
-        .references.indexOf(existingReference);
-      referenceArrayMethods.update(id, referenceFormMethod.getValues());
+    const isNonRootReference = currentName.split(".").length === 2;
+
+    if (isNonRootReference) {
+      // Handling Object Type
+      if (existingReference) {
+        console.log("-- handling object type (update) --");
+        const id = careerFormMethod
+          .getValues()
+          .appointment.references.indexOf(existingReference);
+        referenceArrayMethods.update(id, referenceFormMethod.getValues());
+      } else {
+        console.log("-- handling object type (append) --");
+        referenceArrayMethods.append(referenceFormMethod.getValues());
+      }
     } else {
-      referenceArrayMethods.append(referenceFormMethod.getValues());
+      // Handling Non Object Type
+      if (existingReference) {
+        const id = careerFormMethod
+          .getValues()
+          .references.indexOf(existingReference);
+        referenceArrayMethods.update(id, referenceFormMethod.getValues());
+      } else {
+        referenceArrayMethods.append(referenceFormMethod.getValues());
+      }
     }
+
     sourceFormMethod.reset();
     setPopupMode("read");
   };

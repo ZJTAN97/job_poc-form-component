@@ -50,7 +50,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
 
   const submitFormHandler = careerFormMethods.handleSubmit(async (data) => {
     console.info("[SUCCESS]", data);
-    // saveOrCreateCareer(data);
+    saveOrCreateCareer(data);
     // setDrawer(false);
   });
 
@@ -100,7 +100,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 className={classes.formTextInput}
                 required
               />
-              <ReferenceTrigger<CareerType>
+              <ReferenceTrigger
                 isOpenPopover={isOpenPopover}
                 name={"company"}
                 content={careerFormMethods.getValues().company}
@@ -124,7 +124,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 variant={editMode ? "default" : "unstyled"}
                 className={classes.formTextInput}
               />
-              <ReferenceTrigger<CareerType>
+              <ReferenceTrigger
                 isOpenPopover={isOpenPopover}
                 name={"duration"}
                 content={careerFormMethods.getValues().duration}
@@ -148,20 +148,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 variant={editMode ? "default" : "unstyled"}
                 className={classes.formTextInput}
               />
-              <ReferenceTrigger<CareerType>
-                isOpenPopover={isOpenPopover}
-                name={"lastDrawnSalary"}
-                content={careerFormMethods.getValues().lastDrawnSalary}
-                currentName={currentName}
-                setCurrentName={setCurrentName}
-                currentContent={currentContent}
-                setCurrentContent={setCurrentContent}
-                setIsOpenPopover={setIsOpenPopover}
-                setEditMode={setEditMode}
-                disabled={
-                  careerFormMethods.getValues().lastDrawnSalary.length < 1
-                }
-              />
             </Row>
 
             {/* APPOINTMENT (POSITION, RANK) */}
@@ -175,7 +161,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 className={classes.formTextInput}
                 required
               />
-              <ReferenceTrigger<CareerType>
+              <ReferenceTrigger
                 isOpenPopover={isOpenPopover}
                 name={"appointment.position"}
                 content={careerFormMethods.getValues().appointment.position}
@@ -201,7 +187,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 className={classes.formTextInput}
                 required={true}
               />
-              <ReferenceTrigger<CareerType>
+              <ReferenceTrigger
                 isOpenPopover={isOpenPopover}
                 name={"appointment.rank"}
                 content={careerFormMethods.getValues().appointment.rank}
@@ -223,16 +209,19 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 name="skills"
                 editMode={editMode}
                 rightSection={(id) => (
-                  <ReferenceTrigger<CareerType>
+                  <ReferenceTrigger
                     isOpenPopover={isOpenPopover}
                     name={"skills"}
                     content={careerFormMethods.getValues().skills[id]}
-                    currentName={"skills"}
+                    currentName={currentName}
                     setCurrentName={setCurrentName}
                     currentContent={currentContent}
                     setCurrentContent={setCurrentContent}
                     setIsOpenPopover={setIsOpenPopover}
                     setEditMode={setEditMode}
+                    disabled={
+                      careerFormMethods.getValues().skills[id].length < 1
+                    }
                   />
                 )}
               />
