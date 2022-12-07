@@ -76,7 +76,7 @@ export const ReferencePopup = ({
     },
   });
 
-  const existingReference = React.useMemo(() => {
+  const existingReference: ReferenceType = React.useMemo(() => {
     const allReferences = [
       ...careerFormMethod.getValues().references,
       ...careerFormMethod.getValues().appointment.references,
@@ -99,7 +99,7 @@ export const ReferencePopup = ({
     mode: "onChange",
     defaultValues: {
       comment: "",
-      dateObtained: "",
+      dateObtained: "2022-11-11T12:19:54.52",
       referenceType: undefined,
     },
   });
@@ -107,9 +107,10 @@ export const ReferencePopup = ({
   const referenceArrayMethods = useFieldArray<CareerType>({
     control: careerFormMethod.control,
     name:
-      // TODO
       currentName === "rank" || currentName === "position"
         ? "appointment.references"
+        : currentName === "issuedBy" || currentName === "name"
+        ? "certs"
         : "references",
   });
 
@@ -141,15 +142,35 @@ export const ReferencePopup = ({
       }
     } else if (isCertReference) {
       // Handling Object Type (Certifications)
+      // retrieve id of the cert object first; but how?
+      // how to differentiate between append and update for cert types
+
+      const tempHardCodeId = 0;
+
+      const objSelected = careerFormMethod.getValues().certs[tempHardCodeId];
+
       if (existingReference) {
         // update
-        const id = careerFormMethod
-          .getValues()
-          .certs[0].references.indexOf(existingReference); // TODO
-        referenceArrayMethods.update(id, referenceFormMethod.getValues());
+        const certObjReferenceId =
+          objSelected.references.indexOf(existingReference);
+
+        let copy = objSelected.references;
+
+        copy[certObjReferenceId] = referenceFormMethod.getValues();
+
+        referenceArrayMethods.update(tempHardCodeId, {
+          ...objSelected,
+          references: copy,
+        });
       } else {
         // append
-        referenceArrayMethods.append(referenceFormMethod.getValues());
+        referenceArrayMethods.update(tempHardCodeId, {
+          ...objSelected,
+          references: [
+            ...objSelected.references,
+            referenceFormMethod.getValues(),
+          ],
+        });
       }
     } else {
       // Handling Non Object Type

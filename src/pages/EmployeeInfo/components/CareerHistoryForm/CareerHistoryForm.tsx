@@ -60,6 +60,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
 
   console.log("--careerForm--");
   console.log(careerFormMethods.getValues());
+
   return (
     <Form
       methods={careerFormMethods}
