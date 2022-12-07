@@ -23,6 +23,9 @@ interface ReferenceTriggerProps {
     | Path<AppointmentType>
     | Path<CertificationType>;
 
+  /** if its array of obj, id will be provided to track */
+  objArrId?: number;
+
   /** Set selected field to show references on the popup component */
   setCurrentName: (
     arg: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>,
@@ -33,6 +36,9 @@ interface ReferenceTriggerProps {
 
   /** Set selected content to show references on the popup component */
   setCurrentContent: (arg: string) => void;
+
+  /** Set selected obj id if its array of objects */
+  setCurrentArrayObjId?: (arg: number) => void;
 
   setIsOpenPopover: (arg: boolean) => void;
 
@@ -52,6 +58,8 @@ export const ReferenceTrigger = ({
   setIsOpenPopover,
   setEditMode,
   disabled,
+  setCurrentArrayObjId,
+  objArrId,
 }: ReferenceTriggerProps) => {
   const { classes } = useStyles();
 
@@ -65,6 +73,7 @@ export const ReferenceTrigger = ({
   ) => {
     setCurrentName(name);
     setCurrentContent(content);
+    if (setCurrentArrayObjId && objArrId) setCurrentArrayObjId(objArrId);
     setIsOpenPopover(true);
     setEditMode(false);
   };

@@ -29,6 +29,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     Path<CareerType> | Path<AppointmentType> | Path<CertificationType>
   >("company");
   const [currentContent, setCurrentContent] = React.useState("");
+  const [currentArrayObjId, setCurrentArrayObjId] = React.useState(0);
 
   const [lastSource, setLastSource] = React.useState<SourceType>();
 
@@ -93,6 +94,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
           setEditMode={setEditMode}
           lastSource={lastSource}
           setLastSource={setLastSource}
+          currentArrayObjId={currentArrayObjId}
         />
         <Popover.Target>
           <MainContainer>
@@ -259,6 +261,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                     setCurrentContent={setCurrentContent}
                     setIsOpenPopover={setIsOpenPopover}
                     setEditMode={setEditMode}
+                    setCurrentArrayObjId={setCurrentArrayObjId}
+                    objArrId={id}
                   />
                 )}
               />

@@ -53,7 +53,10 @@ export const EmployeeInfo = () => {
               </Text>
             )}
             {allCareers.map((career, id) => (
-              <tr key={career.toString() + id}>
+              <tr
+                key={career.toString() + id}
+                onClick={() => console.log(career.id)}
+              >
                 <td>{career.company}</td>
                 <td>
                   {career.appointment.position} | {career.appointment.rank}

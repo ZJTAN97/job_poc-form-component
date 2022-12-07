@@ -1,6 +1,8 @@
 import { CareerType } from "../model/career/Career";
 
-export async function getAllCareers(): Promise<CareerType[]> {
+export async function getAllCareers(): Promise<
+  (CareerType & { id: string })[]
+> {
   const response = await fetch("http://localhost:8080/api/v1/career", {
     method: "get",
   });

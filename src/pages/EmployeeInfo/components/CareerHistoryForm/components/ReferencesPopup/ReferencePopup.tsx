@@ -50,6 +50,8 @@ interface ReferencePopupProps {
 
   /** Set last applied source */
   setLastSource: (arg: SourceType) => void;
+
+  currentArrayObjId: number;
 }
 
 export const ReferencePopup = ({
@@ -59,6 +61,7 @@ export const ReferencePopup = ({
   currentContent,
   lastSource,
   setLastSource,
+  currentArrayObjId,
 }: ReferencePopupProps) => {
   const { classes } = useStyles();
 
@@ -142,29 +145,24 @@ export const ReferencePopup = ({
       }
     } else if (isCertReference) {
       // Handling Object Type (Certifications)
-      // retrieve id of the cert object first; but how?
-      // how to differentiate between append and update for cert types
-
-      const tempHardCodeId = 0;
-
-      const objSelected = careerFormMethod.getValues().certs[tempHardCodeId];
-
+      const objSelected = careerFormMethod.getValues().certs[currentArrayObjId];
       if (existingReference) {
         // update
         const certObjReferenceId =
           objSelected.references.indexOf(existingReference);
 
-        let copy = objSelected.references;
+        let existingReferencesForCert = objSelected.references;
 
-        copy[certObjReferenceId] = referenceFormMethod.getValues();
+        existingReferencesForCert[certObjReferenceId] =
+          referenceFormMethod.getValues();
 
-        referenceArrayMethods.update(tempHardCodeId, {
+        referenceArrayMethods.update(currentArrayObjId, {
           ...objSelected,
-          references: copy,
+          references: existingReferencesForCert,
         });
       } else {
         // append
-        referenceArrayMethods.update(tempHardCodeId, {
+        referenceArrayMethods.update(currentArrayObjId, {
           ...objSelected,
           references: [
             ...objSelected.references,
