@@ -42,14 +42,14 @@ export const CareerHistoryContent = ({
         (ref) => ref.field === name && ref.content === content,
       )[0].sources;
 
-      const firstSource = `${sources[0].referenceType} | ${sources[0].comment} | ${sources[0].dateObtained}`;
+      const firstSource = `${sources[0].referenceType}  | ${sources[0].dateObtained} | ${sources[0].comment}`;
 
       return (
         firstSource +
         (sources.length > 1 ? "+ " + (sources.length - 1) + " more" : "")
       );
     }
-    return "none";
+    return "";
   };
 
   return (
@@ -121,7 +121,7 @@ export const CareerHistoryContent = ({
           <FieldBlock>
             <ContentLabel>Certifications</ContentLabel>
             {career.certsToField.map((cert, id) => (
-              <div key={"cert_source_" + id} style={{ marginTop: "15px" }}>
+              <div key={"cert_source_" + id} style={{ marginBottom: "15px" }}>
                 <ContentBlock>
                   <ContentInfo>Name: {cert.name}</ContentInfo>
                   <ReferenceBlock>

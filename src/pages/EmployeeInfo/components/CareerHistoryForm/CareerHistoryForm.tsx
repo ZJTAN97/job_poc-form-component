@@ -72,15 +72,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
         opened={isOpenPopover}
         position="right"
         closeOnClickOutside={false}
-        width={320}
-        styles={{
-          dropdown: {
-            height: "-webkit-fill-available",
-            border: "none",
-            borderLeft: "solid 1px #dfdfdf",
-            minHeight: "95vh",
-          },
-        }}
+        classNames={{ dropdown: classes.dropdown }}
+        width={350}
       >
         <ReferencePopup
           key={

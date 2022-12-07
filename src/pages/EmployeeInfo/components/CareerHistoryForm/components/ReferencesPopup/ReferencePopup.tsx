@@ -51,6 +51,7 @@ interface ReferencePopupProps {
   /** Set last applied source */
   setLastSource: (arg: SourceType) => void;
 
+  /** for handling array of objects */
   currentArrayObjId: number;
 }
 
@@ -67,17 +68,10 @@ export const ReferencePopup = ({
 
   const careerFormMethod = useFormContext<CareerType>();
 
-  const [showCommentsInput, setShowCommentsInput] = React.useState(false);
+  // const { company, appointment, certsToField, duration, skills } =
+  //   careerFormMethod.getValues();
 
-  const referenceFormMethod = useForm<ReferenceType>({
-    resolver: zodResolver(Reference),
-    mode: "onChange",
-    defaultValues: {
-      field: currentName,
-      content: currentContent,
-      sources: [],
-    },
-  });
+  const [showCommentsInput, setShowCommentsInput] = React.useState(false);
 
   const existingReference: ReferenceType = React.useMemo(() => {
     const allReferences = [
@@ -92,6 +86,33 @@ export const ReferencePopup = ({
       (ref) => ref.field === currentName && ref.content === currentContent,
     )[0];
   }, [careerFormMethod.getValues()]);
+
+  // const content =
+  //   currentName === "company"
+  //     ? company
+  //     : currentName === "duration"
+  //     ? duration
+  //     : currentName === "position"
+  //     ? appointment.position
+  //     : currentName === "rank"
+  //     ? appointment.rank
+  //     : currentName === "name" && currentArrayObjId
+  //     ? certsToField[currentArrayObjId].name
+  //     : currentName === "issuedBy" && currentArrayObjId
+  //     ? certsToField[currentArrayObjId].issuedBy
+  //     : currentName === "skills"
+  //     ? skills[currentArrayObjId]
+  //     : "";
+
+  const referenceFormMethod = useForm<ReferenceType>({
+    resolver: zodResolver(Reference),
+    mode: "onChange",
+    defaultValues: {
+      field: currentName,
+      content: currentContent,
+      sources: existingReference ? existingReference.sources : [],
+    },
+  });
 
   const [popupMode, setPopupMode] = React.useState<"edit" | "read">(
     existingReference ? "read" : "edit",
@@ -172,7 +193,7 @@ export const ReferencePopup = ({
         });
       }
     } else {
-      // Handling Non Object Type
+      // Handling String & String Array Type
       if (existingReference) {
         // update
         const id = careerFormMethod
@@ -186,7 +207,6 @@ export const ReferencePopup = ({
     }
 
     setLastSource(sourceFormMethod.getValues());
-
     sourceFormMethod.reset();
     setPopupMode("read");
   };
@@ -228,7 +248,7 @@ export const ReferencePopup = ({
     <Popover.Dropdown p={30}>
       <TitleContainer>
         <Title>References</Title>
-        {referenceFormMethod.getValues().sources.length > 0 && (
+        {existingReference?.sources && existingReference.sources.length > 0 && (
           <IconCirclePlus
             size={20}
             style={{ cursor: "pointer" }}
@@ -240,9 +260,17 @@ export const ReferencePopup = ({
 
       {popupMode === "edit" ? (
         <Form methods={sourceFormMethod}>
-          <Button size="xs" variant="subtle" p={0} mt={10} onClick={applyLast}>
-            Apply last source
-          </Button>
+          {lastSource && (
+            <Button
+              size="xs"
+              variant="subtle"
+              p={0}
+              mt={10}
+              onClick={applyLast}
+            >
+              Apply last source
+            </Button>
+          )}
           <Form.Dropdown
             control={sourceFormMethod.control}
             name={"referenceType"}

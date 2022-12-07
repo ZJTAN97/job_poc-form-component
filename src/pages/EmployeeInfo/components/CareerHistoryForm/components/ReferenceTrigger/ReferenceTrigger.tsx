@@ -109,12 +109,13 @@ export const ReferenceTrigger = ({
     <>
       {isOpenPopover || existingReference ? (
         <Textarea
+          w={190}
           ml={10}
           label={"References"}
           value={existingReference}
           size="xs"
           readOnly
-          autoFocus={currentName === name && currentContent === content}
+          autoFocus={true}
           onClick={() => referencePopoverTrigger(name, content)}
           classNames={{
             input: classes.reference,

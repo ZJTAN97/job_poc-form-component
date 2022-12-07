@@ -16,6 +16,12 @@ export const useStyles = createStyles((theme) => ({
     padding: "0",
     overflow: "hidden",
   },
+  dropdown: {
+    height: "-webkit-fill-available",
+    border: "none",
+    borderLeft: "solid 1px #dfdfdf",
+    minHeight: "95vh",
+  },
 }));
 
 export const MainContainer = styled("div")(({}) => ({
