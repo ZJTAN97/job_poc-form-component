@@ -2,29 +2,53 @@ import { Button, Drawer, Loader, Table, Text } from "@mantine/core";
 import React from "react";
 import { Base } from "../../components/Base";
 import { useQueryCareerData } from "../../react-query/career";
+import { CareerHistoryContent } from "./components/CareerHistoryContent";
 import { CareerHistoryForm } from "./components/CareerHistoryForm";
 import { useStyles } from "./styles";
 
 export const EmployeeInfo = () => {
   const { classes } = useStyles();
-  const [openOption, setOpenOption] = React.useState(false);
+  const [openCreate, setOpenCreate] = React.useState(false);
+  const [selectedTableRowId, setSelectedTableRowId] = React.useState("");
+  const [openInfo, setOpenInfo] = React.useState(false);
 
   const { allCareers, isLoadingCareers, errorCareers } = useQueryCareerData();
 
+  const openSelectedInfo = (id: string) => {
+    setOpenInfo(false);
+    setSelectedTableRowId(id);
+    setOpenInfo(true);
+  };
+
   return (
     <Base>
-      <Button onClick={() => setOpenOption(true)} className={classes.btn}>
-        Click to add Career Record
-      </Button>
       <Drawer
         withOverlay={false}
         position="right"
-        opened={openOption}
-        onClose={() => setOpenOption(false)}
+        opened={openCreate}
+        onClose={() => setOpenCreate(false)}
         className={classes.drawer}
       >
-        <CareerHistoryForm setDrawer={setOpenOption} />
+        <CareerHistoryForm setDrawer={setOpenCreate} />
       </Drawer>
+      <Drawer
+        withOverlay={false}
+        position="right"
+        opened={openInfo}
+        onClose={() => setOpenInfo(false)}
+        className={classes.drawerContent}
+      >
+        <CareerHistoryContent currentId={selectedTableRowId} />
+      </Drawer>
+
+      <Button
+        onClick={() => setOpenCreate(true)}
+        className={classes.btn}
+        disabled={openInfo}
+      >
+        Click to add Career Record
+      </Button>
+
       {errorCareers ? (
         <div>Please check your server is on.</div>
       ) : !isLoadingCareers && allCareers ? (
@@ -54,8 +78,9 @@ export const EmployeeInfo = () => {
             )}
             {allCareers.map((career, id) => (
               <tr
+                className={classes.tableRow}
                 key={career.toString() + id}
-                onClick={() => console.log(career.id)}
+                onClick={() => openSelectedInfo(career.id)}
               >
                 <td>{career.company}</td>
                 <td>
@@ -68,7 +93,11 @@ export const EmployeeInfo = () => {
                     <div key={skill}>{skill}</div>
                   ))}
                 </td>
-                <td>TBA</td>
+                <td>
+                  {career.certsToField.map((cert, id) => (
+                    <div key={"cert_tr_" + id}>{cert.name}</div>
+                  ))}
+                </td>
               </tr>
             ))}
           </tbody>

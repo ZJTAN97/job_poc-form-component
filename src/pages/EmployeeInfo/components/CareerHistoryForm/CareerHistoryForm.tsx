@@ -45,7 +45,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
       },
       skills: [],
       references: [],
-      certs: [],
+      certsToField: [],
       lastDrawnSalary: "",
       duration: "",
     },
@@ -239,7 +239,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             {/* CERTS  */}
             <Row>
               <ObjectArrayInput<CareerType, CertificationType>
-                name="certs"
+                name="certsToField"
                 editMode={editMode}
                 emptyObject={{
                   name: "",
@@ -252,8 +252,9 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                     name={name}
                     content={
                       name === "issuedBy"
-                        ? careerFormMethods.getValues().certs[id].issuedBy
-                        : careerFormMethods.getValues().certs[id].name
+                        ? careerFormMethods.getValues().certsToField[id]
+                            .issuedBy
+                        : careerFormMethods.getValues().certsToField[id].name
                     }
                     currentName={currentName}
                     setCurrentName={setCurrentName}

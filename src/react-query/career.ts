@@ -1,5 +1,5 @@
 import { useQuery, useMutation } from "react-query";
-import { getAllCareers, postNewCareer } from "../api/career";
+import { getCareerById, getCareers, postNewCareer } from "../api/career";
 import { queryClient } from "../App";
 import { CareerType } from "../model/career/Career";
 
@@ -8,11 +8,24 @@ export function useQueryCareerData() {
     data: allCareers,
     isLoading: isLoadingCareers,
     error: errorCareers,
-  } = useQuery(["career"], () => getAllCareers());
+  } = useQuery(["career"], () => getCareers());
   return {
     allCareers,
     isLoadingCareers,
     errorCareers,
+  };
+}
+
+export function useQuerySelectedCareerData(id: string) {
+  const {
+    data: career,
+    isLoading: isLoadingCareer,
+    error: errorCareer,
+  } = useQuery(["career", id], () => getCareerById(id));
+  return {
+    career,
+    isLoadingCareer,
+    errorCareer,
   };
 }
 

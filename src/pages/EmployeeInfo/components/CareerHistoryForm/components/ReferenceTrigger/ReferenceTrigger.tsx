@@ -84,7 +84,7 @@ export const ReferenceTrigger = ({
       ...careerFormMethod.getValues().appointment.references,
       ...careerFormMethod
         .getValues()
-        .certs.map((cert) => cert.references)
+        .certsToField.map((cert) => cert.references)
         .flat(),
     ];
 

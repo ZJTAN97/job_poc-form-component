@@ -85,7 +85,7 @@ export const ReferencePopup = ({
       ...careerFormMethod.getValues().appointment.references,
       ...careerFormMethod
         .getValues()
-        .certs.map((cert) => cert.references)
+        .certsToField.map((cert) => cert.references)
         .flat(),
     ];
     return allReferences.filter(
@@ -113,7 +113,7 @@ export const ReferencePopup = ({
       currentName === "rank" || currentName === "position"
         ? "appointment.references"
         : currentName === "issuedBy" || currentName === "name"
-        ? "certs"
+        ? "certsToField"
         : "references",
   });
 
@@ -145,7 +145,8 @@ export const ReferencePopup = ({
       }
     } else if (isCertReference) {
       // Handling Object Type (Certifications)
-      const objSelected = careerFormMethod.getValues().certs[currentArrayObjId];
+      const objSelected =
+        careerFormMethod.getValues().certsToField[currentArrayObjId];
       if (existingReference) {
         // update
         const certObjReferenceId =
