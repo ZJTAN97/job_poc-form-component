@@ -40,14 +40,18 @@ export const CareerHistoryContent = ({
 
       const sources = allReferences.filter(
         (ref) => ref.field === name && ref.content === content,
-      )[0].sources;
+      )[0]?.sources;
 
-      const firstSource = `${sources[0].referenceType}  | ${sources[0].dateObtained} | ${sources[0].comment}`;
+      if (sources) {
+        const firstSource = `${
+          sources[0].referenceType
+        }  | ${sources[0].dateObtained.slice(0, 10)} | ${sources[0].comment}`;
 
-      return (
-        firstSource +
-        (sources.length > 1 ? "+ " + (sources.length - 1) + " more" : "")
-      );
+        return (
+          firstSource +
+          (sources.length > 1 ? "+ " + (sources.length - 1) + " more" : "")
+        );
+      }
     }
     return "";
   };

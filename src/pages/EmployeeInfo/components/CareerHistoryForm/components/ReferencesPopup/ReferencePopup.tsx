@@ -42,9 +42,6 @@ interface ReferencePopupProps {
     | Path<AppointmentType>
     | Path<CertificationType>;
 
-  /** Content required to populate reference object */
-  currentContent: string;
-
   /** Last applied source */
   lastSource?: SourceType;
 
@@ -52,64 +49,58 @@ interface ReferencePopupProps {
   setLastSource: (arg: SourceType) => void;
 
   /** for handling array of objects */
-  currentArrayObjId: number;
+  currentArrayId: number; // TODO: rename this to be just array
 }
 
 export const ReferencePopup = ({
   setIsOpenPopover,
   setEditMode,
   currentName,
-  currentContent,
   lastSource,
   setLastSource,
-  currentArrayObjId,
+  currentArrayId,
 }: ReferencePopupProps) => {
   const { classes } = useStyles();
 
   const careerFormMethod = useFormContext<CareerType>();
 
-  // const { company, appointment, certsToField, duration, skills } =
-  //   careerFormMethod.getValues();
-
   const [showCommentsInput, setShowCommentsInput] = React.useState(false);
 
-  const existingReference: ReferenceType = React.useMemo(() => {
-    const allReferences = [
-      ...careerFormMethod.getValues().references,
-      ...careerFormMethod.getValues().appointment.references,
-      ...careerFormMethod
-        .getValues()
-        .certsToField.map((cert) => cert.references)
-        .flat(),
-    ];
-    return allReferences.filter(
-      (ref) => ref.field === currentName && ref.content === currentContent,
-    )[0];
-  }, [careerFormMethod.getValues()]);
+  const { company, appointment, certsToField, duration, skills } =
+    careerFormMethod.getValues();
 
-  // const content =
-  //   currentName === "company"
-  //     ? company
-  //     : currentName === "duration"
-  //     ? duration
-  //     : currentName === "position"
-  //     ? appointment.position
-  //     : currentName === "rank"
-  //     ? appointment.rank
-  //     : currentName === "name" && currentArrayObjId
-  //     ? certsToField[currentArrayObjId].name
-  //     : currentName === "issuedBy" && currentArrayObjId
-  //     ? certsToField[currentArrayObjId].issuedBy
-  //     : currentName === "skills"
-  //     ? skills[currentArrayObjId]
-  //     : "";
+  const content =
+    currentName === "company"
+      ? company
+      : currentName === "duration"
+      ? duration
+      : currentName === "position"
+      ? appointment.position
+      : currentName === "rank"
+      ? appointment.rank
+      : currentName === "name" && certsToField[currentArrayId]
+      ? certsToField[currentArrayId].name
+      : currentName === "issuedBy" && certsToField[currentArrayId]
+      ? certsToField[currentArrayId].issuedBy
+      : currentName === "skills"
+      ? skills[currentArrayId]
+      : "";
+
+  const existingReference = [
+    ...careerFormMethod.getValues().references,
+    ...careerFormMethod.getValues().appointment.references,
+    ...careerFormMethod
+      .getValues()
+      .certsToField.map((cert) => cert.references)
+      .flat(),
+  ].filter((ref) => ref.field === currentName && ref.content === content)[0];
 
   const referenceFormMethod = useForm<ReferenceType>({
     resolver: zodResolver(Reference),
     mode: "onChange",
     defaultValues: {
       field: currentName,
-      content: currentContent,
+      content: content,
       sources: existingReference ? existingReference.sources : [],
     },
   });
@@ -146,6 +137,8 @@ export const ReferencePopup = ({
   const submitReferences = () => {
     sourceArrayMethods.append(sourceFormMethod.getValues());
 
+    referenceFormMethod.setValue("content", content);
+
     const isAppointmentReference =
       currentName === "rank" || currentName === "position";
 
@@ -167,7 +160,7 @@ export const ReferencePopup = ({
     } else if (isCertReference) {
       // Handling Object Type (Certifications)
       const objSelected =
-        careerFormMethod.getValues().certsToField[currentArrayObjId];
+        careerFormMethod.getValues().certsToField[currentArrayId];
       if (existingReference) {
         // update
         const certObjReferenceId =
@@ -178,13 +171,13 @@ export const ReferencePopup = ({
         existingReferencesForCert[certObjReferenceId] =
           referenceFormMethod.getValues();
 
-        referenceArrayMethods.update(currentArrayObjId, {
+        referenceArrayMethods.update(currentArrayId, {
           ...objSelected,
           references: existingReferencesForCert,
         });
       } else {
         // append
-        referenceArrayMethods.update(currentArrayObjId, {
+        referenceArrayMethods.update(currentArrayId, {
           ...objSelected,
           references: [
             ...objSelected.references,
@@ -194,6 +187,7 @@ export const ReferencePopup = ({
       }
     } else {
       // Handling String & String Array Type
+      // POTENTIAL BUG
       if (existingReference) {
         // update
         const id = careerFormMethod

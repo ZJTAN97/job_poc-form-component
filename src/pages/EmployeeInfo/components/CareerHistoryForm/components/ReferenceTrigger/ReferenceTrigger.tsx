@@ -31,14 +31,8 @@ interface ReferenceTriggerProps {
     arg: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>,
   ) => void;
 
-  /** Currently selected content to show references on the popup component */
-  currentContent: string;
-
-  /** Set selected content to show references on the popup component */
-  setCurrentContent: (arg: string) => void;
-
-  /** Set selected obj id if its array of objects */
-  setCurrentArrayObjId?: (arg: number) => void;
+  /** Set selected item id if it is array */
+  setCurrentArrayId?: (arg: number) => void;
 
   setIsOpenPopover: (arg: boolean) => void;
 
@@ -53,12 +47,10 @@ export const ReferenceTrigger = ({
   content,
   currentName,
   setCurrentName,
-  currentContent,
-  setCurrentContent,
   setIsOpenPopover,
   setEditMode,
   disabled,
-  setCurrentArrayObjId,
+  setCurrentArrayId,
   objArrId,
 }: ReferenceTriggerProps) => {
   const { classes } = useStyles();
@@ -69,16 +61,15 @@ export const ReferenceTrigger = ({
 
   const referencePopoverTrigger = (
     name: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>,
-    content: string,
   ) => {
     setCurrentName(name);
-    setCurrentContent(content);
-    if (setCurrentArrayObjId && objArrId) setCurrentArrayObjId(objArrId);
+    if (setCurrentArrayId && objArrId !== undefined)
+      setCurrentArrayId(objArrId);
     setIsOpenPopover(true);
     setEditMode(false);
   };
 
-  const existingReference = React.useMemo(() => {
+  const existingReference = (() => {
     const allReferences = [
       ...careerFormMethod.getValues().references,
       ...careerFormMethod.getValues().appointment.references,
@@ -87,7 +78,6 @@ export const ReferenceTrigger = ({
         .certsToField.map((cert) => cert.references)
         .flat(),
     ];
-
     const filteredReference: ReferenceType[] = allReferences.filter(
       (ref) => ref.field === field && ref.content === content,
     );
@@ -103,7 +93,7 @@ export const ReferenceTrigger = ({
       }
     }
     return "";
-  }, [careerFormMethod.getValues()]);
+  })();
 
   return (
     <>
@@ -116,20 +106,18 @@ export const ReferenceTrigger = ({
           size="xs"
           readOnly
           autoFocus={true}
-          onClick={() => referencePopoverTrigger(name, content)}
+          onClick={() => referencePopoverTrigger(name)}
           classNames={{
             input: classes.reference,
           }}
-          disabled={
-            isOpenPopover && currentName !== name && currentContent !== content
-          }
+          disabled={isOpenPopover && currentName !== name}
         />
       ) : (
         <Button
           leftIcon={<IconCirclePlus />}
           variant={"white"}
           mt={24}
-          onClick={() => referencePopoverTrigger(name, content)}
+          onClick={() => referencePopoverTrigger(name)}
           disabled={disabled}
         >
           References

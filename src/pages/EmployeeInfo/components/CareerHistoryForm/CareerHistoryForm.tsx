@@ -28,8 +28,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   const [currentName, setCurrentName] = React.useState<
     Path<CareerType> | Path<AppointmentType> | Path<CertificationType>
   >("company");
-  const [currentContent, setCurrentContent] = React.useState("");
-  const [currentArrayObjId, setCurrentArrayObjId] = React.useState(0);
+  const [currentArrayId, setCurrentArrayId] = React.useState(0);
 
   const [lastSource, setLastSource] = React.useState<SourceType>();
 
@@ -59,8 +58,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     setDrawer(false);
   });
 
-  console.log("--careerForm--");
-  console.log(careerFormMethods.getValues());
+  // console.log("--careerForm--");
+  // console.log(careerFormMethods.getValues());
 
   return (
     <Form
@@ -78,16 +77,15 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
         <ReferencePopup
           key={
             currentName +
-            currentContent +
+            currentArrayId +
             careerFormMethods.getValues().toString()
           }
           currentName={currentName}
-          currentContent={currentContent}
           setIsOpenPopover={setIsOpenPopover}
           setEditMode={setEditMode}
           lastSource={lastSource}
           setLastSource={setLastSource}
-          currentArrayObjId={currentArrayObjId}
+          currentArrayId={currentArrayId}
         />
         <Popover.Target>
           <MainContainer>
@@ -108,8 +106,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 content={careerFormMethods.getValues().company}
                 currentName={currentName}
                 setCurrentName={setCurrentName}
-                currentContent={currentContent}
-                setCurrentContent={setCurrentContent}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={!dirtyFields.company}
@@ -132,8 +128,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 content={careerFormMethods.getValues().duration}
                 currentName={currentName}
                 setCurrentName={setCurrentName}
-                currentContent={currentContent}
-                setCurrentContent={setCurrentContent}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={!dirtyFields.duration}
@@ -169,8 +163,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 content={careerFormMethods.getValues().appointment.position}
                 currentName={currentName}
                 setCurrentName={setCurrentName}
-                currentContent={currentContent}
-                setCurrentContent={setCurrentContent}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={
@@ -195,8 +187,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 content={careerFormMethods.getValues().appointment.rank}
                 currentName={currentName}
                 setCurrentName={setCurrentName}
-                currentContent={currentContent}
-                setCurrentContent={setCurrentContent}
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={
@@ -217,13 +207,13 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                     content={careerFormMethods.getValues().skills[id]}
                     currentName={currentName}
                     setCurrentName={setCurrentName}
-                    currentContent={currentContent}
-                    setCurrentContent={setCurrentContent}
                     setIsOpenPopover={setIsOpenPopover}
                     setEditMode={setEditMode}
                     disabled={
                       careerFormMethods.getValues().skills[id].length < 1
                     }
+                    setCurrentArrayId={setCurrentArrayId}
+                    objArrId={id}
                   />
                 )}
               />
@@ -251,11 +241,9 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                     }
                     currentName={currentName}
                     setCurrentName={setCurrentName}
-                    currentContent={currentContent}
-                    setCurrentContent={setCurrentContent}
                     setIsOpenPopover={setIsOpenPopover}
                     setEditMode={setEditMode}
-                    setCurrentArrayObjId={setCurrentArrayObjId}
+                    setCurrentArrayId={setCurrentArrayId}
                     objArrId={id}
                   />
                 )}
