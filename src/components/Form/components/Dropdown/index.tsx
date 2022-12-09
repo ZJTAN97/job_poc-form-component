@@ -3,29 +3,31 @@ import React from "react";
 import { FormCommonProps } from "../../typings";
 import { useController } from "react-hook-form";
 
-interface DropdownProps extends SelectProps, FormCommonProps {}
+interface DropdownProps extends Omit<SelectProps, "onChange">, FormCommonProps {
+  onChange?: (value: string | null) => void;
+}
 
 const Dropdown = (props: DropdownProps) => {
-  const { control, customOnChange, ...mantineSelectProps } = props;
+  const { control, onChange, ...mantineSelectProps } = props;
 
   const { field } = useController({
     name: String(mantineSelectProps.name),
     control,
   });
 
-  const onChangeCallback = React.useCallback(
-    (selection: any) => {
-      if (customOnChange) customOnChange();
-      field.onChange(selection);
+  const overrideOnChange = React.useCallback(
+    (values: string | null) => {
+      if (onChange) onChange(values);
+      field.onChange(values);
     },
-    [field.name],
+    [onChange],
   );
 
   return (
     <Select
       value={field.value}
       {...mantineSelectProps}
-      onChange={(data) => onChangeCallback(data)}
+      onChange={overrideOnChange}
     />
   );
 };

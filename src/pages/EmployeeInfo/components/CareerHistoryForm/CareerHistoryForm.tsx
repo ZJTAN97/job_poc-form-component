@@ -58,8 +58,19 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     setDrawer(false);
   });
 
-  // console.log("--careerForm--");
-  // console.log(careerFormMethods.getValues());
+  console.log("--careerForm--");
+  console.log(careerFormMethods.getValues());
+
+  const contentEditAfterAddedRef = (val: string) => {
+    if (
+      careerFormMethods
+        .getValues()
+        .references.filter((ref) => ref.field === "company").length === 1
+    ) {
+      console.log(val);
+      // not sure if this is the best way
+    }
+  };
 
   return (
     <Form
@@ -98,6 +109,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 disabled={!editMode}
                 variant={editMode ? "default" : "unstyled"}
                 className={classes.formTextInput}
+                onChange={contentEditAfterAddedRef}
                 required
               />
               <ReferenceTrigger

@@ -1,6 +1,5 @@
-import { Control } from "react-hook-form"
+import { Control } from "react-hook-form";
 
 export interface FormCommonProps {
-  control: Control<any>
-  customOnChange?: CallableFunction
+  control: Control<any>;
 }

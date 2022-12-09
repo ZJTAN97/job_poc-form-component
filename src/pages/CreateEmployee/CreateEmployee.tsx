@@ -56,7 +56,7 @@ export const CreateEmployee = () => {
               label={"Employee Name"}
               control={control}
               name={"employeeName"}
-              customOnChange={debouncedSearch}
+              onChange={debouncedSearch}
               className={styles.input}
               error={
                 characterNameError && (
