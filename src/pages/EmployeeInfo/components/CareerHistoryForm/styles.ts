@@ -1,5 +1,6 @@
 import styled from "@emotion/styled";
 import { createStyles } from "@mantine/styles";
+import React from "react";
 
 export const useStyles = createStyles((theme) => ({
   formTextInput: {
@@ -36,11 +37,13 @@ export const SkillLabel = styled("div")(({ theme }) => ({
   paddingTop: "8px",
 }));
 
-export const Row = styled("div")(({}) => ({
+export const Row = styled("div")(({ highlight }: { highlight?: boolean }) => ({
   display: "flex",
   margin: "30px 0",
   gap: "10px",
-  padding: "15px 0",
+  padding: "20px 15px",
+  borderRadius: "5px",
+  backgroundColor: highlight ? "rgb(192 235 249 / 20%)" : "",
 }));
 
 export const AddRefButton = styled("button")(({ theme }) => ({

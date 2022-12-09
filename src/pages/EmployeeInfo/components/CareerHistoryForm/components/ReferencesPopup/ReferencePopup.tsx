@@ -86,6 +86,11 @@ export const ReferencePopup = ({
       ? skills[currentArrayId]
       : "";
 
+  const isAppointmentReference =
+    currentName === "rank" || currentName === "position";
+
+  const isCertReference = currentName === "issuedBy" || currentName === "name";
+
   const existingReference = [
     ...careerFormMethod.getValues().references,
     ...careerFormMethod.getValues().appointment.references,
@@ -139,12 +144,6 @@ export const ReferencePopup = ({
 
     referenceFormMethod.setValue("content", content);
 
-    const isAppointmentReference =
-      currentName === "rank" || currentName === "position";
-
-    const isCertReference =
-      currentName === "issuedBy" || currentName === "name";
-
     if (isAppointmentReference) {
       // Handling Object Type (Appointment)
       if (existingReference) {
@@ -158,7 +157,7 @@ export const ReferencePopup = ({
         referenceArrayMethods.append(referenceFormMethod.getValues());
       }
     } else if (isCertReference) {
-      // Handling Object Type (Certifications)
+      // Handling Array Object Type (Certifications)
       const objSelected =
         careerFormMethod.getValues().certsToField[currentArrayId];
       if (existingReference) {
@@ -187,7 +186,6 @@ export const ReferencePopup = ({
       }
     } else {
       // Handling String & String Array Type
-      // POTENTIAL BUG
       if (existingReference) {
         // update
         const id = careerFormMethod
@@ -217,6 +215,16 @@ export const ReferencePopup = ({
     referenceArrayMethods.update(referenceId, referenceFormMethod.getValues());
 
     if (referenceFormMethod.getValues().sources.length === 0) {
+      if (isCertReference) {
+        const objSelected =
+          careerFormMethod.getValues().certsToField[currentArrayId];
+        referenceArrayMethods.update(currentArrayId, {
+          ...objSelected,
+          references: [],
+        });
+      } else {
+        referenceArrayMethods.remove(referenceId);
+      }
       setPopupMode("edit");
     }
   };

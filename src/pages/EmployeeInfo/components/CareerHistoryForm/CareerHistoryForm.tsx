@@ -67,8 +67,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     setDrawer(false);
   });
 
-  // console.log("--careerForm--");
-  // console.log(careerFormMethods.getValues());
+  console.log("--careerForm--");
+  console.log(careerFormMethods.getValues());
 
   const contentEditAfterAddedRef = (val: string) => {
     if (
@@ -77,7 +77,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
         .references.filter((ref) => ref.field === "company").length === 1
     ) {
       console.log(val);
-      // not sure if this is the best way
     }
   };
 
@@ -110,7 +109,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
         <Popover.Target>
           <MainContainer>
             {/* COMPANY */}
-            <Row>
+            <Row highlight={!editMode && currentName === "company"}>
               <Form.TextInput
                 control={careerFormMethods.control}
                 label={"Company name"}
@@ -135,7 +134,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             </Row>
 
             {/* DURATION */}
-            <Row>
+            <Row highlight={!editMode && currentName === "duration"}>
               <Form.TextInput
                 control={careerFormMethods.control}
                 label={"Duration"}
@@ -169,7 +168,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             </Row>
 
             {/* APPOINTMENT (POSITION, RANK) */}
-            <Row>
+            <Row highlight={!editMode && currentName === "position"}>
               <Form.TextInput
                 control={careerFormMethods.control}
                 label={"Position"}
@@ -194,7 +193,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               />
             </Row>
 
-            <Row>
+            <Row highlight={!editMode && currentName === "rank"}>
               <Form.TextInput
                 control={careerFormMethods.control}
                 label={"Rank"}
@@ -219,63 +218,73 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             </Row>
 
             {/* SKILLS  */}
-            <Row>
-              <StringArrayInput<CareerType>
-                name="skills"
-                editMode={editMode}
-                referenceTrigger={(id) => (
-                  <ReferenceTrigger
-                    isOpenPopover={isOpenPopover}
-                    name={"skills"}
-                    content={careerFormMethods.getValues().skills[id]}
-                    currentName={currentName}
-                    setCurrentName={setCurrentName}
-                    setIsOpenPopover={setIsOpenPopover}
-                    setEditMode={setEditMode}
-                    disabled={
-                      careerFormMethods.getValues().skills[id].length < 1
-                    }
-                    setCurrentArrayId={setCurrentArrayId}
-                    objArrId={id}
-                    error={references_skills?.message}
-                  />
-                )}
-              />
-            </Row>
+            <StringArrayInput<CareerType>
+              name="skills"
+              editMode={editMode}
+              referenceTrigger={(id) => (
+                <ReferenceTrigger
+                  isOpenPopover={isOpenPopover}
+                  name={"skills"}
+                  content={careerFormMethods.getValues().skills[id]}
+                  currentName={currentName}
+                  setCurrentName={setCurrentName}
+                  setIsOpenPopover={setIsOpenPopover}
+                  setEditMode={setEditMode}
+                  disabled={careerFormMethods.getValues().skills[id].length < 1}
+                  setCurrentArrayId={setCurrentArrayId}
+                  objArrId={id}
+                  error={references_skills?.message}
+                />
+              )}
+              currentName={currentName}
+              currentArrayId={currentArrayId}
+            />
 
             {/* CERTS  */}
-            <Row>
-              <ObjectArrayInput<CareerType, CertificationType>
-                name="certsToField"
-                editMode={editMode}
-                emptyObject={{
-                  name: "",
-                  issuedBy: "",
-                  references: [],
-                }}
-                referenceTrigger={(id, name) => (
-                  <ReferenceTrigger
-                    isOpenPopover={isOpenPopover}
-                    name={name}
-                    content={
-                      name === "issuedBy"
-                        ? careerFormMethods.getValues().certsToField[id]
-                            .issuedBy
-                        : careerFormMethods.getValues().certsToField[id].name
-                    }
-                    currentName={currentName}
-                    setCurrentName={setCurrentName}
-                    setIsOpenPopover={setIsOpenPopover}
-                    setEditMode={setEditMode}
-                    setCurrentArrayId={setCurrentArrayId}
-                    objArrId={id}
-                    error={references_certs?.message}
-                  />
-                )}
-              />
-            </Row>
+            <ObjectArrayInput<CareerType, CertificationType>
+              name="certsToField"
+              editMode={editMode}
+              emptyObject={{
+                name: "",
+                issuedBy: "",
+                references: [],
+              }}
+              referenceTrigger={(id, name) => (
+                <ReferenceTrigger
+                  isOpenPopover={isOpenPopover}
+                  name={name}
+                  content={
+                    name === "issuedBy"
+                      ? careerFormMethods.getValues().certsToField[id].issuedBy
+                      : careerFormMethods.getValues().certsToField[id].name
+                  }
+                  currentName={currentName}
+                  setCurrentName={setCurrentName}
+                  setIsOpenPopover={setIsOpenPopover}
+                  setEditMode={setEditMode}
+                  setCurrentArrayId={setCurrentArrayId}
+                  objArrId={id}
+                  error={references_certs?.message}
+                  disabled={
+                    name === "issuedBy"
+                      ? careerFormMethods.getValues().certsToField[id].issuedBy
+                          .length < 1
+                      : careerFormMethods.getValues().certsToField[id].name
+                          .length < 1
+                  }
+                />
+              )}
+              currentArrayId={currentArrayId}
+              currentName={currentName}
+            />
 
-            <Button mt={20} onClick={submitFormHandler} disabled={!editMode}>
+            <Button
+              ml={15}
+              mt={20}
+              onClick={submitFormHandler}
+              disabled={!editMode}
+              variant={"light"}
+            >
               Add Career
             </Button>
           </MainContainer>

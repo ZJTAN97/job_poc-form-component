@@ -8,11 +8,15 @@ import {
   FieldValues,
   PathValue,
 } from "react-hook-form";
+import { AppointmentType } from "../../../../../../model/career/Appointment";
+import { CareerType } from "../../../../../../model/career/Career";
+import { CertificationType } from "../../../../../../model/career/Certification";
 import {
   ArrayContainer,
   ArrayRow,
   ErrorLabel,
   ObjectArrayRow,
+  Title,
   useStyles,
 } from "./styles";
 
@@ -27,6 +31,15 @@ interface ObjectArrayInputProps<T extends FieldValues, K extends FieldValues> {
 
   /** Reference Trigger components to be tagged to each individual input field */
   referenceTrigger: (id: number, name: Path<T> | Path<K>) => React.ReactNode;
+
+  /** Required for row highlight */
+  currentName?:
+    | Path<CareerType>
+    | Path<AppointmentType>
+    | Path<CertificationType>;
+
+  /** Required for row highlight */
+  currentArrayId?: number;
 }
 
 export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
@@ -34,6 +47,8 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
   editMode,
   emptyObject,
   referenceTrigger,
+  currentName,
+  currentArrayId,
 }: ObjectArrayInputProps<T, K>) => {
   const { classes } = useStyles();
 
@@ -49,24 +64,16 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
     [key: string]: { [key: string]: string };
   }[];
 
-  console.log("-- focus here --");
-  console.log(arrayErrors);
-
   return (
     <ArrayContainer>
       <ArrayRow>
-        <Button
-          p={0}
-          mb={10}
-          rightIcon={<IconCirclePlus />}
-          variant="subtle"
-          size="lg"
-          onClick={() => field.onChange([...field.value, emptyObject])}
-          color={"black"}
-          disabled={!editMode}
-        >
+        <Title disabled={!editMode}>
           {name.charAt(0).toUpperCase() + name.slice(1)}
-        </Button>
+        </Title>
+        <IconCirclePlus
+          color={!editMode ? "rgb(0 0 0 / 30%)" : "black"}
+          onClick={() => field.onChange([...field.value, emptyObject])}
+        />
       </ArrayRow>
       {errors[name] && (
         <ErrorLabel>{errors[name]?.message?.toString()}</ErrorLabel>
@@ -74,6 +81,7 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
       {field.value.map((item: PathValue<T, Path<T>>, id: number) => (
         <ObjectArrayRow key={"object_array_" + id}>
           <Button
+            ml={15}
             disabled={!editMode}
             onClick={() => {
               let current = [...field.value];
@@ -94,12 +102,16 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
               },
             }}
           >
-            {`Certification ${id + 1}`}
+            {`${name.charAt(0).toUpperCase() + name.slice(1)} ${id + 1}`}
           </Button>
-          <ArrayRow>
+          <ArrayRow
+            highlight={
+              !editMode && currentName === "name" && currentArrayId === id
+            }
+          >
             <TextInput
               label={"Certificate Name"}
-              className={classes.skillTextInput}
+              className={classes.textInput}
               disabled={!editMode}
               onChange={(e) => {
                 let current = [...field.value];
@@ -115,10 +127,14 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
             />
             {referenceTrigger(id, "name" as Path<K>)}
           </ArrayRow>
-          <ArrayRow>
+          <ArrayRow
+            highlight={
+              !editMode && currentName === "issuedBy" && currentArrayId === id
+            }
+          >
             <TextInput
               label={"Issued by"}
-              className={classes.skillTextInput}
+              className={classes.textInput}
               disabled={!editMode}
               onChange={(e) => {
                 let current = [...field.value];

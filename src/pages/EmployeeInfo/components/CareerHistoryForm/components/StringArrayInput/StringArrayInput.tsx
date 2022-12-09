@@ -1,23 +1,45 @@
-import { Button, TextInput } from "@mantine/core";
+import { TextInput } from "@mantine/core";
 import { IconCirclePlus, IconX } from "@tabler/icons";
+import React from "react";
 import {
   useFormContext,
   useController,
   Path,
   FieldValues,
 } from "react-hook-form";
-import { ArrayContainer, ArrayRow, ErrorLabel, useStyles } from "./styles";
+import { AppointmentType } from "../../../../../../model/career/Appointment";
+import { CareerType } from "../../../../../../model/career/Career";
+import { CertificationType } from "../../../../../../model/career/Certification";
+import {
+  ArrayContainer,
+  ArrayRow,
+  ButtonRow,
+  ErrorLabel,
+  Title,
+  useStyles,
+} from "./styles";
 
 interface StringArrayInputProps<T extends FieldValues> {
   name: Path<T>;
   editMode: boolean;
   referenceTrigger: (index: number) => React.ReactNode;
+
+  /** Required for row highlight */
+  currentName?:
+    | Path<CareerType>
+    | Path<AppointmentType>
+    | Path<CertificationType>;
+
+  /** Required for row highlight */
+  currentArrayId?: number;
 }
 
 export const StringArrayInput = <T extends FieldValues>({
   name,
   editMode,
   referenceTrigger,
+  currentName,
+  currentArrayId,
 }: StringArrayInputProps<T>) => {
   const { classes } = useStyles();
   const { control, formState } = useFormContext<T>();
@@ -31,25 +53,25 @@ export const StringArrayInput = <T extends FieldValues>({
 
   return (
     <ArrayContainer>
-      <ArrayRow>
-        <Button
-          p={0}
-          mb={10}
-          rightIcon={<IconCirclePlus />}
-          variant="subtle"
-          size="lg"
-          onClick={() => field.onChange([...field.value, ""])}
-          color={"black"}
-          disabled={!editMode}
-        >
+      <ButtonRow>
+        <Title disabled={!editMode}>
           {name.charAt(0).toUpperCase() + name.slice(1)}
-        </Button>
-      </ArrayRow>
+        </Title>
+        <IconCirclePlus
+          color={!editMode ? "rgb(0 0 0 / 30%)" : "black"}
+          onClick={() => field.onChange([...field.value, ""])}
+        />
+      </ButtonRow>
       {errors[name] && (
         <ErrorLabel>{errors[name]?.message?.toString()}</ErrorLabel>
       )}
       {field.value.map((val: string, id: number) => (
-        <ArrayRow key={"string-array" + id}>
+        <ArrayRow
+          key={"string_array_" + id}
+          highlight={
+            !editMode && currentArrayId === id && currentName === "skills"
+          }
+        >
           <TextInput
             label={`${name.charAt(0).toUpperCase() + name.slice(1)} #${id + 1}`}
             value={val}
@@ -59,6 +81,8 @@ export const StringArrayInput = <T extends FieldValues>({
               current[id] = e.target.value;
               field.onChange(current);
             }}
+            disabled={!editMode}
+            variant={editMode ? "default" : "unstyled"}
             rightSection={
               editMode && (
                 <IconX
