@@ -52,14 +52,23 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
 
   const { dirtyFields } = careerFormMethods.formState;
 
+  const {
+    references_company,
+    references_position,
+    references_skills,
+    references_certs,
+  } = careerFormMethods.formState.errors as unknown as {
+    [key: string]: { message: string };
+  };
+
   const submitFormHandler = careerFormMethods.handleSubmit(async (data) => {
     console.info("[SUCCESS]", data);
     saveOrCreateCareer(data);
     setDrawer(false);
   });
 
-  console.log("--careerForm--");
-  console.log(careerFormMethods.getValues());
+  // console.log("--careerForm--");
+  // console.log(careerFormMethods.getValues());
 
   const contentEditAfterAddedRef = (val: string) => {
     if (
@@ -121,6 +130,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={!dirtyFields.company}
+                error={references_company?.message}
               />
             </Row>
 
@@ -180,6 +190,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 disabled={
                   careerFormMethods.getValues().appointment.position.length < 1
                 }
+                error={references_position?.message}
               />
             </Row>
 
@@ -226,6 +237,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                     }
                     setCurrentArrayId={setCurrentArrayId}
                     objArrId={id}
+                    error={references_skills?.message}
                   />
                 )}
               />
@@ -257,6 +269,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                     setEditMode={setEditMode}
                     setCurrentArrayId={setCurrentArrayId}
                     objArrId={id}
+                    error={references_certs?.message}
                   />
                 )}
               />

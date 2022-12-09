@@ -253,3 +253,10 @@ const { control } = methods;
 - Literally just powers `Controller` https://react-hook-form.com/api/usecontroller/controller
 
 <br>
+
+# 7. ISSUES FACE WHILE INTEGRATING
+
+1. Complex to edit content AFTER adding references.
+
+- Not sure if it is my implementation issue
+- But since references is tagged to content and field name, by changing content, during filter it is very prone to error

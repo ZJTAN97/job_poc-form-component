@@ -45,6 +45,13 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
     control,
   });
 
+  const arrayErrors = errors[name] as unknown as {
+    [key: string]: { [key: string]: string };
+  }[];
+
+  console.log("-- focus here --");
+  console.log(arrayErrors);
+
   return (
     <ArrayContainer>
       <ArrayRow>
@@ -58,11 +65,11 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
           color={"black"}
           disabled={!editMode}
         >
-          Certifications
+          {name.charAt(0).toUpperCase() + name.slice(1)}
         </Button>
       </ArrayRow>
-      {errors.certs && (
-        <ErrorLabel>Requires at least one certification</ErrorLabel>
+      {errors[name] && (
+        <ErrorLabel>{errors[name]?.message?.toString()}</ErrorLabel>
       )}
       {field.value.map((item: PathValue<T, Path<T>>, id: number) => (
         <ObjectArrayRow key={"object_array_" + id}>
@@ -99,6 +106,12 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
                 current[id] = { ...item, name: e.target.value };
                 field.onChange(current);
               }}
+              error={
+                arrayErrors &&
+                arrayErrors.length > 0 &&
+                arrayErrors[id] &&
+                arrayErrors[id].name?.message
+              }
             />
             {referenceTrigger(id, "name" as Path<K>)}
           </ArrayRow>
@@ -112,6 +125,12 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
                 current[id] = { ...item, issuedBy: e.target.value };
                 field.onChange(current);
               }}
+              error={
+                arrayErrors &&
+                arrayErrors.length > 0 &&
+                arrayErrors[id] &&
+                arrayErrors[id].issuedBy?.message
+              }
             />
             {referenceTrigger(id, "issuedBy" as Path<K>)}
           </ArrayRow>

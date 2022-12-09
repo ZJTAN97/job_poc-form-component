@@ -27,6 +27,8 @@ export const StringArrayInput = <T extends FieldValues>({
     control,
   });
 
+  const arrayErrors = errors[name] as unknown as { [key: string]: string }[];
+
   return (
     <ArrayContainer>
       <ArrayRow>
@@ -40,14 +42,16 @@ export const StringArrayInput = <T extends FieldValues>({
           color={"black"}
           disabled={!editMode}
         >
-          Skills
+          {name.charAt(0).toUpperCase() + name.slice(1)}
         </Button>
       </ArrayRow>
-      {errors[name] && <ErrorLabel>Requires at least one skill set</ErrorLabel>}
+      {errors[name] && (
+        <ErrorLabel>{errors[name]?.message?.toString()}</ErrorLabel>
+      )}
       {field.value.map((val: string, id: number) => (
         <ArrayRow key={"string-array" + id}>
           <TextInput
-            label={`Skill #${id + 1}`}
+            label={`${name.charAt(0).toUpperCase() + name.slice(1)} #${id + 1}`}
             value={val}
             className={classes.skillTextInput}
             onChange={(e) => {
@@ -67,6 +71,12 @@ export const StringArrayInput = <T extends FieldValues>({
                   }}
                 />
               )
+            }
+            error={
+              arrayErrors &&
+              arrayErrors.length > 0 &&
+              arrayErrors[id] &&
+              arrayErrors[id].message
             }
           />
           {referenceTrigger(id)}

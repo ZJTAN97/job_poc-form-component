@@ -39,6 +39,7 @@ interface ReferenceTriggerProps {
   setEditMode: (arg: boolean) => void;
 
   disabled?: boolean;
+  error?: string;
 }
 
 export const ReferenceTrigger = ({
@@ -52,6 +53,7 @@ export const ReferenceTrigger = ({
   disabled,
   setCurrentArrayId,
   objArrId,
+  error,
 }: ReferenceTriggerProps) => {
   const { classes } = useStyles();
 
@@ -119,8 +121,9 @@ export const ReferenceTrigger = ({
           mt={24}
           onClick={() => referencePopoverTrigger(name)}
           disabled={disabled}
+          color={error && "red"}
         >
-          References
+          {error ? "References required" : "Add references"}
         </Button>
       )}
     </>
