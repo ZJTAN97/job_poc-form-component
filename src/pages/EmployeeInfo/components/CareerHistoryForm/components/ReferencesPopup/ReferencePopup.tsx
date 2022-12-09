@@ -48,8 +48,12 @@ interface ReferencePopupProps {
   /** Set last applied source */
   setLastSource: (arg: SourceType) => void;
 
-  /** for handling array of objects */
-  currentArrayId: number; // TODO: rename this to be just array
+  /** for handling array types, for indexing */
+  currentArrayId: number;
+
+  isMassApplying: boolean;
+
+  setIsMassApplying: (arg: boolean) => void;
 }
 
 export const ReferencePopup = ({
@@ -59,6 +63,8 @@ export const ReferencePopup = ({
   lastSource,
   setLastSource,
   currentArrayId,
+  isMassApplying,
+  setIsMassApplying,
 }: ReferencePopupProps) => {
   const { classes } = useStyles();
 
@@ -311,7 +317,7 @@ export const ReferencePopup = ({
             <ReferenceCard key={"refCard" + id}>
               <div>{item.referenceType}</div>
               <ReferenceCardRow>
-                <div>{item.dateObtained}</div>
+                <div>{item.dateObtained.slice(0, 10)}</div>
                 <div>
                   <IconEdit
                     size={20}
@@ -354,6 +360,17 @@ export const ReferencePopup = ({
           Apply
         </Button>
       </ButtonRow>
+
+      {referenceFormMethod.formState.isValid && popupMode === "edit" && (
+        <Button
+          mt={50}
+          variant={"outline"}
+          size="xs"
+          onClick={() => setIsMassApplying(!isMassApplying)}
+        >
+          Batch apply
+        </Button>
+      )}
 
       <Button
         classNames={{

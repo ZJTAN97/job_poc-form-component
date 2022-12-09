@@ -1,7 +1,7 @@
 import React from "react";
 import { Path, useFormContext } from "react-hook-form";
-import { Button, Textarea } from "@mantine/core";
-import { useStyles } from "./styles";
+import { Button, Checkbox, Textarea } from "@mantine/core";
+import { TriggerRow, useStyles } from "./styles";
 import { IconCirclePlus } from "@tabler/icons";
 import { CareerType } from "../../../../../../model/career/Career";
 import { ReferenceType } from "../../../../../../model/common/Reference";
@@ -34,12 +34,16 @@ interface ReferenceTriggerProps {
   /** Set selected item id if it is array */
   setCurrentArrayId?: (arg: number) => void;
 
+  /** error specific to references */
+  error?: string;
+
   setIsOpenPopover: (arg: boolean) => void;
 
   setEditMode: (arg: boolean) => void;
 
+  isMassApplying: boolean;
+
   disabled?: boolean;
-  error?: string;
 }
 
 export const ReferenceTrigger = ({
@@ -54,6 +58,7 @@ export const ReferenceTrigger = ({
   setCurrentArrayId,
   objArrId,
   error,
+  isMassApplying,
 }: ReferenceTriggerProps) => {
   const { classes } = useStyles();
 
@@ -87,11 +92,12 @@ export const ReferenceTrigger = ({
       const numOfSource = filteredReference[0].sources.length;
       const source = filteredReference[0].sources[0];
       if (numOfSource === 1) {
-        return `${source.referenceType}\n${source.dateObtained}`;
+        return `${source.referenceType}\n${source.dateObtained.slice(0, 10)}`;
       } else if (numOfSource > 1) {
-        return `${source.referenceType}\n${source.dateObtained} + ${
-          numOfSource - 1
-        } more`;
+        return `${source.referenceType}\n${source.dateObtained.slice(
+          0,
+          10,
+        )} + ${numOfSource - 1} more`;
       }
     }
     return "";
@@ -100,20 +106,22 @@ export const ReferenceTrigger = ({
   return (
     <>
       {isOpenPopover || existingReference ? (
-        <Textarea
-          w={190}
-          ml={10}
-          label={"References"}
-          value={existingReference}
-          size="xs"
-          readOnly
-          autoFocus={true}
-          onClick={() => referencePopoverTrigger(name)}
-          classNames={{
-            input: classes.reference,
-          }}
-          disabled={isOpenPopover && currentName !== name}
-        />
+        <TriggerRow>
+          <Textarea
+            w={190}
+            ml={10}
+            label={"References"}
+            value={existingReference}
+            size="xs"
+            readOnly
+            onClick={() => referencePopoverTrigger(name)}
+            classNames={{
+              input: classes.reference,
+            }}
+            disabled={isOpenPopover && currentName !== name}
+          />
+          {isMassApplying && !disabled ? <Checkbox mt={30} ml={25} /> : null}
+        </TriggerRow>
       ) : (
         <Button
           leftIcon={<IconCirclePlus />}

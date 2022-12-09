@@ -29,8 +29,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     Path<CareerType> | Path<AppointmentType> | Path<CertificationType>
   >("company");
   const [currentArrayId, setCurrentArrayId] = React.useState(0);
-
   const [lastSource, setLastSource] = React.useState<SourceType>();
+  const [isMassApplying, setIsMassApplying] = React.useState(false);
 
   const careerFormMethods = useForm<CareerType>({
     resolver: zodResolver(Career),
@@ -105,6 +105,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
           lastSource={lastSource}
           setLastSource={setLastSource}
           currentArrayId={currentArrayId}
+          isMassApplying={isMassApplying}
+          setIsMassApplying={setIsMassApplying}
         />
         <Popover.Target>
           <MainContainer>
@@ -130,6 +132,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 setEditMode={setEditMode}
                 disabled={!dirtyFields.company}
                 error={references_company?.message}
+                isMassApplying={isMassApplying}
               />
             </Row>
 
@@ -152,6 +155,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={!dirtyFields.duration}
+                isMassApplying={isMassApplying}
               />
             </Row>
 
@@ -190,6 +194,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                   careerFormMethods.getValues().appointment.position.length < 1
                 }
                 error={references_position?.message}
+                isMassApplying={isMassApplying}
               />
             </Row>
 
@@ -214,6 +219,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 disabled={
                   careerFormMethods.getValues().appointment.rank.length < 1
                 }
+                isMassApplying={isMassApplying}
               />
             </Row>
 
@@ -234,6 +240,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                   setCurrentArrayId={setCurrentArrayId}
                   objArrId={id}
                   error={references_skills?.message}
+                  isMassApplying={isMassApplying}
                 />
               )}
               currentName={currentName}
@@ -272,6 +279,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                       : careerFormMethods.getValues().certsToField[id].name
                           .length < 1
                   }
+                  isMassApplying={isMassApplying}
                 />
               )}
               currentArrayId={currentArrayId}

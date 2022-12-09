@@ -10,3 +10,7 @@ export const useStyles = createStyles((theme) => ({
     overflow: "hidden",
   },
 }));
+
+export const TriggerRow = styled("div")(({}) => ({
+  display: "flex",
+}));
