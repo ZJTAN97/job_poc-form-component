@@ -1,10 +1,10 @@
 import React from "react";
 import { FormProvider, UseFormReturn } from "react-hook-form";
-import { ChipSelection } from "./components/ChipSelection";
-import Dropdown from "./components/Dropdown";
-import MultiSelect from "./components/MultiSelect";
-import { TextArea } from "./components/TextArea";
-import { TextInput } from "./components/TextInput";
+import { ChipSelection } from "./ChipSelection/ChipSelection";
+import Dropdown from "./Dropdown/Dropdown";
+import MultiSelect from "./MultiSelect/MultiSelect";
+import { TextArea } from "./TextArea/TextArea";
+import { TextInput } from "./TextInput/TextInput";
 
 interface FormProps {
   methods: UseFormReturn<any>;

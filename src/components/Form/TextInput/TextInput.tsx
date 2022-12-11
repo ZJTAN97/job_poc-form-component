@@ -1,19 +1,22 @@
 import React from "react";
 import { TextInput as MantineTextInput, TextInputProps } from "@mantine/core";
-import { useController } from "react-hook-form";
-import { FormCommonProps } from "../../typings";
+import { useController, Path, FieldValues } from "react-hook-form";
+import { FormCommonProps } from "../typings";
 
-export interface FormTextInputProps
-  extends Omit<TextInputProps, "onChange">,
-    FormCommonProps {
+export interface FormTextInputProps<T extends FieldValues>
+  extends Omit<TextInputProps, "onChange" | "name">,
+    FormCommonProps<T> {
+  name: Path<T>;
   onChange?: (value: string) => void;
 }
 
-export const TextInput = (props: FormTextInputProps) => {
-  const { control, onChange, ...mantineTextInputProps } = props;
+export const TextInput = <T extends FieldValues>(
+  props: FormTextInputProps<T>,
+) => {
+  const { control, name, onChange, ...mantineTextInputProps } = props;
 
   const { field, fieldState } = useController({
-    name: String(mantineTextInputProps.name),
+    name,
     control,
   });
 

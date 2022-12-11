@@ -45,7 +45,7 @@ export const CreateEmployee = () => {
         <div>
           <div className={styles.title}>Fill in the mandatory fields below</div>
           <Form methods={methods} useLocalStorage={true} preventLeaving={true}>
-            <Form.ChipSelection<EmployeeType["gender"]>
+            <Form.ChipSelection<EmployeeType, EmployeeType["gender"]>
               selections={["MALE", "FEMALE"]}
               name={"gender"}
               control={control}

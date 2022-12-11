@@ -1,25 +1,27 @@
 import { Chip, ChipProps } from "@mantine/core";
 import React from "react";
-import { useController } from "react-hook-form";
-import { FormCommonProps } from "../../typings";
+import { FieldValues, Path, useController } from "react-hook-form";
+import { FormCommonProps } from "../typings";
 import styles from "./index.module.css";
 
-interface ChipSelectionProps<T>
-  extends FormCommonProps,
-    Omit<ChipProps, "children" | "onChange"> {
-  name: string;
-  selections: T[];
+interface ChipSelectionProps<T extends FieldValues, K>
+  extends FormCommonProps<T>,
+    Omit<ChipProps, "children" | "onChange" | "name"> {
+  name: Path<T>;
+  selections: K[];
   groupClassName?: string;
   onChange?: CallableFunction;
 }
 
-export function ChipSelection<T extends String>(props: ChipSelectionProps<T>) {
+export function ChipSelection<T extends FieldValues, K extends String>(
+  props: ChipSelectionProps<T, K>,
+) {
   const { name, control, onChange, ...mantineChipProps } = props;
 
-  const { field } = useController({ name: name, control: control });
+  const { field } = useController({ name, control });
 
   const overrideOnChange = React.useCallback(
-    (selection: T) => {
+    (selection: K) => {
       if (onChange) onChange();
       field.onChange(selection);
     },
