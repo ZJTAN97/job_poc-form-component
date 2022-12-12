@@ -7,6 +7,7 @@ import {
 } from "../../../../../../model/common/Source";
 import {
   ButtonRow,
+  FieldCountRow,
   ReferenceCard,
   ReferenceCardRow,
   Title,
@@ -51,9 +52,24 @@ interface ReferencePopupProps {
   /** for handling array types, for indexing */
   currentArrayId: number;
 
-  isMassApplying: boolean;
+  massApplyingFields?: {
+    field: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
+    content: string;
+  }[];
 
-  setIsMassApplying: (arg: boolean) => void;
+  /** Reset mass applied fields when close */
+  setMassApplyingFields: React.Dispatch<
+    React.SetStateAction<
+      | {
+          field:
+            | Path<CareerType>
+            | Path<AppointmentType>
+            | Path<CertificationType>;
+          content: string;
+        }[]
+      | undefined
+    >
+  >;
 }
 
 export const ReferencePopup = ({
@@ -63,8 +79,8 @@ export const ReferencePopup = ({
   lastSource,
   setLastSource,
   currentArrayId,
-  isMassApplying,
-  setIsMassApplying,
+  massApplyingFields,
+  setMassApplyingFields,
 }: ReferencePopupProps) => {
   const { classes } = useStyles();
 
@@ -258,6 +274,7 @@ export const ReferencePopup = ({
   const handleClosePanel = () => {
     setEditMode(true);
     setIsOpenPopover(false);
+    setMassApplyingFields(undefined);
   };
 
   const applyLast = () => {
@@ -357,6 +374,12 @@ export const ReferencePopup = ({
         </div>
       )}
 
+      {massApplyingFields ? (
+        <FieldCountRow>
+          {massApplyingFields.length} fields selected
+        </FieldCountRow>
+      ) : null}
+
       <ButtonRow>
         {popupMode === "edit" && (
           <Button
@@ -375,23 +398,11 @@ export const ReferencePopup = ({
           size={"xs"}
           variant="outline"
           onClick={submitReferences}
-          disabled={popupMode === "read"}
+          disabled={popupMode === "read" || !sourceFormMethod.formState.isValid}
         >
           Apply
         </Button>
       </ButtonRow>
-
-      {referenceFormMethod.formState.isValid && popupMode === "edit" && (
-        <Button
-          mt={50}
-          ml={5}
-          variant={"outline"}
-          size="xs"
-          onClick={() => setIsMassApplying(!isMassApplying)}
-        >
-          Batch apply
-        </Button>
-      )}
 
       <Button
         classNames={{

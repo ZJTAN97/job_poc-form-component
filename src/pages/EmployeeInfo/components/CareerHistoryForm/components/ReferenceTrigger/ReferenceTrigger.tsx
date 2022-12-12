@@ -37,11 +37,29 @@ interface ReferenceTriggerProps {
   /** error specific to references */
   error?: string;
 
+  /** track fields where sources are being mass applied to */
+  massApplyingFields?: {
+    field: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
+    content: string;
+  }[];
+
+  /** Set fields where sources are being mass applied to */
+  setMassApplyingFields: React.Dispatch<
+    React.SetStateAction<
+      | {
+          field:
+            | Path<CareerType>
+            | Path<AppointmentType>
+            | Path<CertificationType>;
+          content: string;
+        }[]
+      | undefined
+    >
+  >;
+
   setIsOpenPopover: (arg: boolean) => void;
 
   setEditMode: (arg: boolean) => void;
-
-  isMassApplying: boolean;
 
   disabled?: boolean;
 }
@@ -58,7 +76,8 @@ export const ReferenceTrigger = ({
   setCurrentArrayId,
   objArrId,
   error,
-  isMassApplying,
+  massApplyingFields,
+  setMassApplyingFields,
 }: ReferenceTriggerProps) => {
   const { classes } = useStyles();
 
@@ -103,6 +122,32 @@ export const ReferenceTrigger = ({
     return "";
   })();
 
+  const handleCheckBox = () => {
+    const checkedItem = {
+      field: name,
+      content,
+    };
+
+    if (massApplyingFields !== undefined) {
+      const itemExists =
+        massApplyingFields.filter(
+          (item) => JSON.stringify(item) === JSON.stringify(checkedItem),
+        ).length === 1;
+
+      if (itemExists) {
+        setMassApplyingFields(
+          massApplyingFields.filter(
+            (item) => JSON.stringify(item) !== JSON.stringify(checkedItem),
+          ),
+        );
+      } else {
+        let copyArr = [...massApplyingFields];
+        copyArr.push(checkedItem);
+        setMassApplyingFields(copyArr);
+      }
+    }
+  };
+
   return (
     <>
       {isOpenPopover || existingReference ? (
@@ -120,7 +165,9 @@ export const ReferenceTrigger = ({
             }}
             disabled={isOpenPopover && currentName !== name}
           />
-          {isMassApplying && !disabled ? <Checkbox mt={30} ml={25} /> : null}
+          {massApplyingFields !== undefined && !disabled ? (
+            <Checkbox mt={30} ml={25} onClick={handleCheckBox} />
+          ) : null}
         </TriggerRow>
       ) : (
         <Button

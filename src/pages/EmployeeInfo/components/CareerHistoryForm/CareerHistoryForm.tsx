@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Popover } from "@mantine/core";
-import { Row, useStyles, MainContainer } from "./styles";
+import { Row, useStyles, MainContainer, TitleContainer, Title } from "./styles";
 import { useForm, Path } from "react-hook-form";
 import { Career, CareerType } from "../../../../model/career/Career";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,6 +13,7 @@ import { ObjectArrayInput } from "./components/ObjectArrayInput";
 import { CertificationType } from "../../../../model/career/Certification";
 import { SourceType } from "../../../../model/common/Source";
 import { AppointmentType } from "../../../../model/career/Appointment";
+import { IconEditCircle } from "@tabler/icons";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -30,7 +31,13 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   >("company");
   const [currentArrayId, setCurrentArrayId] = React.useState(0);
   const [lastSource, setLastSource] = React.useState<SourceType>();
-  const [isMassApplying, setIsMassApplying] = React.useState(false);
+
+  const [massApplyingFields, setMassApplyingFields] = React.useState<
+    {
+      field: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
+      content: string;
+    }[]
+  >();
 
   const careerFormMethods = useForm<CareerType>({
     resolver: zodResolver(Career),
@@ -76,6 +83,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
         .getValues()
         .references.filter((ref) => ref.field === "company").length === 1
     ) {
+      console.log("-- to be updated --");
       console.log(val);
     }
   };
@@ -105,13 +113,44 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
           lastSource={lastSource}
           setLastSource={setLastSource}
           currentArrayId={currentArrayId}
-          isMassApplying={isMassApplying}
-          setIsMassApplying={setIsMassApplying}
+          massApplyingFields={massApplyingFields}
+          setMassApplyingFields={setMassApplyingFields}
         />
+
         <Popover.Target>
           <MainContainer>
+            <TitleContainer>
+              <Title>Career History</Title>
+              <Button
+                variant={"subtle"}
+                size="xs"
+                pl={0}
+                mb={10}
+                onClick={() => {
+                  if (massApplyingFields === undefined) {
+                    setMassApplyingFields([]);
+                    setIsOpenPopover(true);
+                  } else {
+                    setMassApplyingFields(undefined);
+                    setIsOpenPopover(false);
+                  }
+                }}
+                leftIcon={<IconEditCircle />}
+              >
+                {isOpenPopover ? "Exit mass apply" : "Mass apply"}
+              </Button>
+            </TitleContainer>
             {/* COMPANY */}
-            <Row highlight={!editMode && currentName === "company"}>
+            <Row
+              highlight={
+                (!editMode && currentName === "company") ||
+                massApplyingFields?.filter(
+                  (item) =>
+                    item.field === "company" &&
+                    item.content === careerFormMethods.getValues().company,
+                ).length === 1
+              }
+            >
               <Form.TextInput
                 control={careerFormMethods.control}
                 label={"Company name"}
@@ -132,12 +171,22 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 setEditMode={setEditMode}
                 disabled={!dirtyFields.company}
                 error={references_company?.message}
-                isMassApplying={isMassApplying}
+                massApplyingFields={massApplyingFields}
+                setMassApplyingFields={setMassApplyingFields}
               />
             </Row>
 
             {/* DURATION */}
-            <Row highlight={!editMode && currentName === "duration"}>
+            <Row
+              highlight={
+                (!editMode && currentName === "duration") ||
+                massApplyingFields?.filter(
+                  (item) =>
+                    item.field === "duration" &&
+                    item.content === careerFormMethods.getValues().duration,
+                ).length === 1
+              }
+            >
               <Form.TextInput
                 control={careerFormMethods.control}
                 label={"Duration"}
@@ -155,7 +204,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 setIsOpenPopover={setIsOpenPopover}
                 setEditMode={setEditMode}
                 disabled={!dirtyFields.duration}
-                isMassApplying={isMassApplying}
+                massApplyingFields={massApplyingFields}
+                setMassApplyingFields={setMassApplyingFields}
               />
             </Row>
 
@@ -172,7 +222,17 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             </Row>
 
             {/* APPOINTMENT (POSITION, RANK) */}
-            <Row highlight={!editMode && currentName === "position"}>
+            <Row
+              highlight={
+                (!editMode && currentName === "position") ||
+                massApplyingFields?.filter(
+                  (item) =>
+                    item.field === "position" &&
+                    item.content ===
+                      careerFormMethods.getValues().appointment.position,
+                ).length === 1
+              }
+            >
               <Form.TextInput
                 control={careerFormMethods.control}
                 label={"Position"}
@@ -194,11 +254,22 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                   careerFormMethods.getValues().appointment.position.length < 1
                 }
                 error={references_position?.message}
-                isMassApplying={isMassApplying}
+                massApplyingFields={massApplyingFields}
+                setMassApplyingFields={setMassApplyingFields}
               />
             </Row>
 
-            <Row highlight={!editMode && currentName === "rank"}>
+            <Row
+              highlight={
+                (!editMode && currentName === "rank") ||
+                massApplyingFields?.filter(
+                  (item) =>
+                    item.field === "rank" &&
+                    item.content ===
+                      careerFormMethods.getValues().appointment.rank,
+                ).length === 1
+              }
+            >
               <Form.TextInput
                 control={careerFormMethods.control}
                 label={"Rank"}
@@ -219,7 +290,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 disabled={
                   careerFormMethods.getValues().appointment.rank.length < 1
                 }
-                isMassApplying={isMassApplying}
+                massApplyingFields={massApplyingFields}
+                setMassApplyingFields={setMassApplyingFields}
               />
             </Row>
 
@@ -240,11 +312,13 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                   setCurrentArrayId={setCurrentArrayId}
                   objArrId={id}
                   error={references_skills?.message}
-                  isMassApplying={isMassApplying}
+                  massApplyingFields={massApplyingFields}
+                  setMassApplyingFields={setMassApplyingFields}
                 />
               )}
               currentName={currentName}
               currentArrayId={currentArrayId}
+              massApplyingFields={massApplyingFields}
             />
 
             {/* CERTS  */}
@@ -279,11 +353,13 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                       : careerFormMethods.getValues().certsToField[id].name
                           .length < 1
                   }
-                  isMassApplying={isMassApplying}
+                  massApplyingFields={massApplyingFields}
+                  setMassApplyingFields={setMassApplyingFields}
                 />
               )}
               currentArrayId={currentArrayId}
               currentName={currentName}
+              massApplyingFields={massApplyingFields}
             />
 
             <Button

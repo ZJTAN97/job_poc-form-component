@@ -32,6 +32,11 @@ interface StringArrayInputProps<T extends FieldValues> {
 
   /** Required for row highlight */
   currentArrayId?: number;
+
+  massApplyingFields?: {
+    field: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
+    content: string;
+  }[];
 }
 
 export const StringArrayInput = <T extends FieldValues>({
@@ -40,6 +45,7 @@ export const StringArrayInput = <T extends FieldValues>({
   referenceTrigger,
   currentName,
   currentArrayId,
+  massApplyingFields,
 }: StringArrayInputProps<T>) => {
   const { classes } = useStyles();
   const { control, formState } = useFormContext<T>();
@@ -69,7 +75,10 @@ export const StringArrayInput = <T extends FieldValues>({
         <ArrayRow
           key={"string_array_" + id}
           highlight={
-            !editMode && currentArrayId === id && currentName === "skills"
+            (!editMode && currentArrayId === id && currentName === "skills") ||
+            massApplyingFields?.filter(
+              (item) => item.field === "skills" && item.content === val,
+            ).length === 1
           }
         >
           <TextInput

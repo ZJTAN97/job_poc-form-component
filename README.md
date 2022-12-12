@@ -260,3 +260,11 @@ const { control } = methods;
 
 - Not sure if it is my implementation issue
 - But since references is tagged to content and field name, by changing content, during filter it is very prone to error
+
+<br>
+
+2. During mass apply, because of the way the UI is currently designed (as checkboxes) I have to filter by two fields (field and content) to track which fields to mass apply to.
+
+<br>
+
+3. For the current way of constructing the request body, the code is messy in a way that i have to do checks on 3 types of methods to append/update references. However the new structure came up by QR and Joseph could solve this issue. (will need to test again)

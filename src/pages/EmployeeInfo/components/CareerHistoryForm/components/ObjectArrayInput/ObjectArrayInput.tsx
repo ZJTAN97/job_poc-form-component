@@ -40,6 +40,11 @@ interface ObjectArrayInputProps<T extends FieldValues, K extends FieldValues> {
 
   /** Required for row highlight */
   currentArrayId?: number;
+
+  massApplyingFields?: {
+    field: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
+    content: string;
+  }[];
 }
 
 export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
@@ -49,6 +54,7 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
   referenceTrigger,
   currentName,
   currentArrayId,
+  massApplyingFields,
 }: ObjectArrayInputProps<T, K>) => {
   const { classes } = useStyles();
 
@@ -106,7 +112,12 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
           </Button>
           <ArrayRow
             highlight={
-              !editMode && currentName === "name" && currentArrayId === id
+              (!editMode && currentName === "name" && currentArrayId === id) ||
+              massApplyingFields?.filter(
+                (massAppliedField) =>
+                  massAppliedField.field === "name" &&
+                  massAppliedField.content === field.value[id].name,
+              ).length === 1
             }
           >
             <TextInput
@@ -129,7 +140,14 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
           </ArrayRow>
           <ArrayRow
             highlight={
-              !editMode && currentName === "issuedBy" && currentArrayId === id
+              (!editMode &&
+                currentName === "issuedBy" &&
+                currentArrayId === id) ||
+              massApplyingFields?.filter(
+                (massAppliedField) =>
+                  massAppliedField.field === "issuedBy" &&
+                  massAppliedField.content === field.value[id].issuedBy,
+              ).length === 1
             }
           >
             <TextInput

@@ -52,3 +52,19 @@ export const AddRefButton = styled("button")(({ theme }) => ({
   marginLeft: "5px",
   height: "36px",
 }));
+
+export const TitleContainer = styled("div")(({}) => ({
+  // position: "sticky",
+  // top: 0,
+  // zIndex: 2,
+  // background: "white",
+  maxWidth: "640px",
+  display: "flex",
+  justifyContent: "space-between",
+  borderBottom: "solid 1px #dfdfdf",
+}));
+
+export const Title = styled("div")(({}) => ({
+  fontSize: "18px",
+  fontWeight: 600,
+}));

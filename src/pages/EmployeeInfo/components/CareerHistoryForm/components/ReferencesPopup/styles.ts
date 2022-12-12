@@ -17,7 +17,7 @@ export const useStyles = createStyles(() => ({
 
 export const TitleContainer = styled("div")(({ theme }) => ({
   display: "flex",
-  gap: "20px",
+  gap: "5px",
 }));
 
 export const Title = styled("div")(({ theme }) => ({
@@ -28,9 +28,17 @@ export const Title = styled("div")(({ theme }) => ({
 export const ButtonRow = styled("div")(({ theme }) => ({
   backgroundColor: "#fafafa",
   padding: "10px",
-  marginTop: "40px",
+  marginTop: "10px",
   display: "flex",
   justifyContent: "space-between",
+}));
+
+export const FieldCountRow = styled("div")(({ theme }) => ({
+  textAlign: "end",
+  paddingRight: theme.spacing.xs,
+  marginTop: "30px",
+  color: "blue",
+  fontSize: theme.fontSizes.sm,
 }));
 
 export const ReferenceCard = styled("div")(({ theme }) => ({
