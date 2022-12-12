@@ -72,6 +72,8 @@ export const ReferencePopup = ({
 
   const [showCommentsInput, setShowCommentsInput] = React.useState(false);
 
+  const [sourceId, setSourceId] = React.useState<number>();
+
   const { company, appointment, certsToField, duration, skills } =
     careerFormMethod.getValues();
 
@@ -146,7 +148,12 @@ export const ReferencePopup = ({
   });
 
   const submitReferences = () => {
-    sourceArrayMethods.append(sourceFormMethod.getValues());
+    if (sourceId !== undefined) {
+      sourceArrayMethods.update(sourceId, sourceFormMethod.getValues());
+      setSourceId(undefined);
+    } else {
+      sourceArrayMethods.append(sourceFormMethod.getValues());
+    }
 
     referenceFormMethod.setValue("content", content);
 
@@ -210,7 +217,20 @@ export const ReferencePopup = ({
   };
 
   const editSource = (id: number) => {
-    console.log("-- to be implemented --");
+    setSourceId(id);
+    sourceFormMethod.setValue(
+      "referenceType",
+      referenceFormMethod.getValues().sources[id].referenceType,
+    );
+    sourceFormMethod.setValue(
+      "dateObtained",
+      referenceFormMethod.getValues().sources[id].dateObtained,
+    );
+    sourceFormMethod.setValue(
+      "comment",
+      referenceFormMethod.getValues().sources[id].comment,
+    );
+    setPopupMode("edit");
   };
 
   const deleteSource = (id: number) => {
@@ -364,6 +384,7 @@ export const ReferencePopup = ({
       {referenceFormMethod.formState.isValid && popupMode === "edit" && (
         <Button
           mt={50}
+          ml={5}
           variant={"outline"}
           size="xs"
           onClick={() => setIsMassApplying(!isMassApplying)}
