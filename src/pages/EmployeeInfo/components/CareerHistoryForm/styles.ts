@@ -1,6 +1,5 @@
 import styled from "@emotion/styled";
 import { createStyles } from "@mantine/styles";
-import React from "react";
 
 export const useStyles = createStyles((theme) => ({
   formTextInput: {
@@ -20,15 +19,17 @@ export const useStyles = createStyles((theme) => ({
   dropdown: {
     height: "-webkit-fill-available",
     border: "none",
-    borderLeft: "solid 1px #dfdfdf",
     minHeight: "95vh",
+    top: "0 !important",
   },
 }));
 
 export const MainContainer = styled("div")(({}) => ({
-  padding: "0 10px 0 40px",
+  padding: "0 30px 0 40px",
   marginBottom: "50px",
   width: "fit-content",
+  overflowY: "scroll",
+  height: "-webkit-fill-available",
 }));
 
 export const SkillLabel = styled("div")(({ theme }) => ({
@@ -39,7 +40,7 @@ export const SkillLabel = styled("div")(({ theme }) => ({
 
 export const Row = styled("div")(({ highlight }: { highlight?: boolean }) => ({
   display: "flex",
-  margin: "30px 0",
+  marginBottom: "20px",
   gap: "10px",
   padding: "20px 15px",
   borderRadius: "5px",
@@ -54,14 +55,16 @@ export const AddRefButton = styled("button")(({ theme }) => ({
 }));
 
 export const TitleContainer = styled("div")(({}) => ({
-  // position: "sticky",
-  // top: 0,
-  // zIndex: 2,
-  // background: "white",
+  position: "sticky",
+  top: 0,
+  zIndex: 2,
+  background: "white",
   maxWidth: "640px",
   display: "flex",
   justifyContent: "space-between",
   borderBottom: "solid 1px #dfdfdf",
+  marginLeft: "50px",
+  marginBottom: "20px",
 }));
 
 export const Title = styled("div")(({}) => ({

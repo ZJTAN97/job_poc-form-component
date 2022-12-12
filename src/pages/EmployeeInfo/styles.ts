@@ -5,7 +5,6 @@ export const useStyles = createStyles(() => ({
   drawer: {
     top: "60px !important",
     width: "calc(100% - 200px) !important",
-    overflowY: "auto",
   },
   drawerContent: {
     top: "60px !important",

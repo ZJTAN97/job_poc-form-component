@@ -117,29 +117,30 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
           setMassApplyingFields={setMassApplyingFields}
         />
 
+        <TitleContainer>
+          <Title>Career History</Title>
+          <Button
+            variant={"subtle"}
+            size="xs"
+            pl={0}
+            mb={10}
+            onClick={() => {
+              if (massApplyingFields === undefined) {
+                setMassApplyingFields([]);
+                setIsOpenPopover(true);
+              } else {
+                setMassApplyingFields(undefined);
+                setIsOpenPopover(false);
+              }
+            }}
+            leftIcon={<IconEditCircle />}
+          >
+            {isOpenPopover ? "Exit mass apply" : "Mass apply"}
+          </Button>
+        </TitleContainer>
+
         <Popover.Target>
           <MainContainer>
-            <TitleContainer>
-              <Title>Career History</Title>
-              <Button
-                variant={"subtle"}
-                size="xs"
-                pl={0}
-                mb={10}
-                onClick={() => {
-                  if (massApplyingFields === undefined) {
-                    setMassApplyingFields([]);
-                    setIsOpenPopover(true);
-                  } else {
-                    setMassApplyingFields(undefined);
-                    setIsOpenPopover(false);
-                  }
-                }}
-                leftIcon={<IconEditCircle />}
-              >
-                {isOpenPopover ? "Exit mass apply" : "Mass apply"}
-              </Button>
-            </TitleContainer>
             {/* COMPANY */}
             <Row
               highlight={
@@ -365,6 +366,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             <Button
               ml={15}
               mt={20}
+              mb={50}
               onClick={submitFormHandler}
               disabled={!editMode}
               variant={"light"}
