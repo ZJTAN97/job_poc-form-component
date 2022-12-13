@@ -38,10 +38,15 @@ interface ReferencePopupProps {
   setEditMode: (arg: boolean) => void;
 
   /** Field name required to populate reference object */
-  currentName:
+  currentName?:
     | Path<CareerType>
     | Path<AppointmentType>
     | Path<CertificationType>;
+
+  /** testing nia */
+  setCurrentName?: (
+    arg: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>,
+  ) => void;
 
   /** Last applied source */
   lastSource?: SourceType;
@@ -76,6 +81,7 @@ export const ReferencePopup = ({
   setIsOpenPopover,
   setEditMode,
   currentName,
+  setCurrentName,
   lastSource,
   setLastSource,
   currentArrayId,
@@ -230,6 +236,22 @@ export const ReferencePopup = ({
     setLastSource(sourceFormMethod.getValues());
     sourceFormMethod.reset();
     setPopupMode("read");
+  };
+
+  const massSubmitReferences = () => {
+    if (massApplyingFields && setCurrentName) {
+      massApplyingFields.forEach((field, index, arr) => {
+        console.log(field);
+        console.log(arr);
+
+        setCurrentName(field.field);
+
+        referenceFormMethod.setValue("field", field.field);
+        referenceFormMethod.setValue("content", field.content);
+        sourceArrayMethods.append(sourceFormMethod.getValues());
+        referenceArrayMethods.append(referenceFormMethod.getValues());
+      });
+    }
   };
 
   const editSource = (id: number) => {
@@ -397,7 +419,11 @@ export const ReferencePopup = ({
           }}
           size={"xs"}
           variant="outline"
-          onClick={submitReferences}
+          onClick={
+            massApplyingFields !== undefined
+              ? massSubmitReferences
+              : submitReferences
+          }
           disabled={popupMode === "read" || !sourceFormMethod.formState.isValid}
         >
           Apply

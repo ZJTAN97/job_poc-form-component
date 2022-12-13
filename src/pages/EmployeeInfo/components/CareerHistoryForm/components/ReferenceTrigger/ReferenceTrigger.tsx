@@ -18,7 +18,7 @@ interface ReferenceTriggerProps {
   content: string;
 
   /** Currently selected field to show references on the popup component */
-  currentName:
+  currentName?:
     | Path<CareerType>
     | Path<AppointmentType>
     | Path<CertificationType>;
@@ -168,7 +168,10 @@ export const ReferenceTrigger = ({
             classNames={{
               input: classes.reference,
             }}
-            disabled={isOpenPopover && currentName !== name}
+            disabled={
+              (isOpenPopover && currentName !== name) ||
+              massApplyingFields !== undefined
+            }
           />
         </TriggerRow>
       ) : (

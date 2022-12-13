@@ -28,7 +28,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   const [isOpenPopover, setIsOpenPopover] = React.useState(false);
   const [currentName, setCurrentName] = React.useState<
     Path<CareerType> | Path<AppointmentType> | Path<CertificationType>
-  >("company");
+  >();
   const [currentArrayId, setCurrentArrayId] = React.useState(0);
   const [lastSource, setLastSource] = React.useState<SourceType>();
 
@@ -74,9 +74,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     setDrawer(false);
   });
 
-  console.log("--careerForm--");
-  console.log(careerFormMethods.getValues());
-
   const contentEditAfterAddedRef = (val: string) => {
     if (
       careerFormMethods
@@ -89,14 +86,29 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   };
 
   const handleMassApply = () => {
+    console.log(currentName);
+
     if (massApplyingFields === undefined) {
       setMassApplyingFields([]);
-      setIsOpenPopover(true);
+      if (currentName === undefined) {
+        setEditMode(false);
+        setIsOpenPopover(true);
+      }
     } else {
       setMassApplyingFields(undefined);
-      setIsOpenPopover(false);
+
+      if (currentName === undefined) {
+        setEditMode(true);
+        setIsOpenPopover(false);
+      }
     }
   };
+
+  console.log("--careerForm--");
+  console.log(careerFormMethods.getValues());
+
+  console.log("--mass applied fields--");
+  console.log(massApplyingFields);
 
   return (
     <Form
@@ -113,11 +125,12 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
       >
         <ReferencePopup
           key={
-            currentName +
+            currentName! +
             currentArrayId +
             careerFormMethods.getValues().toString()
           }
           currentName={currentName}
+          setCurrentName={setCurrentName}
           setIsOpenPopover={setIsOpenPopover}
           setEditMode={setEditMode}
           lastSource={lastSource}
