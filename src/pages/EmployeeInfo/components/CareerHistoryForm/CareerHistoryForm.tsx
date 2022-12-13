@@ -88,6 +88,16 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     }
   };
 
+  const handleMassApply = () => {
+    if (massApplyingFields === undefined) {
+      setMassApplyingFields([]);
+      setIsOpenPopover(true);
+    } else {
+      setMassApplyingFields(undefined);
+      setIsOpenPopover(false);
+    }
+  };
+
   return (
     <Form
       methods={careerFormMethods}
@@ -124,18 +134,12 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             size="xs"
             pl={0}
             mb={10}
-            onClick={() => {
-              if (massApplyingFields === undefined) {
-                setMassApplyingFields([]);
-                setIsOpenPopover(true);
-              } else {
-                setMassApplyingFields(undefined);
-                setIsOpenPopover(false);
-              }
-            }}
+            onClick={handleMassApply}
             leftIcon={<IconEditCircle />}
           >
-            {isOpenPopover ? "Exit mass apply" : "Mass apply"}
+            {massApplyingFields !== undefined
+              ? "Exit mass apply"
+              : "Mass apply"}
           </Button>
         </TitleContainer>
 

@@ -60,7 +60,7 @@ export const TitleContainer = styled("div")(({}) => ({
   top: 0,
   zIndex: 2,
   background: "white",
-  maxWidth: "600px",
+  maxWidth: "640px",
   display: "flex",
   justifyContent: "space-between",
   borderBottom: "solid 1px #dfdfdf",

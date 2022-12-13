@@ -152,6 +152,11 @@ export const ReferenceTrigger = ({
     <>
       {isOpenPopover || existingReference ? (
         <TriggerRow>
+          {massApplyingFields !== undefined && !disabled ? (
+            <Checkbox mt={30} ml={10} mr={10} onClick={handleCheckBox} />
+          ) : (
+            <div style={{ width: "40px" }}></div>
+          )}
           <Textarea
             w={190}
             ml={10}
@@ -165,15 +170,13 @@ export const ReferenceTrigger = ({
             }}
             disabled={isOpenPopover && currentName !== name}
           />
-          {massApplyingFields !== undefined && !disabled ? (
-            <Checkbox mt={30} ml={25} onClick={handleCheckBox} />
-          ) : null}
         </TriggerRow>
       ) : (
         <Button
           leftIcon={<IconCirclePlus />}
           variant={"white"}
           mt={24}
+          ml={50}
           onClick={() => referencePopoverTrigger(name)}
           disabled={disabled}
           color={error && "red"}
