@@ -366,7 +366,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             <Button
               ml={15}
               mt={20}
-              mb={50}
               onClick={submitFormHandler}
               disabled={!editMode}
               variant={"light"}

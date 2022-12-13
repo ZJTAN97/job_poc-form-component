@@ -25,11 +25,11 @@ export const useStyles = createStyles((theme) => ({
 }));
 
 export const MainContainer = styled("div")(({}) => ({
-  padding: "0 30px 0 40px",
+  padding: "0 30px 50px 40px",
   marginBottom: "50px",
   width: "fit-content",
   overflowY: "scroll",
-  height: "-webkit-fill-available",
+  height: "84vh",
 }));
 
 export const SkillLabel = styled("div")(({ theme }) => ({
@@ -40,7 +40,8 @@ export const SkillLabel = styled("div")(({ theme }) => ({
 
 export const Row = styled("div")(({ highlight }: { highlight?: boolean }) => ({
   display: "flex",
-  marginBottom: "20px",
+  marginTop: "10px",
+  marginBottom: "10px",
   gap: "10px",
   padding: "20px 15px",
   borderRadius: "5px",
@@ -59,12 +60,11 @@ export const TitleContainer = styled("div")(({}) => ({
   top: 0,
   zIndex: 2,
   background: "white",
-  maxWidth: "640px",
+  maxWidth: "600px",
   display: "flex",
   justifyContent: "space-between",
   borderBottom: "solid 1px #dfdfdf",
   marginLeft: "50px",
-  marginBottom: "20px",
 }));
 
 export const Title = styled("div")(({}) => ({
