@@ -14,10 +14,7 @@ import { CertificationType } from "../../../../model/career/Certification";
 import { SourceType } from "../../../../model/common/Source";
 import { AppointmentType } from "../../../../model/career/Appointment";
 import { IconEditCircle } from "@tabler/icons";
-import {
-  ReferencesProvider,
-  ReferencesToolContext,
-} from "./components/ReferencesTool";
+import { ReferencesProvider, ReferencesContext } from "./components/References";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -113,7 +110,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
 
   return (
     <ReferencesProvider>
-      <ReferencesToolContext.Consumer>
+      <ReferencesContext.Consumer>
         {({ openPanel }) => (
           <Form
             methods={careerFormMethods}
@@ -411,7 +408,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             </Popover>
           </Form>
         )}
-      </ReferencesToolContext.Consumer>
+      </ReferencesContext.Consumer>
     </ReferencesProvider>
   );
 };

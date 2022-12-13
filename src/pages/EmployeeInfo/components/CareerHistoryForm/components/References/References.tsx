@@ -7,7 +7,7 @@ import { SourceType } from "../../../../../../model/common/Source";
 import { Panel } from "./Panel/Panel";
 import { Trigger } from "./Trigger/Trigger";
 
-interface ReferencesToolProps {
+interface ReferencesProps {
   editMode: boolean;
   setEditMode: (arg: boolean) => void;
   openPanel: boolean;
@@ -23,7 +23,7 @@ interface ReferencesToolProps {
   setLastSource: (arg: SourceType) => void;
 }
 
-export const ReferencesToolContext = React.createContext<ReferencesToolProps>({
+export const ReferencesContext = React.createContext<ReferencesProps>({
   editMode: false,
   setEditMode: (arg: boolean) => {},
   openPanel: false,
@@ -48,7 +48,7 @@ export const ReferencesProvider = ({
   const [lastSource, setLastSource] = React.useState<SourceType>();
 
   return (
-    <ReferencesToolContext.Provider
+    <ReferencesContext.Provider
       value={{
         editMode,
         setEditMode,
@@ -61,7 +61,7 @@ export const ReferencesProvider = ({
       }}
     >
       {children}
-    </ReferencesToolContext.Provider>
+    </ReferencesContext.Provider>
   );
 };
 
