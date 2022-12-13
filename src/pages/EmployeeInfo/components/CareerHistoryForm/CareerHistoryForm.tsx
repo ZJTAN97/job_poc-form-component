@@ -109,14 +109,15 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   // console.log(careerFormMethods.getValues());
 
   return (
-    <ReferencesProvider>
+    <Form
+      methods={careerFormMethods}
+      preventLeaving={true}
+      useLocalStorage={true}
+      referencesForm
+    >
       <ReferencesContext.Consumer>
         {({ openPanel }) => (
-          <Form
-            methods={careerFormMethods}
-            preventLeaving={true}
-            useLocalStorage={true}
-          >
+          <>
             <ReferencesProvider.Panel />
             <ReferencesProvider.Trigger<CareerType> fieldName={"company"} />
             <TextInput disabled={openPanel} />
@@ -406,9 +407,9 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 </MainContainer>
               </Popover.Target>
             </Popover>
-          </Form>
+          </>
         )}
       </ReferencesContext.Consumer>
-    </ReferencesProvider>
+    </Form>
   );
 };

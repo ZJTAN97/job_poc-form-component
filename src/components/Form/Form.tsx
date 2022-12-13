@@ -1,5 +1,10 @@
 import React from "react";
 import { FormProvider, UseFormReturn } from "react-hook-form";
+import {
+  ReferencesContext,
+  ReferencesProps,
+  ReferencesProvider,
+} from "../../pages/EmployeeInfo/components/CareerHistoryForm/components/References";
 import { ChipSelection } from "./ChipSelection/ChipSelection";
 import Dropdown from "./Dropdown/Dropdown";
 import MultiSelect from "./MultiSelect/MultiSelect";
@@ -11,6 +16,7 @@ interface FormProps {
   useLocalStorage?: boolean;
   preventLeaving?: boolean;
   children: React.ReactNode;
+  referencesForm?: boolean;
 }
 
 export const Form = ({
@@ -18,6 +24,7 @@ export const Form = ({
   useLocalStorage,
   preventLeaving,
   children,
+  referencesForm,
 }: FormProps) => {
   const { formState } = methods;
   const { isDirty } = formState;
@@ -45,7 +52,17 @@ export const Form = ({
     };
   }, [beforeUnload]);
 
-  return <FormProvider {...methods}>{children}</FormProvider>;
+  return (
+    <>
+      {referencesForm ? (
+        <ReferencesProvider>
+          <FormProvider {...methods}>{children}</FormProvider>
+        </ReferencesProvider>
+      ) : (
+        <FormProvider {...methods}>{children}</FormProvider>
+      )}
+    </>
+  );
 };
 
 Form.TextInput = TextInput;

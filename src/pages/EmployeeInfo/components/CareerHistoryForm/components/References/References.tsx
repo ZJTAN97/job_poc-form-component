@@ -7,7 +7,7 @@ import { SourceType } from "../../../../../../model/common/Source";
 import { Panel } from "./Panel/Panel";
 import { Trigger } from "./Trigger/Trigger";
 
-interface ReferencesProps {
+export interface ReferencesProps {
   editMode: boolean;
   setEditMode: (arg: boolean) => void;
   openPanel: boolean;
