@@ -1,11 +1,14 @@
 import React from "react";
 import { Textarea as MantineTextArea, TextareaProps } from "@mantine/core";
-import { FieldValues, Path, useController } from "react-hook-form";
-import { FormCommonProps } from "../typings";
+import {
+  FieldValues,
+  Path,
+  useController,
+  useFormContext,
+} from "react-hook-form";
 
 interface FormTextAreaProps<T extends FieldValues>
-  extends FormCommonProps<T>,
-    Omit<TextareaProps, "onChange" | "name"> {
+  extends Omit<TextareaProps, "onChange" | "name"> {
   name: Path<T>;
   onChange?: (value: string) => void;
 }
@@ -13,7 +16,9 @@ interface FormTextAreaProps<T extends FieldValues>
 export const TextArea = <T extends FieldValues>(
   props: FormTextAreaProps<T>,
 ) => {
-  const { control, name, onChange, ...mantineTextAreaProps } = props;
+  const { name, onChange, ...mantineTextAreaProps } = props;
+
+  const { control } = useFormContext<T>();
 
   const { field, fieldState } = useController({
     name,

@@ -113,303 +113,300 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
       methods={careerFormMethods}
       preventLeaving={true}
       useLocalStorage={true}
-      referencesForm
     >
-      <ReferencesContext.Consumer>
-        {({ openPanel }) => (
-          <>
-            <ReferencesProvider.Panel />
-            <ReferencesProvider.Trigger<CareerType> fieldName={"company"} />
-            <TextInput disabled={openPanel} />
-            <Popover
-              opened={isOpenPopover}
-              position="right"
-              closeOnClickOutside={false}
-              classNames={{ dropdown: classes.dropdown }}
-              width={350}
-            >
-              <ReferencePopup
-                key={
-                  currentName! +
-                  currentArrayId +
-                  careerFormMethods.getValues().toString()
-                }
-                currentName={currentName}
-                setCurrentName={setCurrentName}
-                setIsOpenPopover={setIsOpenPopover}
-                setEditMode={setEditMode}
-                lastSource={lastSource}
-                setLastSource={setLastSource}
-                currentArrayId={currentArrayId}
-                massApplyingFields={massApplyingFields}
-                setMassApplyingFields={setMassApplyingFields}
-              />
+      <ReferencesProvider>
+        <ReferencesContext.Consumer>
+          {({ openPanel }) => (
+            <>
+              <ReferencesProvider.Panel />
+              <ReferencesProvider.Trigger<CareerType> fieldName={"company"} />
+              <TextInput disabled={openPanel} />
+              <Popover
+                opened={isOpenPopover}
+                position="right"
+                closeOnClickOutside={false}
+                classNames={{ dropdown: classes.dropdown }}
+                width={350}
+              >
+                <ReferencePopup
+                  key={
+                    currentName! +
+                    currentArrayId +
+                    careerFormMethods.getValues().toString()
+                  }
+                  currentName={currentName}
+                  setCurrentName={setCurrentName}
+                  setIsOpenPopover={setIsOpenPopover}
+                  setEditMode={setEditMode}
+                  lastSource={lastSource}
+                  setLastSource={setLastSource}
+                  currentArrayId={currentArrayId}
+                  massApplyingFields={massApplyingFields}
+                  setMassApplyingFields={setMassApplyingFields}
+                />
 
-              <TitleContainer>
-                <Title>Career History</Title>
-                <Button
-                  variant={"subtle"}
-                  size="xs"
-                  pl={0}
-                  mb={10}
-                  onClick={handleMassApply}
-                  leftIcon={<IconEditCircle />}
-                >
-                  {massApplyingFields !== undefined
-                    ? "Exit mass apply"
-                    : "Mass apply"}
-                </Button>
-              </TitleContainer>
-
-              <Popover.Target>
-                <MainContainer>
-                  {/* COMPANY */}
-                  <Row
-                    highlight={
-                      (!editMode && currentName === "company") ||
-                      massApplyingFields?.filter(
-                        (item) =>
-                          item.field === "company" &&
-                          item.content ===
-                            careerFormMethods.getValues().company,
-                      ).length === 1
-                    }
-                  >
-                    <Form.TextInput
-                      control={careerFormMethods.control}
-                      label={"Company name"}
-                      name={"company"}
-                      disabled={!editMode}
-                      variant={editMode ? "default" : "unstyled"}
-                      className={classes.formTextInput}
-                      onChange={contentEditAfterAddedRef}
-                      required
-                    />
-                    <ReferenceTrigger
-                      isOpenPopover={isOpenPopover}
-                      name={"company"}
-                      content={careerFormMethods.getValues().company}
-                      currentName={currentName}
-                      setCurrentName={setCurrentName}
-                      setIsOpenPopover={setIsOpenPopover}
-                      setEditMode={setEditMode}
-                      disabled={!dirtyFields.company}
-                      error={references_company?.message}
-                      massApplyingFields={massApplyingFields}
-                      setMassApplyingFields={setMassApplyingFields}
-                    />
-                  </Row>
-
-                  {/* DURATION */}
-                  <Row
-                    highlight={
-                      (!editMode && currentName === "duration") ||
-                      massApplyingFields?.filter(
-                        (item) =>
-                          item.field === "duration" &&
-                          item.content ===
-                            careerFormMethods.getValues().duration,
-                      ).length === 1
-                    }
-                  >
-                    <Form.TextInput
-                      control={careerFormMethods.control}
-                      label={"Duration"}
-                      name={"duration"}
-                      disabled={!editMode}
-                      variant={editMode ? "default" : "unstyled"}
-                      className={classes.formTextInput}
-                    />
-                    <ReferenceTrigger
-                      isOpenPopover={isOpenPopover}
-                      name={"duration"}
-                      content={careerFormMethods.getValues().duration}
-                      currentName={currentName}
-                      setCurrentName={setCurrentName}
-                      setIsOpenPopover={setIsOpenPopover}
-                      setEditMode={setEditMode}
-                      disabled={!dirtyFields.duration}
-                      massApplyingFields={massApplyingFields}
-                      setMassApplyingFields={setMassApplyingFields}
-                    />
-                  </Row>
-
-                  {/* LAST DRAWN SALARY*/}
-                  <Row>
-                    <Form.TextInput
-                      control={careerFormMethods.control}
-                      label={"Last Drawn Salary"}
-                      name={"lastDrawnSalary"}
-                      disabled={!editMode}
-                      variant={editMode ? "default" : "unstyled"}
-                      className={classes.formTextInput}
-                    />
-                  </Row>
-
-                  {/* APPOINTMENT (POSITION, RANK) */}
-                  <Row
-                    highlight={
-                      (!editMode && currentName === "position") ||
-                      massApplyingFields?.filter(
-                        (item) =>
-                          item.field === "position" &&
-                          item.content ===
-                            careerFormMethods.getValues().appointment.position,
-                      ).length === 1
-                    }
-                  >
-                    <Form.TextInput
-                      control={careerFormMethods.control}
-                      label={"Position"}
-                      name={"appointment.position"}
-                      disabled={!editMode}
-                      variant={editMode ? "default" : "unstyled"}
-                      className={classes.formTextInput}
-                      required
-                    />
-                    <ReferenceTrigger
-                      isOpenPopover={isOpenPopover}
-                      name={"position"}
-                      content={
-                        careerFormMethods.getValues().appointment.position
-                      }
-                      currentName={currentName}
-                      setCurrentName={setCurrentName}
-                      setIsOpenPopover={setIsOpenPopover}
-                      setEditMode={setEditMode}
-                      disabled={
-                        careerFormMethods.getValues().appointment.position
-                          .length < 1
-                      }
-                      error={references_position?.message}
-                      massApplyingFields={massApplyingFields}
-                      setMassApplyingFields={setMassApplyingFields}
-                    />
-                  </Row>
-
-                  <Row
-                    highlight={
-                      (!editMode && currentName === "rank") ||
-                      massApplyingFields?.filter(
-                        (item) =>
-                          item.field === "rank" &&
-                          item.content ===
-                            careerFormMethods.getValues().appointment.rank,
-                      ).length === 1
-                    }
-                  >
-                    <Form.TextInput
-                      control={careerFormMethods.control}
-                      label={"Rank"}
-                      name={"appointment.rank"}
-                      disabled={!editMode}
-                      variant={editMode ? "default" : "unstyled"}
-                      className={classes.formTextInput}
-                      required={true}
-                    />
-                    <ReferenceTrigger
-                      isOpenPopover={isOpenPopover}
-                      name={"rank"}
-                      content={careerFormMethods.getValues().appointment.rank}
-                      currentName={currentName}
-                      setCurrentName={setCurrentName}
-                      setIsOpenPopover={setIsOpenPopover}
-                      setEditMode={setEditMode}
-                      disabled={
-                        careerFormMethods.getValues().appointment.rank.length <
-                        1
-                      }
-                      massApplyingFields={massApplyingFields}
-                      setMassApplyingFields={setMassApplyingFields}
-                    />
-                  </Row>
-
-                  {/* SKILLS  */}
-                  <StringArrayInput<CareerType>
-                    name="skills"
-                    editMode={editMode}
-                    referenceTrigger={(id) => (
-                      <ReferenceTrigger
-                        isOpenPopover={isOpenPopover}
-                        name={"skills"}
-                        content={careerFormMethods.getValues().skills[id]}
-                        currentName={currentName}
-                        setCurrentName={setCurrentName}
-                        setIsOpenPopover={setIsOpenPopover}
-                        setEditMode={setEditMode}
-                        disabled={
-                          careerFormMethods.getValues().skills[id].length < 1
-                        }
-                        setCurrentArrayId={setCurrentArrayId}
-                        objArrId={id}
-                        error={references_skills?.message}
-                        massApplyingFields={massApplyingFields}
-                        setMassApplyingFields={setMassApplyingFields}
-                      />
-                    )}
-                    currentName={currentName}
-                    currentArrayId={currentArrayId}
-                    massApplyingFields={massApplyingFields}
-                  />
-
-                  {/* CERTS  */}
-                  <ObjectArrayInput<CareerType, CertificationType>
-                    name="certsToField"
-                    editMode={editMode}
-                    emptyObject={{
-                      name: "",
-                      issuedBy: "",
-                      references: [],
-                    }}
-                    referenceTrigger={(id, name) => (
-                      <ReferenceTrigger
-                        isOpenPopover={isOpenPopover}
-                        name={name}
-                        content={
-                          name === "issuedBy"
-                            ? careerFormMethods.getValues().certsToField[id]
-                                .issuedBy
-                            : careerFormMethods.getValues().certsToField[id]
-                                .name
-                        }
-                        currentName={currentName}
-                        setCurrentName={setCurrentName}
-                        setIsOpenPopover={setIsOpenPopover}
-                        setEditMode={setEditMode}
-                        setCurrentArrayId={setCurrentArrayId}
-                        objArrId={id}
-                        error={references_certs?.message}
-                        disabled={
-                          name === "issuedBy"
-                            ? careerFormMethods.getValues().certsToField[id]
-                                .issuedBy.length < 1
-                            : careerFormMethods.getValues().certsToField[id]
-                                .name.length < 1
-                        }
-                        massApplyingFields={massApplyingFields}
-                        setMassApplyingFields={setMassApplyingFields}
-                      />
-                    )}
-                    currentArrayId={currentArrayId}
-                    currentName={currentName}
-                    massApplyingFields={massApplyingFields}
-                  />
-
+                <TitleContainer>
+                  <Title>Career History</Title>
                   <Button
-                    ml={15}
-                    mt={20}
-                    onClick={submitFormHandler}
-                    disabled={!editMode}
-                    variant={"light"}
+                    variant={"subtle"}
+                    size="xs"
+                    pl={0}
+                    mb={10}
+                    onClick={handleMassApply}
+                    leftIcon={<IconEditCircle />}
                   >
-                    Add Career
+                    {massApplyingFields !== undefined
+                      ? "Exit mass apply"
+                      : "Mass apply"}
                   </Button>
-                </MainContainer>
-              </Popover.Target>
-            </Popover>
-          </>
-        )}
-      </ReferencesContext.Consumer>
+                </TitleContainer>
+
+                <Popover.Target>
+                  <MainContainer>
+                    {/* COMPANY */}
+                    <Row
+                      highlight={
+                        (!editMode && currentName === "company") ||
+                        massApplyingFields?.filter(
+                          (item) =>
+                            item.field === "company" &&
+                            item.content ===
+                              careerFormMethods.getValues().company,
+                        ).length === 1
+                      }
+                    >
+                      <Form.TextInput
+                        label={"Company name"}
+                        name={"company"}
+                        disabled={!editMode}
+                        variant={editMode ? "default" : "unstyled"}
+                        className={classes.formTextInput}
+                        onChange={contentEditAfterAddedRef}
+                        required
+                      />
+                      <ReferenceTrigger
+                        isOpenPopover={isOpenPopover}
+                        name={"company"}
+                        content={careerFormMethods.getValues().company}
+                        currentName={currentName}
+                        setCurrentName={setCurrentName}
+                        setIsOpenPopover={setIsOpenPopover}
+                        setEditMode={setEditMode}
+                        disabled={!dirtyFields.company}
+                        error={references_company?.message}
+                        massApplyingFields={massApplyingFields}
+                        setMassApplyingFields={setMassApplyingFields}
+                      />
+                    </Row>
+
+                    {/* DURATION */}
+                    <Row
+                      highlight={
+                        (!editMode && currentName === "duration") ||
+                        massApplyingFields?.filter(
+                          (item) =>
+                            item.field === "duration" &&
+                            item.content ===
+                              careerFormMethods.getValues().duration,
+                        ).length === 1
+                      }
+                    >
+                      <Form.TextInput
+                        label={"Duration"}
+                        name={"duration"}
+                        disabled={!editMode}
+                        variant={editMode ? "default" : "unstyled"}
+                        className={classes.formTextInput}
+                      />
+                      <ReferenceTrigger
+                        isOpenPopover={isOpenPopover}
+                        name={"duration"}
+                        content={careerFormMethods.getValues().duration}
+                        currentName={currentName}
+                        setCurrentName={setCurrentName}
+                        setIsOpenPopover={setIsOpenPopover}
+                        setEditMode={setEditMode}
+                        disabled={!dirtyFields.duration}
+                        massApplyingFields={massApplyingFields}
+                        setMassApplyingFields={setMassApplyingFields}
+                      />
+                    </Row>
+
+                    {/* LAST DRAWN SALARY*/}
+                    <Row>
+                      <Form.TextInput
+                        label={"Last Drawn Salary"}
+                        name={"lastDrawnSalary"}
+                        disabled={!editMode}
+                        variant={editMode ? "default" : "unstyled"}
+                        className={classes.formTextInput}
+                      />
+                    </Row>
+
+                    {/* APPOINTMENT (POSITION, RANK) */}
+                    <Row
+                      highlight={
+                        (!editMode && currentName === "position") ||
+                        massApplyingFields?.filter(
+                          (item) =>
+                            item.field === "position" &&
+                            item.content ===
+                              careerFormMethods.getValues().appointment
+                                .position,
+                        ).length === 1
+                      }
+                    >
+                      <Form.TextInput
+                        label={"Position"}
+                        name={"appointment.position"}
+                        disabled={!editMode}
+                        variant={editMode ? "default" : "unstyled"}
+                        className={classes.formTextInput}
+                        required
+                      />
+                      <ReferenceTrigger
+                        isOpenPopover={isOpenPopover}
+                        name={"position"}
+                        content={
+                          careerFormMethods.getValues().appointment.position
+                        }
+                        currentName={currentName}
+                        setCurrentName={setCurrentName}
+                        setIsOpenPopover={setIsOpenPopover}
+                        setEditMode={setEditMode}
+                        disabled={
+                          careerFormMethods.getValues().appointment.position
+                            .length < 1
+                        }
+                        error={references_position?.message}
+                        massApplyingFields={massApplyingFields}
+                        setMassApplyingFields={setMassApplyingFields}
+                      />
+                    </Row>
+
+                    <Row
+                      highlight={
+                        (!editMode && currentName === "rank") ||
+                        massApplyingFields?.filter(
+                          (item) =>
+                            item.field === "rank" &&
+                            item.content ===
+                              careerFormMethods.getValues().appointment.rank,
+                        ).length === 1
+                      }
+                    >
+                      <Form.TextInput
+                        label={"Rank"}
+                        name={"appointment.rank"}
+                        disabled={!editMode}
+                        variant={editMode ? "default" : "unstyled"}
+                        className={classes.formTextInput}
+                        required={true}
+                      />
+                      <ReferenceTrigger
+                        isOpenPopover={isOpenPopover}
+                        name={"rank"}
+                        content={careerFormMethods.getValues().appointment.rank}
+                        currentName={currentName}
+                        setCurrentName={setCurrentName}
+                        setIsOpenPopover={setIsOpenPopover}
+                        setEditMode={setEditMode}
+                        disabled={
+                          careerFormMethods.getValues().appointment.rank
+                            .length < 1
+                        }
+                        massApplyingFields={massApplyingFields}
+                        setMassApplyingFields={setMassApplyingFields}
+                      />
+                    </Row>
+
+                    {/* SKILLS  */}
+                    <StringArrayInput<CareerType>
+                      name="skills"
+                      editMode={editMode}
+                      referenceTrigger={(id) => (
+                        <ReferenceTrigger
+                          isOpenPopover={isOpenPopover}
+                          name={"skills"}
+                          content={careerFormMethods.getValues().skills[id]}
+                          currentName={currentName}
+                          setCurrentName={setCurrentName}
+                          setIsOpenPopover={setIsOpenPopover}
+                          setEditMode={setEditMode}
+                          disabled={
+                            careerFormMethods.getValues().skills[id].length < 1
+                          }
+                          setCurrentArrayId={setCurrentArrayId}
+                          objArrId={id}
+                          error={references_skills?.message}
+                          massApplyingFields={massApplyingFields}
+                          setMassApplyingFields={setMassApplyingFields}
+                        />
+                      )}
+                      currentName={currentName}
+                      currentArrayId={currentArrayId}
+                      massApplyingFields={massApplyingFields}
+                    />
+
+                    {/* CERTS  */}
+                    <ObjectArrayInput<CareerType, CertificationType>
+                      name="certsToField"
+                      editMode={editMode}
+                      emptyObject={{
+                        name: "",
+                        issuedBy: "",
+                        references: [],
+                      }}
+                      referenceTrigger={(id, name) => (
+                        <ReferenceTrigger
+                          isOpenPopover={isOpenPopover}
+                          name={name}
+                          content={
+                            name === "issuedBy"
+                              ? careerFormMethods.getValues().certsToField[id]
+                                  .issuedBy
+                              : careerFormMethods.getValues().certsToField[id]
+                                  .name
+                          }
+                          currentName={currentName}
+                          setCurrentName={setCurrentName}
+                          setIsOpenPopover={setIsOpenPopover}
+                          setEditMode={setEditMode}
+                          setCurrentArrayId={setCurrentArrayId}
+                          objArrId={id}
+                          error={references_certs?.message}
+                          disabled={
+                            name === "issuedBy"
+                              ? careerFormMethods.getValues().certsToField[id]
+                                  .issuedBy.length < 1
+                              : careerFormMethods.getValues().certsToField[id]
+                                  .name.length < 1
+                          }
+                          massApplyingFields={massApplyingFields}
+                          setMassApplyingFields={setMassApplyingFields}
+                        />
+                      )}
+                      currentArrayId={currentArrayId}
+                      currentName={currentName}
+                      massApplyingFields={massApplyingFields}
+                    />
+
+                    <Button
+                      ml={15}
+                      mt={20}
+                      onClick={submitFormHandler}
+                      disabled={!editMode}
+                      variant={"light"}
+                    >
+                      Add Career
+                    </Button>
+                  </MainContainer>
+                </Popover.Target>
+              </Popover>
+            </>
+          )}
+        </ReferencesContext.Consumer>
+      </ReferencesProvider>
     </Form>
   );
 };

@@ -339,7 +339,6 @@ export const ReferencePopup = ({
             </Button>
           )}
           <Form.Dropdown
-            control={sourceFormMethod.control}
             name={"referenceType"}
             mt={20}
             mb={20}
@@ -347,18 +346,12 @@ export const ReferencePopup = ({
             data={Object.values(TYPES_OF_REFERENCES)}
           />
           <Form.TextInput
-            control={sourceFormMethod.control}
             name={"dateObtained"}
             mb={20}
             label={"Date Obtained"}
           />
           {showCommentsInput ? (
-            <Form.TextInput
-              control={sourceFormMethod.control}
-              name={"comment"}
-              mb={20}
-              label={"Comments"}
-            />
+            <Form.TextInput name={"comment"} mb={20} label={"Comments"} />
           ) : (
             <Button
               leftIcon={<IconCirclePlus />}

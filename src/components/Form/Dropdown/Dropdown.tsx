@@ -1,17 +1,22 @@
 import { Select, SelectProps } from "@mantine/core";
 import React from "react";
-import { FieldValues, Path, useController } from "react-hook-form";
-import { FormCommonProps } from "../typings";
+import {
+  FieldValues,
+  Path,
+  useController,
+  useFormContext,
+} from "react-hook-form";
 
 interface DropdownProps<T extends FieldValues>
-  extends Omit<SelectProps, "onChange" | "name">,
-    FormCommonProps<T> {
+  extends Omit<SelectProps, "onChange" | "name"> {
   name: Path<T>;
   onChange?: (value: string | null) => void;
 }
 
 const Dropdown = <T extends FieldValues>(props: DropdownProps<T>) => {
-  const { control, name, onChange, ...mantineSelectProps } = props;
+  const { name, onChange, ...mantineSelectProps } = props;
+
+  const { control } = useFormContext<T>();
 
   const { field } = useController({
     name,

@@ -3,18 +3,23 @@ import {
   MultiSelect as MantineMultiSelect,
   MultiSelectProps,
 } from "@mantine/core";
-import { FieldValues, Path, useController } from "react-hook-form";
-import { FormCommonProps } from "../typings";
+import {
+  FieldValues,
+  Path,
+  useController,
+  useFormContext,
+} from "react-hook-form";
 
 export interface FormMultiSelectProps<T extends FieldValues>
-  extends Omit<MultiSelectProps, "onChange" | "name">,
-    FormCommonProps<T> {
+  extends Omit<MultiSelectProps, "onChange" | "name"> {
   name: Path<T>;
   onChange?: (value: string[]) => void;
 }
 
 const MultiSelect = <T extends FieldValues>(props: FormMultiSelectProps<T>) => {
-  const { control, name, onChange, ...mantineMultiInputProps } = props;
+  const { name, onChange, ...mantineMultiInputProps } = props;
+
+  const { control } = useFormContext<T>();
 
   const { field, fieldState } = useController({
     name,

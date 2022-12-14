@@ -1,12 +1,15 @@
 import { Chip, ChipProps } from "@mantine/core";
 import React from "react";
-import { FieldValues, Path, useController } from "react-hook-form";
-import { FormCommonProps } from "../typings";
+import {
+  FieldValues,
+  Path,
+  useController,
+  useFormContext,
+} from "react-hook-form";
 import styles from "./index.module.css";
 
 interface ChipSelectionProps<T extends FieldValues, K>
-  extends FormCommonProps<T>,
-    Omit<ChipProps, "children" | "onChange" | "name"> {
+  extends Omit<ChipProps, "children" | "onChange" | "name"> {
   name: Path<T>;
   selections: K[];
   groupClassName?: string;
@@ -16,7 +19,9 @@ interface ChipSelectionProps<T extends FieldValues, K>
 export function ChipSelection<T extends FieldValues, K extends String>(
   props: ChipSelectionProps<T, K>,
 ) {
-  const { name, control, onChange, ...mantineChipProps } = props;
+  const { name, onChange, ...mantineChipProps } = props;
+
+  const { control } = useFormContext<T>();
 
   const { field } = useController({ name, control });
 

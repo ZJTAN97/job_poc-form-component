@@ -25,7 +25,7 @@ export const CreateEmployee = () => {
     },
   });
 
-  const { formState, handleSubmit, control } = methods;
+  const { formState, handleSubmit } = methods;
   const { isValid, isSubmitting } = formState;
 
   const [characterNameError, setCharacterNameError] = React.useState("");
@@ -48,13 +48,11 @@ export const CreateEmployee = () => {
             <Form.ChipSelection<EmployeeType, EmployeeType["gender"]>
               selections={["MALE", "FEMALE"]}
               name={"gender"}
-              control={control}
               disabled={isSubmitting}
             />
             <Form.TextInput
               disabled={isSubmitting}
               label={"Employee Name"}
-              control={control}
               name={"employeeName"}
               onChange={debouncedSearch}
               className={styles.input}
@@ -69,13 +67,11 @@ export const CreateEmployee = () => {
               disabled={isSubmitting}
               name={"bio"}
               label={"Bio for Employee"}
-              control={control}
               className={styles.input}
             />
             <Form.TextInput
               disabled={isSubmitting}
               label={"Password"}
-              control={control}
               name={"password"}
               className={"input"}
               type={"password"}
@@ -84,7 +80,6 @@ export const CreateEmployee = () => {
             <Form.TextInput
               disabled={isSubmitting}
               label={"Confirm Password"}
-              control={control}
               name={"confirmPassword"}
               className={styles.input}
               type={"password"}
