@@ -256,22 +256,30 @@ const { control } = methods;
 
 # 7. ISSUES FACE WHILE INTEGRATING
 
-1. Complex to edit content AFTER adding SOI.
+1. Complex to edit content AFTER adding References.
 
 - Not sure if it is my implementation issue (will update again if i found a way)
-- But since SOI is tagged to content and field name, by changing the content, i have to do alot of complex code manipulations to "re-filter" the correct SOIs to show beside the updated content on the UI.
+- But since References is tagged to content and field name, by changing the content, i have to do alot of complex code manipulations to "re-filter" the correct SOIs to show beside the updated content on the UI.
 
+2. Mass Apply
 
-2. Mass Apply SOI 
-
-- During mass apply, because of the way the UI is currently designed (as checkboxes) I have to filter by two fields (field and content) to track which fields to mass apply 
+- During mass apply, because of the way the UI is currently designed (as checkboxes) I have to filter by two fields (field and content) to track which fields to mass apply
 - Forsee to be very bug/error prone. Currently the mass apply is still halfway through implementation but I find it quite complex already.
 - However i guess can be mitigated through thorough and comprehensive unit tests.
 
-
 3. Current implementation of constructing request body.
 
-- For the current way of constructing the request body, the code is messy in a way that i have to do checks on 3 types of methods to append/update SOI to the field & content. 
+- For the current way of constructing the request body, the code is messy in a way that i have to do checks on 3 types of methods to append/update References to the field & content.
 - I think this issue could be more on my end, but just recording down.
 
+<br>
 
+## TODOS
+
+- If Creation, allow edit of content as it is not saved to DB
+- If PUT, upon changing content, References should be removed automatically.
+
+- a fallback value from migrated
+
+- omit onChange and Value
+- ideal scenario is to make sure formContext and any "referenceContext" is kept separate
