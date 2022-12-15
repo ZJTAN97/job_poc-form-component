@@ -6,33 +6,30 @@ import MultiSelect from "./MultiSelect/MultiSelect";
 import { TextArea } from "./TextArea/TextArea";
 import { TextInput } from "./TextInput/TextInput";
 
-interface FormProps<T extends FieldValues> {
+interface FormProps<T extends FieldValues, AdditionalFormStateMethods> {
   methods: UseFormReturn<T>;
   useLocalStorage?: boolean;
   preventLeaving?: boolean;
   children: React.ReactNode;
-  additionalStateMethods?: AdditionalFormStateMethodsProps;
+  additionalStateMethods?: AdditionalFormStateMethods;
 }
 
-type AdditionalFormStateMethodsProps = {
-  openPanel: boolean;
-  setOpenPanel: (arg: boolean) => void;
-};
+function createContext<T>() {
+  return React.createContext<T | undefined>(undefined);
+}
 
-// Create Context for Additional States
-const AdditionalFormStateContext = React.createContext<
-  AdditionalFormStateMethodsProps | undefined
->(undefined);
-
-export const Form = <T extends FieldValues>({
+export const Form = <T extends FieldValues, AdditionalFormStateMethods>({
   methods,
   useLocalStorage,
   preventLeaving,
   children,
   additionalStateMethods,
-}: FormProps<T>) => {
+}: FormProps<T, AdditionalFormStateMethods>) => {
   const { formState } = methods;
   const { isDirty } = formState;
+
+  const AdditionalFormStateContext =
+    createContext<AdditionalFormStateMethods>();
 
   if (useLocalStorage) {
     // TODO: add localstorage logic here
@@ -68,14 +65,3 @@ Form.TextArea = TextArea;
 Form.ChipSelection = ChipSelection;
 Form.Dropdown = Dropdown;
 Form.MultiSelect = MultiSelect;
-
-export const useAdditionalFormContext = (): AdditionalFormStateMethodsProps => {
-  const [openPanel, setOpenPanel] = React.useState(false);
-  return {
-    openPanel,
-    setOpenPanel,
-  };
-};
-
-export const useAdditionalFormStateContext = () =>
-  React.useContext(AdditionalFormStateContext);
