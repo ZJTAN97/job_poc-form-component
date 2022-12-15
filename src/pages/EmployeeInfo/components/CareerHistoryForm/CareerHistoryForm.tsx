@@ -15,7 +15,7 @@ import { SourceType } from "../../../../model/common/Source";
 import { AppointmentType } from "../../../../model/career/Appointment";
 import { IconEditCircle } from "@tabler/icons";
 import {
-  ReferencesStateMethods,
+  ReferenceStateContext,
   useReferencesStateMethods,
 } from "./components/References";
 
@@ -97,7 +97,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     }
   };
 
-  console.log(careerFormMethods.getValues());
+  // console.log(careerFormMethods.getValues());
 
   const referenceStateMethods = useReferencesStateMethods();
   const { openPanel, setOpenPanel } = referenceStateMethods;
@@ -107,7 +107,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
       methods={careerFormMethods}
       preventLeaving={true}
       useLocalStorage={true}
-      additionalStateMethods={referenceStateMethods}
+      AdditionalContext={ReferenceStateContext}
+      additionalContextValues={referenceStateMethods}
     >
       <Button onClick={() => setOpenPanel(!openPanel)}>
         Disabled all text inputs

@@ -6,30 +6,38 @@ import MultiSelect from "./MultiSelect/MultiSelect";
 import { TextArea } from "./TextArea/TextArea";
 import { TextInput } from "./TextInput/TextInput";
 
-interface FormProps<T extends FieldValues, AdditionalFormStateMethods> {
+interface BaseFormProps<T extends FieldValues> {
   methods: UseFormReturn<T>;
   useLocalStorage?: boolean;
   preventLeaving?: boolean;
   children: React.ReactNode;
-  additionalStateMethods?: AdditionalFormStateMethods;
 }
 
-function createContext<T>() {
-  return React.createContext<T | undefined>(undefined);
-}
+type FormProps<
+  T extends FieldValues,
+  AdditionalFormStateMethods,
+> = BaseFormProps<T> &
+  (
+    | {
+        additionalContextValues: AdditionalFormStateMethods;
+        AdditionalContext: React.Context<AdditionalFormStateMethods>;
+      }
+    | {
+        additionalContextValues?: never;
+        AdditionalContext?: never;
+      }
+  );
 
 export const Form = <T extends FieldValues, AdditionalFormStateMethods>({
   methods,
   useLocalStorage,
   preventLeaving,
   children,
-  additionalStateMethods,
+  additionalContextValues,
+  AdditionalContext,
 }: FormProps<T, AdditionalFormStateMethods>) => {
   const { formState } = methods;
   const { isDirty } = formState;
-
-  const AdditionalFormStateContext =
-    createContext<AdditionalFormStateMethods>();
 
   if (useLocalStorage) {
     // TODO: add localstorage logic here
@@ -53,9 +61,13 @@ export const Form = <T extends FieldValues, AdditionalFormStateMethods>({
 
   return (
     <FormProvider {...methods}>
-      <AdditionalFormStateContext.Provider value={additionalStateMethods}>
-        {children}
-      </AdditionalFormStateContext.Provider>
+      {AdditionalContext && additionalContextValues ? (
+        <AdditionalContext.Provider value={additionalContextValues}>
+          {children}
+        </AdditionalContext.Provider>
+      ) : (
+        children
+      )}
     </FormProvider>
   );
 };
@@ -65,3 +77,23 @@ Form.TextArea = TextArea;
 Form.ChipSelection = ChipSelection;
 Form.Dropdown = Dropdown;
 Form.MultiSelect = MultiSelect;
+
+// type AdditionalFormStateMethodsProps = {
+//   openPanel: boolean;
+//   setOpenPanel: (arg: boolean) => void;
+// };
+
+// const AdditionalFormStateContext = React.createContext<
+//   AdditionalFormStateMethodsProps | undefined
+// >(undefined);
+
+// export const useAdditionalFormContext = (): AdditionalFormStateMethodsProps => {
+//   const [openPanel, setOpenPanel] = React.useState(false);
+//   return {
+//     openPanel,
+//     setOpenPanel,
+//   };
+// };
+
+// export const useAdditionalFormStateContext = () =>
+//   React.useContext(AdditionalFormStateContext);

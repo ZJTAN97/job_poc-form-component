@@ -1,6 +1,7 @@
 import React from "react";
 import { TextInput as MantineTextInput, TextInputProps } from "@mantine/core";
 import { useController, Path, FieldValues } from "react-hook-form";
+import { useReferenceStateContext } from "../../../pages/EmployeeInfo/components/CareerHistoryForm/components/References";
 
 export interface FormTextInputProps<T extends FieldValues>
   extends Omit<TextInputProps, "onChange" | "name"> {
@@ -24,6 +25,10 @@ export const TextInput = <T extends FieldValues>(
       },
       [onChange],
     );
+
+  const referenceStateContext = useReferenceStateContext();
+  console.info("[INFO] sanity check for the additional context providers");
+  console.info(referenceStateContext);
 
   return (
     <MantineTextInput
