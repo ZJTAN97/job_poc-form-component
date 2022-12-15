@@ -14,6 +14,7 @@ import { CertificationType } from "../../../../model/career/Certification";
 import { SourceType } from "../../../../model/common/Source";
 import { AppointmentType } from "../../../../model/career/Appointment";
 import { IconEditCircle } from "@tabler/icons";
+import { useAdditionalFormContext } from "../../../../components/Form/Form";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -56,6 +57,10 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
       duration: "",
     },
   });
+
+  const additionalStateMethods = useAdditionalFormContext();
+
+  const { openPanel, setOpenPanel } = additionalStateMethods;
 
   const { dirtyFields } = careerFormMethods.formState;
 
@@ -100,7 +105,11 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
       methods={careerFormMethods}
       preventLeaving={true}
       useLocalStorage={true}
+      additionalStateMethods={additionalStateMethods}
     >
+      <Button onClick={() => setOpenPanel(!openPanel)}>
+        Disabled all text inputs
+      </Button>
       <Popover
         opened={isOpenPopover}
         position="right"
@@ -157,7 +166,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               <Form.TextInput<CareerType>
                 label={"Company name"}
                 name={"company"}
-                disabled={!editMode}
+                disabled={openPanel}
                 variant={editMode ? "default" : "unstyled"}
                 className={classes.formTextInput}
                 required

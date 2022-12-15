@@ -11,13 +11,25 @@ interface FormProps<T extends FieldValues> {
   useLocalStorage?: boolean;
   preventLeaving?: boolean;
   children: React.ReactNode;
+  additionalStateMethods?: AdditionalFormStateMethodsProps;
 }
+
+type AdditionalFormStateMethodsProps = {
+  openPanel: boolean;
+  setOpenPanel: (arg: boolean) => void;
+};
+
+// Create Context for Additional States
+const AdditionalFormStateContext = React.createContext<
+  AdditionalFormStateMethodsProps | undefined
+>(undefined);
 
 export const Form = <T extends FieldValues>({
   methods,
   useLocalStorage,
   preventLeaving,
   children,
+  additionalStateMethods,
 }: FormProps<T>) => {
   const { formState } = methods;
   const { isDirty } = formState;
@@ -42,7 +54,13 @@ export const Form = <T extends FieldValues>({
     };
   }, [beforeUnload]);
 
-  return <FormProvider {...methods}>{children}</FormProvider>;
+  return (
+    <FormProvider {...methods}>
+      <AdditionalFormStateContext.Provider value={additionalStateMethods}>
+        {children}
+      </AdditionalFormStateContext.Provider>
+    </FormProvider>
+  );
 };
 
 Form.TextInput = TextInput;
@@ -50,3 +68,14 @@ Form.TextArea = TextArea;
 Form.ChipSelection = ChipSelection;
 Form.Dropdown = Dropdown;
 Form.MultiSelect = MultiSelect;
+
+export const useAdditionalFormContext = (): AdditionalFormStateMethodsProps => {
+  const [openPanel, setOpenPanel] = React.useState(false);
+  return {
+    openPanel,
+    setOpenPanel,
+  };
+};
+
+export const useAdditionalFormStateContext = () =>
+  React.useContext(AdditionalFormStateContext);
