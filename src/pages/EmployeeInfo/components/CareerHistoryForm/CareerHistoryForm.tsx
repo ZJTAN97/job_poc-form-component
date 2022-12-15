@@ -93,8 +93,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     }
   };
 
-  // console.log("--careerForm--");
-  // console.log(careerFormMethods.getValues());
+  console.log(careerFormMethods.getValues());
 
   return (
     <Form
@@ -155,7 +154,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 ).length === 1
               }
             >
-              <Form.TextInput
+              <Form.TextInput<CareerType>
                 label={"Company name"}
                 name={"company"}
                 disabled={!editMode}
@@ -189,7 +188,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 ).length === 1
               }
             >
-              <Form.TextInput
+              <Form.TextInput<CareerType>
                 label={"Duration"}
                 name={"duration"}
                 disabled={!editMode}
@@ -212,7 +211,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
 
             {/* LAST DRAWN SALARY*/}
             <Row>
-              <Form.TextInput
+              <Form.TextInput<CareerType>
                 label={"Last Drawn Salary"}
                 name={"lastDrawnSalary"}
                 disabled={!editMode}
@@ -233,7 +232,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 ).length === 1
               }
             >
-              <Form.TextInput
+              <Form.TextInput<CareerType>
                 label={"Position"}
                 name={"appointment.position"}
                 disabled={!editMode}
@@ -269,7 +268,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 ).length === 1
               }
             >
-              <Form.TextInput
+              <Form.TextInput<CareerType>
                 label={"Rank"}
                 name={"appointment.rank"}
                 disabled={!editMode}

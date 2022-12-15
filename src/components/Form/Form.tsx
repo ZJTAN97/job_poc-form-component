@@ -1,24 +1,24 @@
 import React from "react";
-import { FormProvider, UseFormReturn } from "react-hook-form";
+import { FormProvider, UseFormReturn, FieldValues } from "react-hook-form";
 import { ChipSelection } from "./ChipSelection/ChipSelection";
 import Dropdown from "./Dropdown/Dropdown";
 import MultiSelect from "./MultiSelect/MultiSelect";
 import { TextArea } from "./TextArea/TextArea";
 import { TextInput } from "./TextInput/TextInput";
 
-interface FormProps {
-  methods: UseFormReturn<any>;
+interface FormProps<T extends FieldValues> {
+  methods: UseFormReturn<T>;
   useLocalStorage?: boolean;
   preventLeaving?: boolean;
   children: React.ReactNode;
 }
 
-export const Form = ({
+export const Form = <T extends FieldValues>({
   methods,
   useLocalStorage,
   preventLeaving,
   children,
-}: FormProps) => {
+}: FormProps<T>) => {
   const { formState } = methods;
   const { isDirty } = formState;
 
