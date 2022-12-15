@@ -1,5 +1,5 @@
 import React from "react";
-import { Button, Popover, TextInput } from "@mantine/core";
+import { Button, Popover } from "@mantine/core";
 import { Row, useStyles, MainContainer, TitleContainer, Title } from "./styles";
 import { useForm, Path } from "react-hook-form";
 import { Career, CareerType } from "../../../../model/career/Career";
@@ -73,17 +73,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     saveOrCreateCareer(data);
     setDrawer(false);
   });
-
-  const contentEditAfterAddedRef = (val: string) => {
-    if (
-      careerFormMethods
-        .getValues()
-        .references.filter((ref) => ref.field === "company").length === 1
-    ) {
-      console.log("-- to be updated --");
-      console.log(val);
-    }
-  };
 
   const handleMassApply = () => {
     console.log(currentName);
@@ -172,7 +161,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 disabled={!editMode}
                 variant={editMode ? "default" : "unstyled"}
                 className={classes.formTextInput}
-                onChange={contentEditAfterAddedRef}
                 required
               />
               <ReferenceTrigger
