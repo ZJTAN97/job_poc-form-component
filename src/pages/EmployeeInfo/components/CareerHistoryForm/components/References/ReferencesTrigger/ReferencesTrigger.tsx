@@ -14,24 +14,27 @@ interface ReferencesTriggerProp {
 
   /** Content required to filter which references to show for this component instance */
   content: string;
+
+  /** Disable trigger */
+  disabled?: boolean;
+
+  arrId?: number;
 }
 
 export const ReferencesTrigger = ({
   field,
   content,
+  disabled,
+  arrId,
 }: ReferencesTriggerProp) => {
   const { classes } = useStyles();
 
   const referenceStateContext = useReferenceStateContext();
   const formContext = useFormContext<CareerType>();
 
-  // console.info("[INFO] sanity check for the additional context providers");
-  // console.info(referenceStateContext);
-
   const {
     openPanel,
     setOpenPanel,
-    currentArrayId,
     setCurrentArrayId,
     editMode,
     setEditMode,
@@ -42,12 +45,9 @@ export const ReferencesTrigger = ({
   const handlePanelOpen = () => {
     setOpenPanel(true);
     setEditMode(false);
-
-    // handle non-array type
     setCurrentField(field);
-
-    // handle array type
-    if (currentArrayId) {
+    if (arrId !== undefined) {
+      setCurrentArrayId(arrId);
     }
   };
 
@@ -94,7 +94,7 @@ export const ReferencesTrigger = ({
           ml={50}
           color={referencesErrors.references_company && "red"}
           onClick={() => handlePanelOpen()}
-          disabled={content.length < 1}
+          disabled={!disabled}
         >
           {referencesErrors.references_company
             ? "References required"

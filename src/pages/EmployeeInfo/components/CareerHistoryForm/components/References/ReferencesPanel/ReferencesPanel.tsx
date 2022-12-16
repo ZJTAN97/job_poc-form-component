@@ -9,8 +9,9 @@ import {
   TitleContainer,
   useStyles,
 } from "./styles";
-import { useFormContext, Path, useForm, useFieldArray } from "react-hook-form";
+import { useFormContext, useForm, useFieldArray } from "react-hook-form";
 import {
+  setReferences,
   useCurrentContent,
   useCurrentReference,
   useExistingReference,
@@ -39,11 +40,23 @@ export const ReferencesPanel = () => {
 
   const formContext = useFormContext<CareerType>();
   const referenceStateContext = useReferenceStateContext();
-  const { currentField, setEditMode, setOpenPanel } = referenceStateContext!;
+  const {
+    currentField,
+    setEditMode,
+    setOpenPanel,
+    currentArrayId,
+    setCurrentArrayId,
+    editMode,
+    openPanel,
+    setCurrentField,
+  } = referenceStateContext!;
 
-  const currentContent = useCurrentContent<CareerType>({
+  console.log(currentArrayId);
+
+  const currentContent = useCurrentContent({
     formMethods: formContext,
-    currentField: currentField as Path<CareerType>,
+    currentField: currentField!,
+    currentArrayId,
   });
 
   const existingReference = useExistingReference({
@@ -65,8 +78,11 @@ export const ReferencesPanel = () => {
     defaultValues: {
       field: currentField,
       content: currentContent,
+      sources: [],
     },
   });
+
+  console.log(referenceFormMethod.getValues());
 
   const sourceFormMethod = useForm<SourceType>({
     resolver: zodResolver(Source),
@@ -101,6 +117,18 @@ export const ReferencesPanel = () => {
     } else {
       sourceArrayMethods.append(sourceFormMethod.getValues());
     }
+
+    setReferences({
+      arrayMethod: referenceArrayMethods,
+      currentArrayId,
+      fieldName: currentField!,
+      formContext,
+      referenceForm: referenceFormMethod,
+      existingReference,
+    });
+
+    sourceFormMethod.reset();
+    setPopupMode("read");
   };
 
   const handleClosePanel = () => {
@@ -196,7 +224,7 @@ export const ReferencesPanel = () => {
           }}
           size={"xs"}
           variant="outline"
-          onClick={() => {}} // TODO
+          onClick={appendReferences}
           disabled={popupMode === "read" || !sourceFormMethod.formState.isValid}
         >
           Apply
@@ -208,7 +236,7 @@ export const ReferencesPanel = () => {
           root: classes.returnBtn,
         }}
         mt={50}
-        onClick={handleClosePanel} // TODO
+        onClick={handleClosePanel}
         variant={"subtle"}
         leftIcon={<IconArrowLeft />}
       >

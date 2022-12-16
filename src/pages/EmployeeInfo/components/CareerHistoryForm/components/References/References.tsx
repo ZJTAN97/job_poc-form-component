@@ -30,10 +30,10 @@ export type ReferencesStateMethods = {
   ) => void;
 
   /** to differentiate between array fields and non-array fields during selection */
-  currentArrayId?: number;
+  currentArrayId: number;
 
   /** setter method for which item in the array is being selected */
-  setCurrentArrayId: (arg?: number) => void;
+  setCurrentArrayId: (arg: number) => void;
 };
 
 /** Creation of Context */
@@ -44,11 +44,11 @@ export const ReferenceStateContext = React.createContext<
 /** Think of it as using the initial values */
 export const useReferencesStateMethods = (): ReferencesStateMethods => {
   const [openPanel, setOpenPanel] = React.useState(false);
-  const [editMode, setEditMode] = React.useState(false);
+  const [editMode, setEditMode] = React.useState(true);
   const [currentField, setCurrentField] = React.useState<
     Path<CareerType> | Path<AppointmentType> | Path<CertificationType>
   >();
-  const [currentArrayId, setCurrentArrayId] = React.useState<number>();
+  const [currentArrayId, setCurrentArrayId] = React.useState(0);
 
   return {
     openPanel,

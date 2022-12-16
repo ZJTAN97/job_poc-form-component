@@ -31,7 +31,7 @@ interface StringArrayInputProps<T extends FieldValues> {
     | Path<CertificationType>;
 
   /** Required for row highlight */
-  currentArrayId?: number;
+  currentArrayId: number;
 
   massApplyingFields?: {
     field: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
