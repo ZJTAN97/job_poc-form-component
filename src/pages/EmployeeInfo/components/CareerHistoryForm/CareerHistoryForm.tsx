@@ -113,13 +113,13 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
       additionalContextValues={referenceStateMethods}
     >
       <Popover
-        opened={isOpenPopover}
+        opened={openPanel} // OLD: isOpenPopover
         position="right"
         closeOnClickOutside={false}
         classNames={{ dropdown: classes.dropdown }}
         width={350}
       >
-        <ReferencePopup
+        {/* <ReferencePopup
           key={
             currentName! +
             currentArrayId +
@@ -134,7 +134,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
           currentArrayId={currentArrayId}
           massApplyingFields={massApplyingFields}
           setMassApplyingFields={setMassApplyingFields}
-        />
+        /> */}
 
         <ReferencesPanel />
 
