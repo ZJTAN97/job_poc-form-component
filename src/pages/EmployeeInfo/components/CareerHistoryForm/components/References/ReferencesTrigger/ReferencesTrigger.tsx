@@ -1,4 +1,3 @@
-import React from "react";
 import { useReferenceStateContext } from "../References";
 import { TriggerRow, useStyles } from "./styles";
 import { useFormContext, Path } from "react-hook-form";
@@ -6,7 +5,8 @@ import { CareerType } from "../../../../../../../model/career/Career";
 import { AppointmentType } from "../../../../../../../model/career/Appointment";
 import { CertificationType } from "../../../../../../../model/career/Certification";
 import { Button, Textarea } from "@mantine/core";
-import { TextArea } from "../../../../../../../components/Form/TextArea/TextArea";
+import { useExistingReference } from "../utils";
+import { IconCirclePlus } from "@tabler/icons";
 
 interface ReferencesTriggerProp {
   /** Field Name required to filter which references to show for this component instance */
@@ -25,6 +25,9 @@ export const ReferencesTrigger = ({
   const referenceStateContext = useReferenceStateContext();
   const formContext = useFormContext<CareerType>();
 
+  // console.info("[INFO] sanity check for the additional context providers");
+  // console.info(referenceStateContext);
+
   const {
     openPanel,
     setOpenPanel,
@@ -32,69 +35,71 @@ export const ReferencesTrigger = ({
     setCurrentArrayId,
     editMode,
     setEditMode,
-    currentName,
-    setCurrentName,
+    currentField,
+    setCurrentField,
   } = referenceStateContext!;
 
-  const referencePanelTrigger = (
-    name: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>,
-  ) => {
-    setCurrentName(name);
+  const handlePanelOpen = () => {
+    setOpenPanel(true);
+    setEditMode(false);
+
+    // handle non-array type
+    setCurrentField(field);
+
+    // handle array type
+    if (currentArrayId) {
+    }
   };
 
-  const existingReference = (() => {
-    const allReferences = [
+  const existingReference = useExistingReference({
+    references: [
       ...formContext.getValues().references,
       ...formContext.getValues().appointment.references,
       ...formContext
         .getValues()
         .certsToField.map((cert) => cert.references)
         .flat(),
-    ];
+    ],
+    field,
+    content,
+  });
 
-    const filteredReference = allReferences.filter(
-      (ref) => ref.field === field && ref.content === content,
-    );
-
-    if (filteredReference.length === 1) {
-      const numOfSource = filteredReference[0].sources.length;
-      const firstSource = filteredReference[0].sources[0];
-
-      if (numOfSource === 1) {
-        `${firstSource.referenceType}\n${firstSource.dateObtained.slice(
-          0,
-          10,
-        )}`;
-      } else if (numOfSource > 1) {
-        return `${firstSource.referenceType}\n${firstSource.dateObtained.slice(
-          0,
-          10,
-        )} + ${numOfSource - 1} more`;
-      }
-    }
-    return "";
-  })();
+  const referencesErrors = formContext.formState.errors as unknown as {
+    [key: string]: { message: string };
+  }; // TODO: give a better typing when the errors are more stable
 
   return (
     <>
-      {openPanel || existingReference ? (
+      {openPanel || existingReference.stringText ? (
         <TriggerRow>
           <Textarea
             w={190}
             ml={10}
             label={"References"}
-            value={existingReference}
+            value={existingReference.stringText}
             size="xs"
             readOnly
-            // onClick={() => referencePopoverTrigger(name)}
+            onClick={existingReference ? () => handlePanelOpen() : () => {}}
             classNames={{
               input: classes.reference,
             }}
-            disabled={openPanel && currentName !== field}
+            disabled={openPanel && currentField !== field}
           />
         </TriggerRow>
       ) : (
-        <Button>{}</Button>
+        <Button
+          leftIcon={<IconCirclePlus />}
+          variant="white"
+          mt={24}
+          ml={50}
+          color={referencesErrors.references_company && "red"}
+          onClick={() => handlePanelOpen()}
+          disabled={content.length < 1}
+        >
+          {referencesErrors.references_company
+            ? "References required"
+            : "Add references"}
+        </Button>
       )}
     </>
   );

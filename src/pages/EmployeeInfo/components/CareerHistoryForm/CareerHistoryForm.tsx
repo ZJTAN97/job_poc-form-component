@@ -18,6 +18,8 @@ import {
   ReferenceStateContext,
   useReferencesStateMethods,
 } from "./components/References";
+import { ReferencesTrigger } from "./components/References/ReferencesTrigger";
+import { ReferencesPanel } from "./components/References/ReferencesPanel";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -110,9 +112,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
       AdditionalContext={ReferenceStateContext}
       additionalContextValues={referenceStateMethods}
     >
-      <Button onClick={() => setOpenPanel(!openPanel)}>
-        Disabled all text inputs
-      </Button>
       <Popover
         opened={isOpenPopover}
         position="right"
@@ -137,6 +136,8 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
           setMassApplyingFields={setMassApplyingFields}
         />
 
+        <ReferencesPanel />
+
         <TitleContainer>
           <Title>Career History</Title>
           <Button
@@ -155,8 +156,24 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
 
         <Popover.Target>
           <MainContainer>
+            {/* COMPANY TEST NEW */}
+            <Row>
+              <Form.TextInput<CareerType>
+                label={"Company name (New)"}
+                name={"company"}
+                disabled={openPanel}
+                variant={editMode ? "default" : "unstyled"}
+                className={classes.formTextInput}
+                required
+              />
+              <ReferencesTrigger
+                field="company"
+                content={careerFormMethods.getValues().company}
+              />
+            </Row>
+
             {/* COMPANY */}
-            <Row
+            {/* <Row
               highlight={
                 (!editMode && currentName === "company") ||
                 massApplyingFields?.filter(
@@ -187,7 +204,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 massApplyingFields={massApplyingFields}
                 setMassApplyingFields={setMassApplyingFields}
               />
-            </Row>
+            </Row> */}
 
             {/* DURATION */}
             <Row

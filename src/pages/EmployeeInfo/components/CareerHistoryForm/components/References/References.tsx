@@ -6,18 +6,33 @@ import { CertificationType } from "../../../../../../model/career/Certification"
 
 /** Main Context Type */
 export type ReferencesStateMethods = {
+  /** panel state */
   openPanel: boolean;
+
+  /** setter method to manage state of panel */
   setOpenPanel: (arg: boolean) => void;
+
+  /** refers to the ability to edit content of the fields */
   editMode: boolean;
+
+  /** setter method to manage editMode */
   setEditMode: (arg: boolean) => void;
-  currentName?:
+
+  /** refers to the current field being selected to add references */
+  currentField?:
     | Path<CareerType>
     | Path<AppointmentType>
     | Path<CertificationType>;
-  setCurrentName: (
+
+  /** setter method for current selected field */
+  setCurrentField: (
     arg?: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>,
   ) => void;
+
+  /** to differentiate between array fields and non-array fields during selection */
   currentArrayId?: number;
+
+  /** setter method for which item in the array is being selected */
   setCurrentArrayId: (arg?: number) => void;
 };
 
@@ -30,7 +45,7 @@ export const ReferenceStateContext = React.createContext<
 export const useReferencesStateMethods = (): ReferencesStateMethods => {
   const [openPanel, setOpenPanel] = React.useState(false);
   const [editMode, setEditMode] = React.useState(false);
-  const [currentName, setCurrentName] = React.useState<
+  const [currentField, setCurrentField] = React.useState<
     Path<CareerType> | Path<AppointmentType> | Path<CertificationType>
   >();
   const [currentArrayId, setCurrentArrayId] = React.useState<number>();
@@ -40,8 +55,8 @@ export const useReferencesStateMethods = (): ReferencesStateMethods => {
     setOpenPanel,
     editMode,
     setEditMode,
-    currentName,
-    setCurrentName,
+    currentField,
+    setCurrentField,
     currentArrayId,
     setCurrentArrayId,
   };
