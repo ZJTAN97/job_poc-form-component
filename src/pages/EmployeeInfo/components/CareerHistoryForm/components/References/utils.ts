@@ -22,7 +22,7 @@ export const useExistingReference = <T extends FieldValues>({
     (ref) => ref.field === field && ref.content === content,
   );
 
-  let stringText;
+  let stringText = "";
 
   if (filteredReference.length === 1) {
     const numOfSource = filteredReference[0].sources.length;

@@ -45,13 +45,9 @@ export const ReferencesPanel = () => {
     setEditMode,
     setOpenPanel,
     currentArrayId,
-    setCurrentArrayId,
-    editMode,
-    openPanel,
-    setCurrentField,
+    lastSource,
+    setLastSource,
   } = referenceStateContext!;
-
-  console.log(currentArrayId);
 
   const currentContent = useCurrentContent({
     formMethods: formContext,
@@ -81,8 +77,6 @@ export const ReferencesPanel = () => {
       sources: [],
     },
   });
-
-  console.log(referenceFormMethod.getValues());
 
   const sourceFormMethod = useForm<SourceType>({
     resolver: zodResolver(Source),
@@ -117,7 +111,6 @@ export const ReferencesPanel = () => {
     } else {
       sourceArrayMethods.append(sourceFormMethod.getValues());
     }
-
     setReferences({
       arrayMethod: referenceArrayMethods,
       currentArrayId,
@@ -127,14 +120,69 @@ export const ReferencesPanel = () => {
       existingReference,
     });
 
+    setLastSource(sourceFormMethod.getValues());
     sourceFormMethod.reset();
     setPopupMode("read");
+  };
+
+  const editSource = (providedSourceId: number) => {
+    setSourceId(providedSourceId);
+    sourceFormMethod.setValue(
+      "referenceType",
+      referenceFormMethod.getValues().sources[providedSourceId].referenceType,
+    );
+    sourceFormMethod.setValue(
+      "dateObtained",
+      referenceFormMethod.getValues().sources[providedSourceId].dateObtained,
+    );
+    sourceFormMethod.setValue(
+      "comment",
+      referenceFormMethod.getValues().sources[providedSourceId].comment,
+    );
+    setPopupMode("edit");
+  };
+
+  const deleteSource = (providedSourceId: number) => {
+    // TODO: handle all scenarios
+    sourceArrayMethods.remove(providedSourceId);
+    const referenceId = formContext
+      .getValues()
+      .references.indexOf(existingReference);
+    referenceArrayMethods.update(referenceId, referenceFormMethod.getValues());
+
+    if (referenceFormMethod.getValues().sources.length === 0) {
+      if (currentField === "name" || currentField === "issuedBy") {
+        const selectedCert =
+          formContext.getValues().certsToField[currentArrayId];
+        referenceArrayMethods.update(currentArrayId, {
+          ...selectedCert,
+          references: [],
+        });
+      } else {
+        referenceArrayMethods.remove(referenceId);
+      }
+    }
+    setPopupMode("edit");
   };
 
   const handleClosePanel = () => {
     setEditMode(true);
     setOpenPanel(false);
   };
+
+  const applyLastSource = () => {
+    if (lastSource) {
+      sourceFormMethod.setValue("referenceType", lastSource.referenceType);
+      sourceFormMethod.setValue("dateObtained", lastSource.dateObtained);
+      if (lastSource.comment.length > 0) {
+        setShowCommentsInput(true);
+        sourceFormMethod.setValue("comment", lastSource.comment);
+      }
+      console.log("[INFO ] Applied last filled references");
+    }
+  };
+
+  console.info(referenceFormMethod.getValues());
 
   return (
     <Popover.Dropdown p={30}>
@@ -152,6 +200,17 @@ export const ReferencesPanel = () => {
 
       {popupMode === "edit" ? (
         <Form methods={sourceFormMethod}>
+          {lastSource && (
+            <Button
+              size="xs"
+              variant="subtle"
+              p={0}
+              mt={10}
+              onClick={applyLastSource}
+            >
+              Apply last source
+            </Button>
+          )}
           <Form.Dropdown<SourceType>
             data={Object.values(TYPES_OF_REFERENCES)}
             mt={20}
@@ -192,12 +251,12 @@ export const ReferencesPanel = () => {
                   <IconEdit
                     size={20}
                     style={{ cursor: "pointer" }}
-                    onClick={() => {}} // TODO
+                    onClick={() => editSource(id)}
                   />
                   <IconIdOff
                     size={20}
                     style={{ cursor: "pointer" }}
-                    onClick={() => {}}
+                    onClick={() => deleteSource(id)}
                   />
                 </div>
               </ReferenceCardRow>

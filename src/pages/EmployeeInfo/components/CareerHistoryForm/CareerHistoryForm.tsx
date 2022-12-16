@@ -65,6 +65,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     },
   });
 
+  // TODO: move error state into the references components instead
   const {
     references_company,
     references_position,
@@ -97,7 +98,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     }
   };
 
-  console.log(careerFormMethods.getValues());
+  console.info(careerFormMethods.getValues());
 
   return (
     <Form

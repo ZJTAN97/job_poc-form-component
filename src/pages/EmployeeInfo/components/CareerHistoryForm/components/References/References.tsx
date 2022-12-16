@@ -3,6 +3,7 @@ import { Path } from "react-hook-form";
 import { AppointmentType } from "../../../../../../model/career/Appointment";
 import { CareerType } from "../../../../../../model/career/Career";
 import { CertificationType } from "../../../../../../model/career/Certification";
+import { SourceType } from "../../../../../../model/common/Source";
 
 /** Main Context Type */
 export type ReferencesStateMethods = {
@@ -34,6 +35,10 @@ export type ReferencesStateMethods = {
 
   /** setter method for which item in the array is being selected */
   setCurrentArrayId: (arg: number) => void;
+
+  lastSource?: SourceType;
+
+  setLastSource: (arg: SourceType) => void;
 };
 
 /** Creation of Context */
@@ -49,6 +54,7 @@ export const useReferencesStateMethods = (): ReferencesStateMethods => {
     Path<CareerType> | Path<AppointmentType> | Path<CertificationType>
   >();
   const [currentArrayId, setCurrentArrayId] = React.useState(0);
+  const [lastSource, setLastSource] = React.useState<SourceType>();
 
   return {
     openPanel,
@@ -59,6 +65,8 @@ export const useReferencesStateMethods = (): ReferencesStateMethods => {
     setCurrentField,
     currentArrayId,
     setCurrentArrayId,
+    lastSource,
+    setLastSource,
   };
 };
 
