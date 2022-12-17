@@ -161,8 +161,8 @@ export const ReferencesPanel = () => {
       } else {
         referenceArrayMethods.remove(referenceId);
       }
+      setPopupMode("edit");
     }
-    setPopupMode("edit");
   };
 
   const handleClosePanel = () => {

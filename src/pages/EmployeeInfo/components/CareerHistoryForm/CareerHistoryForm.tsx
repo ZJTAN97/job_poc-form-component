@@ -38,8 +38,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     setCurrentArrayId,
   } = referenceStateMethods;
 
-  const [lastSource, setLastSource] = React.useState<SourceType>();
-
   const [massApplyingFields, setMassApplyingFields] = React.useState<
     {
       field: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
