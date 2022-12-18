@@ -159,4 +159,43 @@ export const setReferences = ({
   }
 };
 
-export const useSetReferences = () => {};
+export const useSetSources = ({
+  fieldName,
+  formContext,
+  arrayMethod,
+  existingReference,
+  referenceForm,
+  currentArrayId,
+  sourceId,
+}: {
+  fieldName: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
+  formContext: UseFormReturn<CareerType>;
+  arrayMethod: UseFieldArrayReturn<CareerType>;
+  existingReference?: ReferenceType;
+  referenceForm: UseFormReturn<ReferenceType>;
+  currentArrayId: number;
+  sourceId?: number;
+}) => {
+  const saveOrUpdateSource = () => {
+    console.info(
+      `[INFO] Creating/Updating ${fieldName} and array Id ${currentArrayId}`,
+
+      setReferences({
+        fieldName,
+        formContext,
+        arrayMethod,
+        existingReference,
+        referenceForm,
+        currentArrayId,
+      }),
+    );
+  };
+  const deleteSource = () => {
+    console.info(`[INFO] Deleting ${fieldName} and array Id ${currentArrayId}`);
+  };
+
+  return {
+    saveOrUpdateSource,
+    deleteSource,
+  };
+};

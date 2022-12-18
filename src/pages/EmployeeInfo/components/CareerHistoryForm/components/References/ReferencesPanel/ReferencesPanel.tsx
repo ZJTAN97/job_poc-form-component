@@ -15,6 +15,7 @@ import {
   useCurrentContent,
   useCurrentReference,
   useExistingReference,
+  useSetSources,
 } from "../utils";
 import {
   Reference,
@@ -104,6 +105,15 @@ export const ReferencesPanel = () => {
   const [showCommentsInput, setShowCommentsInput] = React.useState(false);
   const [sourceId, setSourceId] = React.useState<number>();
 
+  const setSources = useSetSources({
+    arrayMethod: referenceArrayMethods,
+    currentArrayId,
+    fieldName: currentField!,
+    formContext,
+    referenceForm: referenceFormMethod,
+    existingReference,
+  });
+
   const appendReferences = () => {
     if (sourceId !== undefined) {
       sourceArrayMethods.update(sourceId, sourceFormMethod.getValues());
@@ -111,14 +121,17 @@ export const ReferencesPanel = () => {
     } else {
       sourceArrayMethods.append(sourceFormMethod.getValues());
     }
-    setReferences({
-      arrayMethod: referenceArrayMethods,
-      currentArrayId,
-      fieldName: currentField!,
-      formContext,
-      referenceForm: referenceFormMethod,
-      existingReference,
-    });
+
+    setSources.saveOrUpdateSource();
+
+    // setReferences({
+    //   arrayMethod: referenceArrayMethods,
+    //   currentArrayId,
+    //   fieldName: currentField!,
+    //   formContext,
+    //   referenceForm: referenceFormMethod,
+    //   existingReference,
+    // });
 
     setLastSource(sourceFormMethod.getValues());
     sourceFormMethod.reset();
