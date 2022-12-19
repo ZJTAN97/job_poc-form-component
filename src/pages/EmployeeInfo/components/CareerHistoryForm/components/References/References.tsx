@@ -5,6 +5,11 @@ import { CareerType } from "../../../../../../model/career/Career";
 import { CertificationType } from "../../../../../../model/career/Certification";
 import { SourceType } from "../../../../../../model/common/Source";
 
+export type MassApplyingFields = {
+  field: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
+  arrayId?: number;
+};
+
 /** Main Context Type */
 export type ReferencesStateMethods = {
   /** panel state */
@@ -12,12 +17,6 @@ export type ReferencesStateMethods = {
 
   /** setter method to manage state of panel */
   setOpenPanel: (arg: boolean) => void;
-
-  /** refers to the ability to edit content of the fields */
-  editMode: boolean;
-
-  /** setter method to manage editMode */
-  setEditMode: (arg: boolean) => void;
 
   /** refers to the current field being selected to add references */
   currentField?:
@@ -36,9 +35,17 @@ export type ReferencesStateMethods = {
   /** setter method for which item in the array is being selected */
   setCurrentArrayId: (arg: number) => void;
 
+  /** state to remember last source added */
   lastSource?: SourceType;
 
+  /** setter method for setting last source being added */
   setLastSource: (arg: SourceType) => void;
+
+  /** state to track mass applied fields */
+  massApplyingFields?: MassApplyingFields[];
+
+  /** setter method for setting fields being added to mass applied array */
+  setMassApplyingFields: (arg?: MassApplyingFields[]) => void;
 };
 
 /** Creation of Context */
@@ -49,24 +56,25 @@ export const ReferenceStateContext = React.createContext<
 /** Think of it as using the initial values */
 export const useReferencesStateMethods = (): ReferencesStateMethods => {
   const [openPanel, setOpenPanel] = React.useState(false);
-  const [editMode, setEditMode] = React.useState(true);
   const [currentField, setCurrentField] = React.useState<
     Path<CareerType> | Path<AppointmentType> | Path<CertificationType>
   >();
   const [currentArrayId, setCurrentArrayId] = React.useState(0);
   const [lastSource, setLastSource] = React.useState<SourceType>();
+  const [massApplyingFields, setMassApplyingFields] =
+    React.useState<MassApplyingFields[]>();
 
   return {
     openPanel,
     setOpenPanel,
-    editMode,
-    setEditMode,
     currentField,
     setCurrentField,
     currentArrayId,
     setCurrentArrayId,
     lastSource,
     setLastSource,
+    massApplyingFields,
+    setMassApplyingFields,
   };
 };
 

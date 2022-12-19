@@ -4,7 +4,7 @@ import { useFormContext, Path } from "react-hook-form";
 import { CareerType } from "../../../../../../../model/career/Career";
 import { AppointmentType } from "../../../../../../../model/career/Appointment";
 import { CertificationType } from "../../../../../../../model/career/Certification";
-import { Button, Textarea } from "@mantine/core";
+import { Button, Checkbox, Textarea } from "@mantine/core";
 import { useExistingReference } from "../utils";
 import { IconCirclePlus } from "@tabler/icons";
 
@@ -36,15 +36,13 @@ export const ReferencesTrigger = ({
     openPanel,
     setOpenPanel,
     setCurrentArrayId,
-    editMode,
-    setEditMode,
     currentField,
     setCurrentField,
+    massApplyingFields,
   } = referenceStateContext!;
 
   const handlePanelOpen = () => {
     setOpenPanel(true);
-    setEditMode(false);
     setCurrentField(field);
     if (arrId !== undefined) {
       setCurrentArrayId(arrId);
@@ -64,6 +62,8 @@ export const ReferencesTrigger = ({
     content,
   });
 
+  const handleMassApply = () => [];
+
   const referencesErrors = formContext.formState.errors as unknown as {
     [key: string]: { message: string };
   }; // TODO: give a better typing when the errors are more stable
@@ -72,6 +72,11 @@ export const ReferencesTrigger = ({
     <>
       {openPanel || existingReference.stringText ? (
         <TriggerRow>
+          {massApplyingFields !== undefined && !disabled ? (
+            <Checkbox mt={30} ml={10} mr={10} onClick={handleMassApply} />
+          ) : (
+            <div style={{ width: "40px" }}></div>
+          )}
           <Textarea
             w={190}
             ml={10}

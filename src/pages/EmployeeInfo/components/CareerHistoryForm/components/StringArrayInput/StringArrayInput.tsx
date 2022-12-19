@@ -7,9 +7,7 @@ import {
   Path,
   FieldValues,
 } from "react-hook-form";
-import { AppointmentType } from "../../../../../../model/career/Appointment";
-import { CareerType } from "../../../../../../model/career/Career";
-import { CertificationType } from "../../../../../../model/career/Certification";
+import { useReferenceStateContext } from "../References";
 import {
   ArrayContainer,
   ArrayRow,
@@ -21,33 +19,16 @@ import {
 
 interface StringArrayInputProps<T extends FieldValues> {
   name: Path<T>;
-  editMode: boolean;
   referenceTrigger: (index: number) => React.ReactNode;
-
-  /** Required for row highlight */
-  currentName?:
-    | Path<CareerType>
-    | Path<AppointmentType>
-    | Path<CertificationType>;
-
-  /** Required for row highlight */
-  currentArrayId: number;
-
-  massApplyingFields?: {
-    field: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
-    content: string;
-  }[];
 }
 
 export const StringArrayInput = <T extends FieldValues>({
   name,
-  editMode,
   referenceTrigger,
-  currentName,
-  currentArrayId,
-  massApplyingFields,
 }: StringArrayInputProps<T>) => {
   const { classes } = useStyles();
+  const referenceStateContext = useReferenceStateContext();
+  const { openPanel, currentField, currentArrayId } = referenceStateContext!;
   const { control, formState } = useFormContext<T>();
   const { errors } = formState;
   const { field } = useController({
@@ -60,11 +41,11 @@ export const StringArrayInput = <T extends FieldValues>({
   return (
     <ArrayContainer>
       <ButtonRow>
-        <Title disabled={!editMode}>
+        <Title disabled={openPanel}>
           {name.charAt(0).toUpperCase() + name.slice(1)}
         </Title>
         <IconCirclePlus
-          color={!editMode ? "rgb(0 0 0 / 30%)" : "black"}
+          color={openPanel ? "rgb(0 0 0 / 30%)" : "black"}
           onClick={() => field.onChange([...field.value, ""])}
         />
       </ButtonRow>
@@ -75,10 +56,7 @@ export const StringArrayInput = <T extends FieldValues>({
         <ArrayRow
           key={"string_array_" + id}
           highlight={
-            (!editMode && currentArrayId === id && currentName === "skills") ||
-            massApplyingFields?.filter(
-              (item) => item.field === "skills" && item.content === val,
-            ).length === 1
+            openPanel && currentArrayId === id && currentField === name
           }
         >
           <TextInput
@@ -90,10 +68,10 @@ export const StringArrayInput = <T extends FieldValues>({
               current[id] = e.target.value;
               field.onChange(current);
             }}
-            disabled={!editMode}
-            variant={editMode ? "default" : "unstyled"}
+            disabled={openPanel}
+            variant={!openPanel ? "default" : "unstyled"}
             rightSection={
-              editMode && (
+              !openPanel && (
                 <IconX
                   key={"string-array-icon" + id}
                   size={20}

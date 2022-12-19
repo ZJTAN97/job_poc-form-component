@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Popover } from "@mantine/core";
 import { Row, useStyles, MainContainer, TitleContainer, Title } from "./styles";
-import { useForm, Path } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Career, CareerType } from "../../../../model/career/Career";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../components/Form";
@@ -9,8 +9,7 @@ import { useSaveOrCreateCareer } from "../../../../react-query/career";
 import { StringArrayInput } from "./components/StringArrayInput";
 import { ObjectArrayInput } from "./components/ObjectArrayInput";
 import { CertificationType } from "../../../../model/career/Certification";
-import { SourceType } from "../../../../model/common/Source";
-import { AppointmentType } from "../../../../model/career/Appointment";
+
 import { IconEditCircle } from "@tabler/icons";
 import {
   ReferenceStateContext,
@@ -32,18 +31,10 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     openPanel,
     setOpenPanel,
     currentField,
-    editMode,
-    setEditMode,
     currentArrayId,
-    setCurrentArrayId,
+    massApplyingFields,
+    setMassApplyingFields,
   } = referenceStateMethods;
-
-  const [massApplyingFields, setMassApplyingFields] = React.useState<
-    {
-      field: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
-      content: string;
-    }[]
-  >();
 
   const careerFormMethods = useForm<CareerType>({
     resolver: zodResolver(Career),
@@ -83,14 +74,11 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     if (massApplyingFields === undefined) {
       setMassApplyingFields([]);
       if (currentField === undefined) {
-        setEditMode(false);
         setOpenPanel(true);
       }
     } else {
       setMassApplyingFields(undefined);
-
       if (currentField === undefined) {
-        setEditMode(true);
         setOpenPanel(false);
       }
     }
@@ -134,12 +122,12 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
         <Popover.Target>
           <MainContainer>
             {/* COMPANY */}
-            <Row highlight={!editMode && currentField === "company"}>
+            <Row highlight={openPanel && currentField === "company"}>
               <Form.TextInput<CareerType>
                 label={"Company name"}
                 name={"company"}
                 disabled={openPanel}
-                variant={editMode ? "default" : "unstyled"}
+                variant={!openPanel ? "default" : "unstyled"}
                 className={classes.formTextInput}
                 required
               />
@@ -151,12 +139,12 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             </Row>
 
             {/* DURATION */}
-            <Row highlight={!editMode && currentField === "duration"}>
+            <Row highlight={openPanel && currentField === "duration"}>
               <Form.TextInput<CareerType>
                 label={"Duration"}
                 name={"duration"}
                 disabled={openPanel}
-                variant={editMode ? "default" : "unstyled"}
+                variant={!openPanel ? "default" : "unstyled"}
                 className={classes.formTextInput}
               />
               <ReferencesTrigger
@@ -172,18 +160,18 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 label={"Last Drawn Salary"}
                 name={"lastDrawnSalary"}
                 disabled={openPanel}
-                variant={editMode ? "default" : "unstyled"}
+                variant={!openPanel ? "default" : "unstyled"}
                 className={classes.formTextInput}
               />
             </Row>
 
             {/* APPOINTMENT (POSITION, RANK) */}
-            <Row highlight={!editMode && currentField === "position"}>
+            <Row highlight={openPanel && currentField === "position"}>
               <Form.TextInput<CareerType>
                 label={"Position"}
                 name={"appointment.position"}
-                disabled={!editMode}
-                variant={editMode ? "default" : "unstyled"}
+                disabled={openPanel}
+                variant={!openPanel ? "default" : "unstyled"}
                 className={classes.formTextInput}
                 required
               />
@@ -196,12 +184,12 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               />
             </Row>
 
-            <Row highlight={!editMode && currentField === "rank"}>
+            <Row highlight={openPanel && currentField === "rank"}>
               <Form.TextInput<CareerType>
                 label={"Rank"}
                 name={"appointment.rank"}
-                disabled={!editMode}
-                variant={editMode ? "default" : "unstyled"}
+                disabled={openPanel}
+                variant={!openPanel ? "default" : "unstyled"}
                 className={classes.formTextInput}
                 required={true}
               />
@@ -217,7 +205,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
             {/* SKILLS  */}
             <StringArrayInput<CareerType>
               name="skills"
-              editMode={editMode}
               referenceTrigger={(arrId) => (
                 <ReferencesTrigger
                   field="skills"
@@ -228,15 +215,11 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                   arrId={arrId}
                 />
               )}
-              currentName={currentField}
-              currentArrayId={currentArrayId}
-              massApplyingFields={massApplyingFields}
             />
 
             {/* CERTS  */}
             <ObjectArrayInput<CareerType, CertificationType>
               name="certsToField"
-              editMode={editMode}
               emptyObject={{
                 name: "",
                 issuedBy: "",
@@ -261,16 +244,13 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                   arrId={arrId}
                 />
               )}
-              currentArrayId={currentArrayId}
-              currentName={currentField}
-              massApplyingFields={massApplyingFields}
             />
 
             <Button
               ml={15}
               mt={20}
               onClick={submitFormHandler}
-              disabled={!editMode}
+              disabled={openPanel}
               variant={"light"}
             >
               Add Career

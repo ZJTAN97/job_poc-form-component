@@ -43,7 +43,6 @@ export const ReferencesPanel = () => {
   const referenceStateContext = useReferenceStateContext();
   const {
     currentField,
-    setEditMode,
     setOpenPanel,
     currentArrayId,
     lastSource,
@@ -123,16 +122,6 @@ export const ReferencesPanel = () => {
     }
 
     setSources.saveOrUpdateSource();
-
-    // setReferences({
-    //   arrayMethod: referenceArrayMethods,
-    //   currentArrayId,
-    //   fieldName: currentField!,
-    //   formContext,
-    //   referenceForm: referenceFormMethod,
-    //   existingReference,
-    // });
-
     setLastSource(sourceFormMethod.getValues());
     sourceFormMethod.reset();
     setPopupMode("read");
@@ -179,7 +168,6 @@ export const ReferencesPanel = () => {
   };
 
   const handleClosePanel = () => {
-    setEditMode(true);
     setOpenPanel(false);
   };
 
