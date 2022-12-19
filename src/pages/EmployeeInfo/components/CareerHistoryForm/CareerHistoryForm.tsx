@@ -1,6 +1,6 @@
 import { Button, Popover } from "@mantine/core";
 import { Row, useStyles, MainContainer, TitleContainer, Title } from "./styles";
-import { useForm } from "react-hook-form";
+import { useForm, Path } from "react-hook-form";
 import { Career, CareerType } from "../../../../model/career/Career";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../components/Form";
@@ -16,6 +16,10 @@ import {
 } from "./components/References";
 import { ReferencesTrigger } from "./components/References/ReferencesTrigger";
 import { ReferencesPanel } from "./components/References/ReferencesPanel";
+import {
+  useCurrentContent,
+  useCurrentReference,
+} from "./components/References/utils";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -64,9 +68,37 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   };
 
   const submitFormHandler = careerFormMethods.handleSubmit(async (data) => {
-    console.info("[SUCCESS]", data);
-    saveOrCreateCareer(data);
-    setDrawer(false);
+    // console.info("[SUCCESS]", data);
+    // TODO: how to iterate and add content throughout
+
+    let singleFieldReferences = careerFormMethods.getValues().references;
+
+    for (const [key, value] of Object.entries(careerFormMethods.getValues())) {
+      if (typeof value === "string") {
+        singleFieldReferences = singleFieldReferences.map((ref) =>
+          ref.field === key ? { ...ref, content: value } : { ...ref },
+        );
+      } else if (value instanceof Array && key === "skills") {
+        value.forEach(
+          (item, skillId) =>
+            (singleFieldReferences = singleFieldReferences.map(
+              (ref: any, id: number) =>
+                ref.field === "skills" && ref.content !== value[skillId-1]
+                  ? { ...ref, content: item }
+                  : { ...ref },
+            )),
+        );
+      } else if (value instanceof Array && key === "references") {
+        // console.log("array");
+      } else if (value instanceof Object && !(value instanceof Array)) {
+        // console.log(value);
+      }
+    }
+
+    console.log(singleFieldReferences);
+
+    // saveOrCreateCareer(data);
+    // setDrawer(false);
   });
 
   const handleMassApply = () => {
@@ -83,7 +115,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     }
   };
 
-  console.info(careerFormMethods.getValues());
+  // console.info(careerFormMethods.getValues());
 
   return (
     <Form
