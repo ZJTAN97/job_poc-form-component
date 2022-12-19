@@ -30,10 +30,10 @@ export type ReferencesStateMethods = {
   ) => void;
 
   /** to differentiate between array fields and non-array fields during selection */
-  currentArrayId: number;
+  currentArrayId?: number;
 
   /** setter method for which item in the array is being selected */
-  setCurrentArrayId: (arg: number) => void;
+  setCurrentArrayId: (arg?: number) => void;
 
   /** state to remember last source added */
   lastSource?: SourceType;
@@ -59,7 +59,7 @@ export const useReferencesStateMethods = (): ReferencesStateMethods => {
   const [currentField, setCurrentField] = React.useState<
     Path<CareerType> | Path<AppointmentType> | Path<CertificationType>
   >();
-  const [currentArrayId, setCurrentArrayId] = React.useState(0);
+  const [currentArrayId, setCurrentArrayId] = React.useState<number>();
   const [lastSource, setLastSource] = React.useState<SourceType>();
   const [massApplyingFields, setMassApplyingFields] =
     React.useState<MassApplyingFields[]>();

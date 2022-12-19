@@ -11,8 +11,6 @@ import {
 } from "./styles";
 import { useFormContext, useForm, useFieldArray } from "react-hook-form";
 import {
-  setReferences,
-  useCurrentContent,
   useCurrentReference,
   useExistingReference,
   useSetSources,
@@ -49,12 +47,6 @@ export const ReferencesPanel = () => {
     setLastSource,
   } = referenceStateContext!;
 
-  const currentContent = useCurrentContent({
-    formMethods: formContext,
-    currentField: currentField!,
-    currentArrayId,
-  });
-
   const existingReference = useExistingReference({
     references: [
       ...formContext.getValues().references,
@@ -65,15 +57,17 @@ export const ReferencesPanel = () => {
         .flat(),
     ],
     field: currentField!,
-    content: currentContent,
+    arrayId: currentArrayId,
   }).filteredReference;
+
+  const existingSources = existingReference?.sources ?? [];
 
   const referenceFormMethod = useForm<ReferenceType>({
     resolver: zodResolver(Reference),
     mode: "onChange",
     defaultValues: {
       field: currentField,
-      content: currentContent,
+      content: "",
       sources: [],
     },
   });
@@ -99,7 +93,7 @@ export const ReferencesPanel = () => {
   });
 
   const [popupMode, setPopupMode] = React.useState<"edit" | "read">(
-    existingReference ? "read" : "edit",
+    existingSources.length > 0 ? "read" : "edit",
   );
   const [showCommentsInput, setShowCommentsInput] = React.useState(false);
   const [sourceId, setSourceId] = React.useState<number>();
@@ -153,7 +147,10 @@ export const ReferencesPanel = () => {
     referenceArrayMethods.update(referenceId, referenceFormMethod.getValues());
 
     if (referenceFormMethod.getValues().sources.length === 0) {
-      if (currentField === "name" || currentField === "issuedBy") {
+      if (
+        (currentField === "name" || currentField === "issuedBy") &&
+        currentArrayId
+      ) {
         const selectedCert =
           formContext.getValues().certsToField[currentArrayId];
         referenceArrayMethods.update(currentArrayId, {
@@ -183,13 +180,13 @@ export const ReferencesPanel = () => {
     }
   };
 
-  console.info(referenceFormMethod.getValues());
+  // console.info(referenceFormMethod.getValues());
 
   return (
     <Popover.Dropdown p={30}>
       <TitleContainer>
         <Title>References</Title>
-        {existingReference?.sources.length > 0 ? (
+        {existingSources.length > 0 ? (
           <IconCirclePlus
             size={20}
             style={{ cursor: "pointer" }}
@@ -243,7 +240,7 @@ export const ReferencesPanel = () => {
         </Form>
       ) : (
         <div>
-          {existingReference.sources.map((item, id) => (
+          {existingSources.map((item, id) => (
             <ReferenceCard key={"ref_card_" + id}>
               <div>{item.referenceType}</div>
               <ReferenceCardRow>

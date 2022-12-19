@@ -12,9 +12,6 @@ interface ReferencesTriggerProp {
   /** Field Name required to filter which references to show for this component instance */
   field: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
 
-  /** Content required to filter which references to show for this component instance */
-  content: string;
-
   /** Disable trigger */
   disabled?: boolean;
 
@@ -23,7 +20,6 @@ interface ReferencesTriggerProp {
 
 export const ReferencesTrigger = ({
   field,
-  content,
   disabled,
   arrId,
 }: ReferencesTriggerProp) => {
@@ -46,6 +42,8 @@ export const ReferencesTrigger = ({
     setCurrentField(field);
     if (arrId !== undefined) {
       setCurrentArrayId(arrId);
+    } else {
+      setCurrentArrayId(undefined);
     }
   };
 
@@ -59,7 +57,7 @@ export const ReferencesTrigger = ({
         .flat(),
     ],
     field,
-    content,
+    arrayId: arrId,
   });
 
   const handleMassApply = () => [];

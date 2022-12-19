@@ -1,4 +1,3 @@
-import React from "react";
 import { Button, Popover } from "@mantine/core";
 import { Row, useStyles, MainContainer, TitleContainer, Title } from "./styles";
 import { useForm } from "react-hook-form";
@@ -133,7 +132,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               />
               <ReferencesTrigger
                 field="company"
-                content={careerFormMethods.getValues().company}
                 disabled={careerFormMethods.formState.dirtyFields.company}
               />
             </Row>
@@ -149,7 +147,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               />
               <ReferencesTrigger
                 field="duration"
-                content={careerFormMethods.getValues().duration}
                 disabled={careerFormMethods.formState.dirtyFields.duration}
               />
             </Row>
@@ -177,7 +174,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               />
               <ReferencesTrigger
                 field="position"
-                content={careerFormMethods.getValues().appointment.position}
                 disabled={
                   careerFormMethods.formState.dirtyFields.appointment?.position
                 }
@@ -195,7 +191,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               />
               <ReferencesTrigger
                 field="rank"
-                content={careerFormMethods.getValues().appointment.rank}
                 disabled={
                   careerFormMethods.formState.dirtyFields.appointment?.rank
                 }
@@ -208,7 +203,6 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
               referenceTrigger={(arrId) => (
                 <ReferencesTrigger
                   field="skills"
-                  content={careerFormMethods.getValues().skills[arrId]}
                   disabled={
                     careerFormMethods.getValues().skills[arrId].length > 1
                   }
@@ -225,17 +219,11 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
                 issuedBy: "",
                 references: [],
               }}
-              referenceTrigger={(arrId, name) => (
+              referenceTrigger={(arrId, field) => (
                 <ReferencesTrigger
-                  field={name}
-                  content={
-                    name === "issuedBy"
-                      ? careerFormMethods.getValues().certsToField[arrId]
-                          .issuedBy
-                      : careerFormMethods.getValues().certsToField[arrId].name
-                  }
+                  field={field}
                   disabled={
-                    name === "issuedBy"
+                    field === "issuedBy"
                       ? careerFormMethods.getValues().certsToField[arrId]
                           .issuedBy.length > 1
                       : careerFormMethods.getValues().certsToField[arrId].name

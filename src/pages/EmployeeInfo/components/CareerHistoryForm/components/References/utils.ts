@@ -12,17 +12,21 @@ import { ReferenceType } from "../../../../../../model/common/Reference";
 export const useExistingReference = <T extends FieldValues>({
   references,
   field,
-  content,
+  arrayId,
 }: {
   references: ReferenceType[];
   field: Path<T>;
-  content: string;
+  arrayId?: number;
 }) => {
-  const filteredReference = references.filter(
-    (ref) => ref.field === field && ref.content === content,
-  );
-
+  let filteredReference: ReferenceType[] = [];
   let stringText = "";
+
+  if (arrayId !== undefined) {
+    const filteredByArray = references.filter((ref) => ref.field === field);
+    filteredReference = filteredByArray.filter((_, id) => id === arrayId);
+  } else {
+    filteredReference = references.filter((ref) => ref.field === field);
+  }
 
   if (filteredReference.length === 1) {
     const numOfSource = filteredReference[0].sources.length;
@@ -57,7 +61,7 @@ export const useCurrentContent = ({
     | Path<CareerType>
     | Path<AppointmentType>
     | Path<CertificationType>;
-  currentArrayId: number;
+  currentArrayId?: number;
 }) => {
   const { company, appointment, certsToField, duration, skills } =
     formMethods.getValues();
@@ -69,11 +73,13 @@ export const useCurrentContent = ({
     ? appointment.position
     : currentField === "rank"
     ? appointment.rank
-    : currentField === "name" && certsToField[currentArrayId]
+    : currentField === "name" && currentArrayId && certsToField[currentArrayId]
     ? certsToField[currentArrayId].name
-    : currentField === "issuedBy" && certsToField[currentArrayId]
+    : currentField === "issuedBy" &&
+      currentArrayId &&
+      certsToField[currentArrayId]
     ? certsToField[currentArrayId].issuedBy
-    : currentField === "skills"
+    : currentField === "skills" && currentArrayId
     ? skills[currentArrayId]
     : "";
 };
@@ -104,7 +110,7 @@ export const setReferences = ({
   arrayMethod: UseFieldArrayReturn<CareerType>;
   existingReference?: ReferenceType;
   referenceForm: UseFormReturn<ReferenceType>;
-  currentArrayId: number;
+  currentArrayId?: number;
 }) => {
   const isAppointmentReference =
     fieldName === "rank" || fieldName === "position";
@@ -125,7 +131,9 @@ export const setReferences = ({
   }
   // ARRAY OBJECT TYPE
   else if (isCertReference) {
-    const selectedCert = formContext.getValues().certsToField[currentArrayId];
+    const selectedCert = formContext.getValues().certsToField[currentArrayId!];
+    console.log("-- look here --");
+    console.log(selectedCert);
     if (existingReference) {
       // UPDATE
       const selectedCertReferenceId =
@@ -135,13 +143,13 @@ export const setReferences = ({
 
       existingReferences[selectedCertReferenceId] = referenceForm.getValues();
 
-      arrayMethod.update(currentArrayId, {
+      arrayMethod.update(currentArrayId!, {
         ...selectedCert,
         references: existingReferences,
       });
     } else {
       // CREATE
-      arrayMethod.update(currentArrayId, {
+      arrayMethod.update(currentArrayId!, {
         ...selectedCert,
         references: [...selectedCert.references, referenceForm.getValues()],
       });
@@ -173,7 +181,7 @@ export const useSetSources = ({
   arrayMethod: UseFieldArrayReturn<CareerType>;
   existingReference?: ReferenceType;
   referenceForm: UseFormReturn<ReferenceType>;
-  currentArrayId: number;
+  currentArrayId?: number;
   sourceId?: number;
 }) => {
   const saveOrUpdateSource = () => {
