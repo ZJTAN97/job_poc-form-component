@@ -198,14 +198,6 @@ export const useSetSources = ({
     console.info(
       `[INFO] Creating/Updating ${fieldName} and array Id ${currentArrayId}`,
     );
-    setReferences({
-      fieldName,
-      formContext,
-      arrayMethod,
-      existingReference,
-      referenceForm,
-      currentArrayId,
-    });
   };
   const deleteSource = () => {
     console.info(`[INFO] Deleting ${fieldName} and array Id ${currentArrayId}`);
