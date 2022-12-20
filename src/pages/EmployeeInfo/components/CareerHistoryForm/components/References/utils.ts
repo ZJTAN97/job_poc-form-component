@@ -115,6 +115,7 @@ export const setReferences = ({
   const isAppointmentReference =
     fieldName === "rank" || fieldName === "position";
   const isCertReference = fieldName === "issuedBy" || fieldName === "name";
+  const isSkillReference = fieldName === "skills";
 
   // OBJECT TYPE
   if (isAppointmentReference) {
@@ -132,8 +133,6 @@ export const setReferences = ({
   // ARRAY OBJECT TYPE
   else if (isCertReference) {
     const selectedCert = formContext.getValues().certsToField[currentArrayId!];
-    console.log("-- look here --");
-    console.log(selectedCert);
     if (existingReference) {
       // UPDATE
       const selectedCertReferenceId =
@@ -155,7 +154,18 @@ export const setReferences = ({
       });
     }
   }
-  // STRING / STRING ARRAY TYPE
+  // STRING ARRAY TYPE
+  // Note: update/create is handled at `StringArrayInput`
+  else if (isSkillReference) {
+    if (existingReference) {
+      const id = formContext.getValues().references.indexOf(existingReference);
+      arrayMethod.update(id, {
+        ...existingReference,
+        sources: referenceForm.getValues().sources,
+      });
+    }
+  }
+  // STRING TYPE
   else {
     if (existingReference) {
       // UPDATE

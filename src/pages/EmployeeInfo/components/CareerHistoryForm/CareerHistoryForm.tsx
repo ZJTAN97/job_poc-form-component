@@ -1,6 +1,6 @@
 import { Button, Popover } from "@mantine/core";
 import { Row, useStyles, MainContainer, TitleContainer, Title } from "./styles";
-import { useForm, Path } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { Career, CareerType } from "../../../../model/career/Career";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../components/Form";
@@ -16,10 +16,6 @@ import {
 } from "./components/References";
 import { ReferencesTrigger } from "./components/References/ReferencesTrigger";
 import { ReferencesPanel } from "./components/References/ReferencesPanel";
-import {
-  useCurrentContent,
-  useCurrentReference,
-} from "./components/References/utils";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -67,38 +63,71 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     [key: string]: { message: string };
   };
 
+  // TODO: CODE REVIEW WITH WC BEFORE THIS BECOMES BLACK-BOX CODE
   const submitFormHandler = careerFormMethods.handleSubmit(async (data) => {
-    // console.info("[SUCCESS]", data);
-    // TODO: how to iterate and add content throughout
-
-    let singleFieldReferences = careerFormMethods.getValues().references;
+    const singleFieldReferences = careerFormMethods.getValues().references;
+    const singleObjectReferences =
+      careerFormMethods.getValues().appointment.references;
+    const multiArrayReferences = careerFormMethods.getValues().certsToField;
 
     for (const [key, value] of Object.entries(careerFormMethods.getValues())) {
+      // Single String Type
       if (typeof value === "string") {
-        singleFieldReferences = singleFieldReferences.map((ref) =>
-          ref.field === key ? { ...ref, content: value } : { ...ref },
+        singleFieldReferences.map(
+          (ref, id, arr) =>
+            (arr[id] =
+              ref.field === key ? { ...ref, content: value } : { ...ref }),
         );
-      } else if (value instanceof Array && key === "skills") {
-        value.forEach(
-          (item, skillId) =>
-            (singleFieldReferences = singleFieldReferences.map(
-              (ref: any, id: number) =>
-                ref.field === "skills" && ref.content !== value[skillId-1]
-                  ? { ...ref, content: item }
-                  : { ...ref },
-            )),
+      }
+      // String Array Type
+      else if (value instanceof Array && key === "skills") {
+        singleFieldReferences.map((ref, id, arr) =>
+          ref.field === "skills"
+            ? (arr[id] = {
+                ...ref,
+                content: value[Number(ref.content)] as string,
+              })
+            : { ...ref },
         );
-      } else if (value instanceof Array && key === "references") {
-        // console.log("array");
-      } else if (value instanceof Object && !(value instanceof Array)) {
-        // console.log(value);
+      }
+      // Single Object Type
+      else if (value instanceof Object && key === "appointment") {
+        singleObjectReferences.map(
+          (ref, id, arr) =>
+            (arr[id] =
+              ref.field === "position"
+                ? { ...ref, content: data.appointment.position }
+                : { ...ref, content: data.appointment.rank }),
+        );
+      }
+      // Array Object Type
+      else if (value instanceof Array && key == "certsToField") {
+        multiArrayReferences.map(
+          (certObj, id, arr) =>
+            (arr[id] = {
+              ...certObj,
+              references: certObj.references.map((ref) => ({
+                ...ref,
+                content: ref.field === "name" ? certObj.name : certObj.issuedBy,
+              })),
+            }),
+        );
       }
     }
 
-    console.log(singleFieldReferences);
+    const requestBody: CareerType = {
+      ...data,
+      appointment: {
+        ...data.appointment,
+        references: singleObjectReferences,
+      },
+      references: singleFieldReferences,
+      certsToField: multiArrayReferences,
+    };
 
-    // saveOrCreateCareer(data);
-    // setDrawer(false);
+    saveOrCreateCareer(requestBody);
+    console.info("[SUCCESS]", requestBody.toString());
+    setDrawer(false);
   });
 
   const handleMassApply = () => {
@@ -116,6 +145,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   };
 
   // console.info(careerFormMethods.getValues());
+  console.log(careerFormMethods.formState.errors);
 
   return (
     <Form
