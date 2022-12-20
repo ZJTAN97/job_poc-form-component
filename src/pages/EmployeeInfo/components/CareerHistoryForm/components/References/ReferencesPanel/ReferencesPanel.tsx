@@ -1,5 +1,4 @@
 import React from "react";
-import { CareerType } from "../../../../../../../model/career/Career";
 import { useReferenceStateContext } from "../References";
 import {
   ButtonRow,
@@ -9,17 +8,8 @@ import {
   TitleContainer,
   useStyles,
 } from "./styles";
-import { useFormContext, useForm, useFieldArray } from "react-hook-form";
-import {
-  setReferences,
-  useCurrentReference,
-  useExistingReference,
-} from "../utils";
-import {
-  Reference,
-  ReferenceType,
-} from "../../../../../../../model/common/Reference";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useSetSources } from "../utils";
+
 import { Button, Popover } from "@mantine/core";
 import {
   IconArrowLeft,
@@ -29,7 +19,6 @@ import {
 } from "@tabler/icons";
 import { Form } from "../../../../../../../components/Form";
 import {
-  Source,
   SourceType,
   TYPES_OF_REFERENCES,
 } from "../../../../../../../model/common/Source";
@@ -37,7 +26,6 @@ import {
 export const ReferencesPanel = () => {
   const { classes } = useStyles();
 
-  const formContext = useFormContext<CareerType>();
   const referenceStateContext = useReferenceStateContext();
   const {
     currentField,
@@ -47,119 +35,23 @@ export const ReferencesPanel = () => {
     setLastSource,
   } = referenceStateContext!;
 
-  const existingReference = useExistingReference({
-    references: [
-      ...formContext.getValues().references,
-      ...formContext.getValues().appointment.references,
-      ...formContext
-        .getValues()
-        .certsToField.map((cert) => cert.references)
-        .flat(),
-    ],
-    field: currentField!,
-    arrayId: currentArrayId,
-  }).filteredReference;
-
-  const existingSources = existingReference?.sources ?? [];
-
-  const referenceFormMethod = useForm<ReferenceType>({
-    resolver: zodResolver(Reference),
-    mode: "onChange",
-    defaultValues: {
-      field: currentField,
-      content: "",
-      sources: [],
-    },
+  const {
+    setSourceId,
+    sourceFormMethod,
+    referenceFormMethod,
+    applySourcesToReferences,
+    editSource,
+    deleteSource,
+    popupMode,
+    setPopupMode,
+    existingSources,
+  } = useSetSources({
+    fieldName: currentField!,
+    currentArrayId,
+    setLastSource,
   });
 
-  const sourceFormMethod = useForm<SourceType>({
-    resolver: zodResolver(Source),
-    mode: "onChange",
-    defaultValues: {
-      comment: "",
-      dateObtained: "2022-11-11T12:19:54.52",
-      referenceType: undefined,
-    },
-  });
-
-  const referenceArrayMethods = useFieldArray<CareerType>({
-    control: formContext.control,
-    name: useCurrentReference(currentField!),
-  });
-
-  const sourceArrayMethods = useFieldArray<ReferenceType>({
-    control: referenceFormMethod.control,
-    name: "sources",
-  });
-
-  const [popupMode, setPopupMode] = React.useState<"edit" | "read">(
-    existingSources.length > 0 ? "read" : "edit",
-  );
   const [showCommentsInput, setShowCommentsInput] = React.useState(false);
-  const [sourceId, setSourceId] = React.useState<number>();
-
-  const appendReferences = () => {
-    if (sourceId !== undefined) {
-      sourceArrayMethods.update(sourceId, sourceFormMethod.getValues());
-      setSourceId(undefined);
-    } else {
-      sourceArrayMethods.append(sourceFormMethod.getValues());
-    }
-    setReferences({
-      fieldName: currentField!,
-      formContext,
-      arrayMethod: referenceArrayMethods,
-      existingReference,
-      referenceForm: referenceFormMethod,
-      currentArrayId,
-    });
-    setLastSource(sourceFormMethod.getValues());
-    sourceFormMethod.reset();
-    setPopupMode("read");
-  };
-
-  const editSource = (providedSourceId: number) => {
-    setSourceId(providedSourceId);
-    sourceFormMethod.setValue(
-      "referenceType",
-      referenceFormMethod.getValues().sources[providedSourceId].referenceType,
-    );
-    sourceFormMethod.setValue(
-      "dateObtained",
-      referenceFormMethod.getValues().sources[providedSourceId].dateObtained,
-    );
-    sourceFormMethod.setValue(
-      "comment",
-      referenceFormMethod.getValues().sources[providedSourceId].comment,
-    );
-    setPopupMode("edit");
-  };
-
-  const deleteSource = (providedSourceId: number) => {
-    // TODO: handle all scenarios
-    sourceArrayMethods.remove(providedSourceId);
-    const referenceId = formContext
-      .getValues()
-      .references.indexOf(existingReference);
-    referenceArrayMethods.update(referenceId, referenceFormMethod.getValues());
-
-    if (referenceFormMethod.getValues().sources.length === 0) {
-      if (
-        (currentField === "name" || currentField === "issuedBy") &&
-        currentArrayId
-      ) {
-        const selectedCert =
-          formContext.getValues().certsToField[currentArrayId];
-        referenceArrayMethods.update(currentArrayId, {
-          ...selectedCert,
-          references: [],
-        });
-      } else {
-        referenceArrayMethods.remove(referenceId);
-      }
-      setPopupMode("edit");
-    }
-  };
 
   const handleClosePanel = () => {
     setOpenPanel(false);
@@ -246,12 +138,18 @@ export const ReferencesPanel = () => {
                   <IconEdit
                     size={20}
                     style={{ cursor: "pointer" }}
-                    onClick={() => editSource(id)}
+                    onClick={() => {
+                      setSourceId(id);
+                      editSource();
+                    }}
                   />
                   <IconIdOff
                     size={20}
                     style={{ cursor: "pointer" }}
-                    onClick={() => deleteSource(id)}
+                    onClick={() => {
+                      setSourceId(id);
+                      deleteSource();
+                    }}
                   />
                 </div>
               </ReferenceCardRow>
@@ -278,7 +176,7 @@ export const ReferencesPanel = () => {
           }}
           size={"xs"}
           variant="outline"
-          onClick={appendReferences}
+          onClick={applySourcesToReferences}
           disabled={popupMode === "read" || !sourceFormMethod.formState.isValid}
         >
           Apply
