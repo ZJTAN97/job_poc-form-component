@@ -6,36 +6,19 @@ import MultiSelect from "./MultiSelect/MultiSelect";
 import { TextArea } from "./TextArea/TextArea";
 import { TextInput } from "./TextInput/TextInput";
 
-interface BaseFormProps<T extends FieldValues> {
+interface FormProps<T extends FieldValues> {
   methods: UseFormReturn<T>;
   useLocalStorage?: boolean;
   preventLeaving?: boolean;
   children: React.ReactNode;
 }
 
-type FormProps<
-  T extends FieldValues,
-  AdditionalFormStateMethods,
-> = BaseFormProps<T> &
-  (
-    | {
-        additionalContextValues: AdditionalFormStateMethods;
-        AdditionalContext: React.Context<AdditionalFormStateMethods>;
-      }
-    | {
-        additionalContextValues?: never;
-        AdditionalContext?: never;
-      }
-  );
-
-export const Form = <T extends FieldValues, AdditionalFormStateMethods>({
+export const Form = <T extends FieldValues>({
   methods,
   useLocalStorage,
   preventLeaving,
   children,
-  additionalContextValues,
-  AdditionalContext,
-}: FormProps<T, AdditionalFormStateMethods>) => {
+}: FormProps<T>) => {
   const { formState } = methods;
   const { isDirty } = formState;
 
@@ -59,17 +42,7 @@ export const Form = <T extends FieldValues, AdditionalFormStateMethods>({
     };
   }, [beforeUnload]);
 
-  return (
-    <FormProvider {...methods}>
-      {AdditionalContext && additionalContextValues ? (
-        <AdditionalContext.Provider value={additionalContextValues}>
-          {children}
-        </AdditionalContext.Provider>
-      ) : (
-        children
-      )}
-    </FormProvider>
-  );
+  return <FormProvider {...methods}>{children}</FormProvider>;
 };
 
 Form.TextInput = TextInput;

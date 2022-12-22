@@ -14,7 +14,11 @@ import {
   Reference,
   ReferenceType,
 } from "../../../../../../model/common/Reference";
-import { Source, SourceType } from "../../../../../../model/common/Source";
+import {
+  Source,
+  SourceType,
+  TYPES_OF_REFERENCES,
+} from "../../../../../../model/common/Source";
 
 export const useExistingReference = <T extends FieldValues>({
   references,
@@ -204,7 +208,7 @@ export const useSetSources = ({
   };
 
   const editSource = () => {
-    if (sourceId) {
+    if (sourceId !== undefined) {
       sourceFormMethod.setValue(
         "referenceType",
         referenceFormMethod.getValues().sources[sourceId].referenceType,
