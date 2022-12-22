@@ -171,8 +171,8 @@ export const CareerHistoryForm = ({
     }
   };
 
-  console.info("Current Form: " + careerFormMethods.getValues());
-  console.info("Error State: " + careerFormMethods.formState.errors);
+  console.info(careerFormMethods.getValues());
+  console.info(careerFormMethods.formState.errors);
 
   return (
     <Form
