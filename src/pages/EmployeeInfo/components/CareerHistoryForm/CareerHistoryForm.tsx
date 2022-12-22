@@ -16,12 +16,17 @@ import {
 } from "./components/References";
 import { ReferencesTrigger } from "./components/References/ReferencesTrigger";
 import { ReferencesPanel } from "./components/References/ReferencesPanel";
+import React from "react";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
+  selectedCareerValue?: CareerType;
 }
 
-export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
+export const CareerHistoryForm = ({
+  setDrawer,
+  selectedCareerValue,
+}: CareerHistoryFormProps) => {
   const { classes } = useStyles();
 
   const { saveOrCreateCareer } = useSaveOrCreateCareer();
@@ -35,10 +40,30 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
     setMassApplyingFields,
   } = referenceStateMethods;
 
+  const transformedSelectedCareerValue: CareerType | undefined =
+    React.useMemo(() => {
+      if (selectedCareerValue) {
+        const transformedSkillsReference = selectedCareerValue.references
+          .filter((ref) => ref.field === "skills")
+          .map((skillRef, id) => ({ ...skillRef, content: String(id) }));
+
+        return {
+          ...selectedCareerValue,
+          references: [
+            ...selectedCareerValue.references.filter(
+              (ref) => ref.field !== "skills",
+            ),
+            ...transformedSkillsReference,
+          ],
+        };
+      }
+      return undefined;
+    }, [selectedCareerValue]);
+
   const careerFormMethods = useForm<CareerType>({
     resolver: zodResolver(Career),
     mode: "onChange",
-    defaultValues: {
+    defaultValues: transformedSelectedCareerValue ?? {
       company: "",
       appointment: {
         position: "",
@@ -124,9 +149,11 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
       references: singleFieldReferences,
       certsToField: multiArrayReferences,
     };
-
-    saveOrCreateCareer(requestBody);
-    console.info("[SUCCESS]", requestBody.toString());
+    saveOrCreateCareer({
+      career: requestBody,
+      id: careerFormMethods.getValues().id,
+    });
+    console.info("[SUCCESS]", requestBody);
     setDrawer(false);
   });
 
@@ -145,7 +172,7 @@ export const CareerHistoryForm = ({ setDrawer }: CareerHistoryFormProps) => {
   };
 
   // console.info(careerFormMethods.getValues());
-  console.log(careerFormMethods.formState.errors);
+  // console.log(careerFormMethods.formState.errors);
 
   return (
     <Form

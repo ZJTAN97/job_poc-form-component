@@ -18,10 +18,16 @@ import {
 
 interface CareerHistoryContentProps {
   currentId: string;
+  setOpenInfo: (arg: boolean) => void;
+  setOpenCreate: (arg: boolean) => void;
+  setSelectedCareerValue: (arg: CareerType) => void;
 }
 
 export const CareerHistoryContent = ({
   currentId,
+  setOpenInfo,
+  setOpenCreate,
+  setSelectedCareerValue,
 }: CareerHistoryContentProps) => {
   const { classes } = useStyles();
 
@@ -56,6 +62,12 @@ export const CareerHistoryContent = ({
     return "";
   };
 
+  const handleEditRecord = () => {
+    setSelectedCareerValue(career!);
+    setOpenInfo(false);
+    setOpenCreate(true);
+  };
+
   return (
     <MainContainer>
       {!career || isLoadingCareer ? (
@@ -64,7 +76,7 @@ export const CareerHistoryContent = ({
         <>
           <TitleBlock>
             <Text>Career Information</Text>
-            <IconEdit className={classes.icon} />
+            <IconEdit className={classes.icon} onClick={handleEditRecord} />
           </TitleBlock>
 
           <FieldBlock>

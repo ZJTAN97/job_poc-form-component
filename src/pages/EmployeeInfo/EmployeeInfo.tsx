@@ -1,6 +1,7 @@
 import { Button, Drawer, Loader, Table, Text } from "@mantine/core";
 import React from "react";
 import { Base } from "../../components/Base";
+import { CareerType } from "../../model/career/Career";
 import { useQueryCareerData } from "../../react-query/career";
 import { CareerHistoryContent } from "./components/CareerHistoryContent";
 import { CareerHistoryForm } from "./components/CareerHistoryForm";
@@ -14,6 +15,9 @@ export const EmployeeInfo = () => {
 
   const { allCareers, isLoadingCareers, errorCareers } = useQueryCareerData();
 
+  const [selectedCareerValue, setSelectedCareerValue] =
+    React.useState<CareerType>();
+
   const openSelectedInfo = (id: string) => {
     setOpenInfo(false);
     setSelectedTableRowId(id);
@@ -26,10 +30,16 @@ export const EmployeeInfo = () => {
         withOverlay={false}
         position="right"
         opened={openCreate}
-        onClose={() => setOpenCreate(false)}
+        onClose={() => {
+          setOpenCreate(false);
+          setSelectedCareerValue(undefined);
+        }}
         className={classes.drawer}
       >
-        <CareerHistoryForm setDrawer={setOpenCreate} />
+        <CareerHistoryForm
+          setDrawer={setOpenCreate}
+          selectedCareerValue={selectedCareerValue}
+        />
       </Drawer>
       <Drawer
         withOverlay={false}
@@ -38,7 +48,12 @@ export const EmployeeInfo = () => {
         onClose={() => setOpenInfo(false)}
         className={classes.drawerContent}
       >
-        <CareerHistoryContent currentId={selectedTableRowId} />
+        <CareerHistoryContent
+          currentId={selectedTableRowId}
+          setOpenInfo={setOpenInfo}
+          setOpenCreate={setOpenCreate}
+          setSelectedCareerValue={setSelectedCareerValue}
+        />
       </Drawer>
 
       <Button

@@ -19,6 +19,7 @@ export async function getCareerById(
 }
 
 export async function postNewCareer(newCareer: CareerType): Promise<Response> {
+  console.warn("[POST] Endpoint");
   return fetch("http://localhost:8080/api/v1/career", {
     method: "post",
     headers: {
@@ -26,5 +27,20 @@ export async function postNewCareer(newCareer: CareerType): Promise<Response> {
       "Content-Type": "application/json",
     },
     body: JSON.stringify(newCareer),
+  });
+}
+
+export async function putExistingCareer(
+  existingCareer: CareerType,
+  id: string,
+): Promise<Response> {
+  console.warn("[PUT] Endpoint");
+  return fetch(`http://localhost:8080/api/v1/career/${id}`, {
+    method: "put",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(existingCareer),
   });
 }

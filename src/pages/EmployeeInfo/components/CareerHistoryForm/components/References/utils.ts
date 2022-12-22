@@ -6,7 +6,6 @@ import {
   useFieldArray,
   useForm,
   useFormContext,
-  UseFormReturn,
 } from "react-hook-form";
 import { AppointmentType } from "../../../../../../model/career/Appointment";
 import { CareerType } from "../../../../../../model/career/Career";
