@@ -77,23 +77,3 @@ Form.TextArea = TextArea;
 Form.ChipSelection = ChipSelection;
 Form.Dropdown = Dropdown;
 Form.MultiSelect = MultiSelect;
-
-// type AdditionalFormStateMethodsProps = {
-//   openPanel: boolean;
-//   setOpenPanel: (arg: boolean) => void;
-// };
-
-// const AdditionalFormStateContext = React.createContext<
-//   AdditionalFormStateMethodsProps | undefined
-// >(undefined);
-
-// export const useAdditionalFormContext = (): AdditionalFormStateMethodsProps => {
-//   const [openPanel, setOpenPanel] = React.useState(false);
-//   return {
-//     openPanel,
-//     setOpenPanel,
-//   };
-// };
-
-// export const useAdditionalFormStateContext = () =>
-//   React.useContext(AdditionalFormStateContext);
