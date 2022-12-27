@@ -205,27 +205,28 @@ export const useSetSources = ({
     setLastSource(sourceFormMethod.getValues());
     sourceFormMethod.reset();
     setPopupMode("read");
+    setSourceId(undefined);
   };
 
-  const editSource = () => {
-    if (sourceId !== undefined) {
-      sourceFormMethod.setValue(
-        "referenceType",
-        referenceFormMethod.getValues().sources[sourceId].referenceType,
-      );
-      sourceFormMethod.setValue(
-        "dateObtained",
-        referenceFormMethod.getValues().sources[sourceId].dateObtained,
-      );
-      sourceFormMethod.setValue(
-        "comment",
-        referenceFormMethod.getValues().sources[sourceId].comment,
-      );
-      setPopupMode("edit");
-    }
+  const editSource = (sourceId: number) => {
+    sourceFormMethod.setValue(
+      "referenceType",
+      referenceFormMethod.getValues().sources[sourceId].referenceType,
+    );
+    sourceFormMethod.setValue(
+      "dateObtained",
+      referenceFormMethod.getValues().sources[sourceId].dateObtained,
+    );
+    sourceFormMethod.setValue(
+      "comment",
+      referenceFormMethod.getValues().sources[sourceId].comment,
+    );
+    setPopupMode("edit");
+    setSourceId(sourceId);
   };
 
-  const deleteSource = () => {
+  const deleteSource = (sourceId: number) => {
+    // setSourceId(sourceId);
     if (existingReference) {
       sourceArrayMethods.remove(sourceId);
       const referenceId = formContext
@@ -257,7 +258,6 @@ export const useSetSources = ({
 
   return {
     existingSources,
-    setSourceId,
     sourceFormMethod,
     referenceFormMethod,
     applySourcesToReferences,

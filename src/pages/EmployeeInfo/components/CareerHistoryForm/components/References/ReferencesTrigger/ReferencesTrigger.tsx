@@ -31,6 +31,7 @@ export const ReferencesTrigger = ({
   const {
     openPanel,
     setOpenPanel,
+    currentArrayId,
     setCurrentArrayId,
     currentField,
     setCurrentField,
@@ -86,7 +87,10 @@ export const ReferencesTrigger = ({
             classNames={{
               input: classes.reference,
             }}
-            disabled={openPanel && currentField !== field}
+            disabled={
+              (openPanel && currentField !== field) ||
+              (currentArrayId !== undefined && currentArrayId !== arrId)
+            }
           />
         </TriggerRow>
       ) : (

@@ -29,14 +29,15 @@ export const ReferencesPanel = () => {
   const referenceStateContext = useReferenceStateContext();
   const {
     currentField,
+    setCurrentField,
     setOpenPanel,
     currentArrayId,
+    setCurrentArrayId,
     lastSource,
     setLastSource,
   } = referenceStateContext!;
 
   const {
-    setSourceId,
     sourceFormMethod,
     referenceFormMethod,
     applySourcesToReferences,
@@ -54,6 +55,8 @@ export const ReferencesPanel = () => {
   const [showCommentsInput, setShowCommentsInput] = React.useState(false);
 
   const handleClosePanel = () => {
+    setCurrentField(undefined);
+    setCurrentArrayId(undefined);
     setOpenPanel(false);
   };
 
@@ -68,8 +71,6 @@ export const ReferencesPanel = () => {
       console.log("[INFO ] Applied last filled references");
     }
   };
-
-  // console.info(referenceFormMethod.getValues());
 
   return (
     <Popover.Dropdown p={30}>
@@ -139,16 +140,14 @@ export const ReferencesPanel = () => {
                     size={20}
                     style={{ cursor: "pointer" }}
                     onClick={() => {
-                      setSourceId(id);
-                      editSource();
+                      editSource(id);
                     }}
                   />
                   <IconIdOff
                     size={20}
                     style={{ cursor: "pointer" }}
                     onClick={() => {
-                      setSourceId(id);
-                      deleteSource();
+                      deleteSource(id);
                     }}
                   />
                 </div>

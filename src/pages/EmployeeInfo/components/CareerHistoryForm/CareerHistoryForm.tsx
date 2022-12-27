@@ -172,7 +172,7 @@ export const CareerHistoryForm = ({
   };
 
   console.info(careerFormMethods.getValues());
-  console.info(careerFormMethods.formState.errors);
+  // console.info(careerFormMethods.formState.errors);
 
   return (
     <Form<CareerType>
