@@ -14,11 +14,7 @@ import {
   Reference,
   ReferenceType,
 } from "../../../../../../model/common/Reference";
-import {
-  Source,
-  SourceType,
-  TYPES_OF_REFERENCES,
-} from "../../../../../../model/common/Source";
+import { Source, SourceType } from "../../../../../../model/common/Source";
 
 export const useExistingReference = <T extends FieldValues>({
   references,
@@ -100,7 +96,7 @@ export const useSetSources = ({
     defaultValues: {
       field: fieldName,
       content: "",
-      sources: [],
+      sources: existingReference?.sources ?? [],
     },
   });
 
