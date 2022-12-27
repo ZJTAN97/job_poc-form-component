@@ -36,6 +36,7 @@ export const ReferencesTrigger = ({
     currentField,
     setCurrentField,
     massApplyingFields,
+    setMassApplyingFields,
   } = referenceStateContext!;
 
   const handlePanelOpen = () => {
@@ -61,18 +62,44 @@ export const ReferencesTrigger = ({
     arrayId: arrId,
   });
 
-  const handleMassApply = () => [];
+  const handleCheckBox = () => {
+    const checkedItem = {
+      field,
+      arrayId: arrId,
+    };
+
+    if (massApplyingFields !== undefined) {
+      const itemExists =
+        massApplyingFields.filter(
+          (item) => JSON.stringify(item) === JSON.stringify(checkedItem),
+        ).length === 1;
+
+      if (itemExists) {
+        setMassApplyingFields(
+          massApplyingFields.filter(
+            (item) => JSON.stringify(item) !== JSON.stringify(checkedItem),
+          ),
+        );
+      } else {
+        let copyArr = [...massApplyingFields];
+        copyArr.push(checkedItem);
+        setMassApplyingFields(copyArr);
+      }
+    }
+  };
 
   const referencesErrors = formContext.formState.errors as unknown as {
     [key: string]: { message: string };
   }; // TODO: give a better typing when the errors are more stable
 
+  console.log(massApplyingFields);
+
   return (
     <>
       {openPanel || existingReference.stringText ? (
         <TriggerRow>
-          {massApplyingFields !== undefined && !disabled ? (
-            <Checkbox mt={30} ml={10} mr={10} onClick={handleMassApply} />
+          {massApplyingFields !== undefined && disabled ? (
+            <Checkbox mt={30} ml={10} mr={10} onClick={handleCheckBox} />
           ) : (
             <div style={{ width: "40px" }}></div>
           )}

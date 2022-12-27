@@ -204,6 +204,10 @@ export const useSetSources = ({
     setSourceId(undefined);
   };
 
+  const massApplySourcesToAllReferences = () => {
+    console.log("Mass apply chosen");
+  };
+
   const editSource = (sourceId: number) => {
     sourceFormMethod.setValue(
       "referenceType",
@@ -234,6 +238,7 @@ export const useSetSources = ({
     sourceFormMethod,
     referenceFormMethod,
     applySourcesToReferences,
+    massApplySourcesToAllReferences,
     editSource,
     deleteSource,
     setPopupMode,

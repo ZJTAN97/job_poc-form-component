@@ -35,12 +35,15 @@ export const ReferencesPanel = () => {
     setCurrentArrayId,
     lastSource,
     setLastSource,
+    massApplyingFields,
+    setMassApplyingFields,
   } = referenceStateContext!;
 
   const {
     sourceFormMethod,
     referenceFormMethod,
     applySourcesToReferences,
+    massApplySourcesToAllReferences,
     editSource,
     deleteSource,
     popupMode,
@@ -58,6 +61,7 @@ export const ReferencesPanel = () => {
     setCurrentField(undefined);
     setCurrentArrayId(undefined);
     setOpenPanel(false);
+    setMassApplyingFields(undefined);
   };
 
   const applyLastSource = () => {
@@ -175,7 +179,11 @@ export const ReferencesPanel = () => {
           }}
           size={"xs"}
           variant="outline"
-          onClick={applySourcesToReferences}
+          onClick={
+            massApplyingFields !== undefined
+              ? massApplySourcesToAllReferences
+              : applySourcesToReferences
+          }
           disabled={popupMode === "read" || !sourceFormMethod.formState.isValid}
         >
           Apply
