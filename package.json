@@ -5,6 +5,7 @@
   "homepage": "https://zjtan97.github.io/job_poc-form-component",
   "scripts": {
     "watch": "webpack serve --config webpack.config.js",
+    "test": "jest",
     "build": "webpack --config deployment/webpack.prod.js",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
@@ -19,9 +20,9 @@
     "@tabler/icons": "^1.111.0",
     "@tanstack/react-location": "^3.7.4",
     "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^13.0.0",
+    "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.2.1",
-    "@types/jest": "^27.0.1",
+    "@types/jest": "^29.2.4",
     "@types/node": "^16.7.13",
     "lodash": "^4.17.21",
     "react": "^18.2.0",
@@ -45,6 +46,7 @@
     "css-loader": "^6.7.1",
     "gh-pages": "^4.0.0",
     "html-webpack-plugin": "^5.5.0",
+    "jest": "^29.3.1",
     "mini-css-extract-plugin": "^2.6.1",
     "react-refresh": "^0.14.0",
     "style-loader": "^3.3.1",

@@ -8,9 +8,7 @@ import {
   FieldValues,
   PathValue,
 } from "react-hook-form";
-import { AppointmentType } from "../../../../../../model/career/Appointment";
-import { CareerType } from "../../../../../../model/career/Career";
-import { CertificationType } from "../../../../../../model/career/Certification";
+import { useReferenceStateContext } from "../References";
 import {
   ArrayContainer,
   ArrayRow,
@@ -24,40 +22,21 @@ interface ObjectArrayInputProps<T extends FieldValues, K extends FieldValues> {
   /** Available naming paths for Form Object */
   name: Path<T>;
 
-  editMode: boolean;
-
   /** To set empty objects when adding input fields on UI */
   emptyObject: K;
 
   /** Reference Trigger components to be tagged to each individual input field */
   referenceTrigger: (id: number, name: Path<T> | Path<K>) => React.ReactNode;
-
-  /** Required for row highlight */
-  currentName?:
-    | Path<CareerType>
-    | Path<AppointmentType>
-    | Path<CertificationType>;
-
-  /** Required for row highlight */
-  currentArrayId?: number;
-
-  massApplyingFields?: {
-    field: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
-    content: string;
-  }[];
 }
 
 export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
   name,
-  editMode,
   emptyObject,
   referenceTrigger,
-  currentName,
-  currentArrayId,
-  massApplyingFields,
 }: ObjectArrayInputProps<T, K>) => {
   const { classes } = useStyles();
-
+  const referenceStateContext = useReferenceStateContext();
+  const { openPanel, currentField, currentArrayId } = referenceStateContext!;
   const { control, formState } = useFormContext<T>();
   const { errors } = formState;
 
@@ -73,11 +52,11 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
   return (
     <ArrayContainer>
       <ArrayRow>
-        <Title disabled={!editMode}>
+        <Title disabled={openPanel}>
           {name.charAt(0).toUpperCase() + name.slice(1)}
         </Title>
         <IconCirclePlus
-          color={!editMode ? "rgb(0 0 0 / 30%)" : "black"}
+          color={openPanel ? "rgb(0 0 0 / 30%)" : "black"}
           onClick={() => field.onChange([...field.value, emptyObject])}
         />
       </ArrayRow>
@@ -88,7 +67,7 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
         <ObjectArrayRow key={"object_array_" + id}>
           <Button
             ml={15}
-            disabled={!editMode}
+            disabled={openPanel}
             onClick={() => {
               let current = [...field.value];
               current.splice(id, 1);
@@ -112,18 +91,13 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
           </Button>
           <ArrayRow
             highlight={
-              (!editMode && currentName === "name" && currentArrayId === id) ||
-              massApplyingFields?.filter(
-                (massAppliedField) =>
-                  massAppliedField.field === "name" &&
-                  massAppliedField.content === field.value[id].name,
-              ).length === 1
+              openPanel && currentField === "name" && currentArrayId === id
             }
           >
             <TextInput
               label={"Certificate Name"}
               className={classes.textInput}
-              disabled={!editMode}
+              disabled={openPanel}
               onChange={(e) => {
                 let current = [...field.value];
                 current[id] = { ...item, name: e.target.value };
@@ -140,20 +114,13 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
           </ArrayRow>
           <ArrayRow
             highlight={
-              (!editMode &&
-                currentName === "issuedBy" &&
-                currentArrayId === id) ||
-              massApplyingFields?.filter(
-                (massAppliedField) =>
-                  massAppliedField.field === "issuedBy" &&
-                  massAppliedField.content === field.value[id].issuedBy,
-              ).length === 1
+              openPanel && currentField === "issuedBy" && currentArrayId === id
             }
           >
             <TextInput
               label={"Issued by"}
               className={classes.textInput}
-              disabled={!editMode}
+              disabled={openPanel}
               onChange={(e) => {
                 let current = [...field.value];
                 current[id] = { ...item, issuedBy: e.target.value };

@@ -1,5 +1,10 @@
 import { useQuery, useMutation } from "react-query";
-import { getCareerById, getCareers, postNewCareer } from "../api/career";
+import {
+  getCareerById,
+  getCareers,
+  postNewCareer,
+  putExistingCareer,
+} from "../api/career";
 import { queryClient } from "../App";
 import { CareerType } from "../model/career/Career";
 
@@ -31,7 +36,8 @@ export function useQuerySelectedCareerData(id: string) {
 
 export function useSaveOrCreateCareer() {
   const { mutateAsync: saveOrCreateCareer } = useMutation(
-    (newCareer: CareerType) => postNewCareer(newCareer),
+    ({ career, id }: { career: CareerType; id?: string }) =>
+      id ? putExistingCareer(career, id) : postNewCareer(career),
     {
       onSuccess: (response) => {
         if (!response.ok) {

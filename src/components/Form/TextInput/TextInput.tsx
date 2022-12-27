@@ -1,11 +1,9 @@
 import React from "react";
 import { TextInput as MantineTextInput, TextInputProps } from "@mantine/core";
 import { useController, Path, FieldValues } from "react-hook-form";
-import { FormCommonProps } from "../typings";
 
 export interface FormTextInputProps<T extends FieldValues>
-  extends Omit<TextInputProps, "onChange" | "name">,
-    FormCommonProps<T> {
+  extends Omit<TextInputProps, "onChange" | "name"> {
   name: Path<T>;
   onChange?: (value: string) => void;
 }
@@ -13,11 +11,9 @@ export interface FormTextInputProps<T extends FieldValues>
 export const TextInput = <T extends FieldValues>(
   props: FormTextInputProps<T>,
 ) => {
-  const { control, name, onChange, ...mantineTextInputProps } = props;
-
+  const { name, onChange, ...mantineTextInputProps } = props;
   const { field, fieldState } = useController({
     name,
-    control,
   });
 
   const overrideOnChange: React.ChangeEventHandler<HTMLInputElement> =

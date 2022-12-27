@@ -5,11 +5,11 @@ import { Certification } from "./Certification";
 
 export const Career = z
   .object({
+    id: z.string().optional(),
     company: z.string().min(1, "Company cannot be empty"),
     appointment: Appointment,
     skills: z
       .string()
-      .min(1, "Skill cannot be empty")
       .array()
       .min(1, "A career must have at least one skill 😡")
       .superRefine((val, ctx) => {

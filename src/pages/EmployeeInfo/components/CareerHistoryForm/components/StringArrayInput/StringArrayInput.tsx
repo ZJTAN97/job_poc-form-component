@@ -6,10 +6,12 @@ import {
   useController,
   Path,
   FieldValues,
+  useFieldArray,
+  FieldArray,
+  ArrayPath,
+  PathValue,
 } from "react-hook-form";
-import { AppointmentType } from "../../../../../../model/career/Appointment";
-import { CareerType } from "../../../../../../model/career/Career";
-import { CertificationType } from "../../../../../../model/career/Certification";
+import { useReferenceStateContext } from "../References";
 import {
   ArrayContainer,
   ArrayRow,
@@ -21,51 +23,79 @@ import {
 
 interface StringArrayInputProps<T extends FieldValues> {
   name: Path<T>;
-  editMode: boolean;
   referenceTrigger: (index: number) => React.ReactNode;
-
-  /** Required for row highlight */
-  currentName?:
-    | Path<CareerType>
-    | Path<AppointmentType>
-    | Path<CertificationType>;
-
-  /** Required for row highlight */
-  currentArrayId?: number;
-
-  massApplyingFields?: {
-    field: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
-    content: string;
-  }[];
 }
 
 export const StringArrayInput = <T extends FieldValues>({
   name,
-  editMode,
   referenceTrigger,
-  currentName,
-  currentArrayId,
-  massApplyingFields,
 }: StringArrayInputProps<T>) => {
   const { classes } = useStyles();
-  const { control, formState } = useFormContext<T>();
+  const referenceStateContext = useReferenceStateContext();
+  const { openPanel, currentField, currentArrayId } = referenceStateContext!;
+  const { control, formState, getValues, setValue } = useFormContext<T>();
   const { errors } = formState;
   const { field } = useController({
     name,
     control,
   });
 
+  const fieldArrayMethods = useFieldArray({
+    name: "references" as ArrayPath<T>,
+    control,
+  });
+
+  // TODO: CODE REVIEW WITH WC BEFORE THIS BECOMES BLACK-BOX CODE
+  const appendStringArray = () => {
+    // 1. add empty string to array
+    field.onChange([...field.value, ""]);
+
+    // 2. add empty reference to root reference array to ensure ID are in sync
+    // 3. Index to be in content as a temporary marking
+    const itemIndex = String(getValues()[name].length - 1);
+    fieldArrayMethods.append({
+      field: name,
+      content: itemIndex,
+      sources: [],
+    } as FieldArray<T, ArrayPath<T>> | FieldArray<T, ArrayPath<T>>[]);
+  };
+
+  // TODO: CODE REVIEW WITH WC BEFORE THIS BECOMES BLACK-BOX CODE
+  const popStringArray = (id: number) => {
+    // 1. removing the correct references
+    const refToRemove = getValues().references.find(
+      (item: any) => item.content === String(id),
+    );
+    const indexRefToRemove = getValues().references.indexOf(refToRemove);
+    fieldArrayMethods.remove(indexRefToRemove);
+
+    // 2. need to re-index/sync in references' content
+    const reIndexedContent = getValues()
+      .references.filter((item: any) => item.field === String(name))
+      .map((ref: any, id: number) => ({ ...ref, content: String(id) }));
+    const final = [
+      ...getValues().references.filter((ref: any) => ref.field !== "skills"),
+      ...reIndexedContent,
+    ];
+    setValue("references" as Path<T>, final as PathValue<T, Path<T>>);
+
+    // 3. remove the item from string array
+    let current = [...field.value];
+    current.splice(id, 1);
+    field.onChange(current);
+  };
+
   const arrayErrors = errors[name] as unknown as { [key: string]: string }[];
 
   return (
     <ArrayContainer>
       <ButtonRow>
-        <Title disabled={!editMode}>
+        <Title disabled={openPanel}>
           {name.charAt(0).toUpperCase() + name.slice(1)}
         </Title>
         <IconCirclePlus
-          color={!editMode ? "rgb(0 0 0 / 30%)" : "black"}
-          onClick={() => field.onChange([...field.value, ""])}
+          color={openPanel ? "rgb(0 0 0 / 30%)" : "black"}
+          onClick={appendStringArray}
         />
       </ButtonRow>
       {errors[name] && (
@@ -75,10 +105,7 @@ export const StringArrayInput = <T extends FieldValues>({
         <ArrayRow
           key={"string_array_" + id}
           highlight={
-            (!editMode && currentArrayId === id && currentName === "skills") ||
-            massApplyingFields?.filter(
-              (item) => item.field === "skills" && item.content === val,
-            ).length === 1
+            openPanel && currentArrayId === id && currentField === name
           }
         >
           <TextInput
@@ -90,18 +117,14 @@ export const StringArrayInput = <T extends FieldValues>({
               current[id] = e.target.value;
               field.onChange(current);
             }}
-            disabled={!editMode}
-            variant={editMode ? "default" : "unstyled"}
+            disabled={openPanel}
+            variant={!openPanel ? "default" : "unstyled"}
             rightSection={
-              editMode && (
+              !openPanel && (
                 <IconX
                   key={"string-array-icon" + id}
                   size={20}
-                  onClick={() => {
-                    let current = [...field.value];
-                    current.splice(id, 1);
-                    field.onChange(current);
-                  }}
+                  onClick={() => popStringArray(id)}
                 />
               )
             }

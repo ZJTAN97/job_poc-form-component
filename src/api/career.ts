@@ -1,7 +1,9 @@
 import { CareerType } from "../model/career/Career";
 
+const BASE_URL = "http://localhost:8080/api/v1/career";
+
 export async function getCareers(): Promise<(CareerType & { id: string })[]> {
-  const response = await fetch(`http://localhost:8080/api/v1/career`, {
+  const response = await fetch(`${BASE_URL}`, {
     method: "get",
   });
   const data = await response.json();
@@ -11,7 +13,7 @@ export async function getCareers(): Promise<(CareerType & { id: string })[]> {
 export async function getCareerById(
   id: string,
 ): Promise<CareerType & { id: string }> {
-  const response = await fetch(`http://localhost:8080/api/v1/career/${id}`, {
+  const response = await fetch(`${BASE_URL}/${id}`, {
     method: "get",
   });
   const data = await response.json();
@@ -19,12 +21,28 @@ export async function getCareerById(
 }
 
 export async function postNewCareer(newCareer: CareerType): Promise<Response> {
-  return fetch("http://localhost:8080/api/v1/career", {
+  console.warn("[POST] Endpoint");
+  return fetch(`${BASE_URL}`, {
     method: "post",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
     body: JSON.stringify(newCareer),
+  });
+}
+
+export async function putExistingCareer(
+  existingCareer: CareerType,
+  id: string,
+): Promise<Response> {
+  console.warn("[PUT] Endpoint");
+  return fetch(`${BASE_URL}/${id}`, {
+    method: "put",
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(existingCareer),
   });
 }
