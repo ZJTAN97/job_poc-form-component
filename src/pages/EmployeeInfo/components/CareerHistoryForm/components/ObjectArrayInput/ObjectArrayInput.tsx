@@ -95,6 +95,7 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
             }
           >
             <TextInput
+              value={field.value[id].name}
               label={"Certificate Name"}
               className={classes.textInput}
               disabled={openPanel}
@@ -118,6 +119,7 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
             }
           >
             <TextInput
+              value={field.value[id].issuedBy}
               label={"Issued by"}
               className={classes.textInput}
               disabled={openPanel}
