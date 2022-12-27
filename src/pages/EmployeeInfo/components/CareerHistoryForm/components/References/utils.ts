@@ -222,27 +222,9 @@ export const useSetSources = ({
   };
 
   const deleteSource = (sourceId: number) => {
-    // setSourceId(sourceId);
     sourceArrayMethods.remove(sourceId);
-    const referenceId = formContext
-      .getValues()
-      .references.indexOf(existingReference);
-    referenceArrayMethods.update(referenceId, referenceFormMethod.getValues());
-
+    updateReferences();
     if (referenceFormMethod.getValues().sources.length === 0) {
-      if (
-        (fieldName === "name" || fieldName === "issuedBy") &&
-        currentArrayId
-      ) {
-        const selectedCert =
-          formContext.getValues().certsToField[currentArrayId];
-        referenceArrayMethods.update(currentArrayId, {
-          ...selectedCert,
-          references: [],
-        });
-      } else if (fieldName !== "skills") {
-        referenceArrayMethods.remove(referenceId);
-      }
       setPopupMode("edit");
     }
   };
