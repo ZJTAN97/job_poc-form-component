@@ -184,11 +184,7 @@ export const ReferencesPanel = () => {
           }}
           size={"xs"}
           variant="outline"
-          onClick={
-            massApplyingFields !== undefined
-              ? massApplySourcesToAllReferences
-              : applySourcesToReferences
-          }
+          onClick={applySourcesToReferences}
           disabled={popupMode === "read" || !sourceFormMethod.formState.isValid}
         >
           Apply

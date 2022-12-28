@@ -84,8 +84,6 @@ export const ReferencesTrigger = ({
     [key: string]: { message: string };
   }; // TODO: give a better typing when the errors are more stable
 
-  console.log(massApplyingFields);
-
   return (
     <>
       {openPanel || existingReference.stringText ? (
