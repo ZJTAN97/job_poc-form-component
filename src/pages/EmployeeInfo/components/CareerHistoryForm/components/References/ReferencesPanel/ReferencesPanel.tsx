@@ -22,10 +22,14 @@ import {
   SourceType,
   TYPES_OF_REFERENCES,
 } from "../../../../../../../model/common/Source";
+import { CareerType } from "../../../../../../../model/career/Career";
+import { useFormContext } from "react-hook-form";
+import { array } from "zod";
 
 export const ReferencesPanel = () => {
   const { classes } = useStyles();
 
+  const formContext = useFormContext<CareerType>();
   const referenceStateContext = useReferenceStateContext();
   const {
     currentField,
@@ -45,7 +49,6 @@ export const ReferencesPanel = () => {
     sourceFormMethod,
     referenceFormMethod,
     applySourcesToReferences,
-    massApplySourcesToAllReferences,
     editSource,
     deleteSource,
     popupMode,
@@ -79,6 +82,52 @@ export const ReferencesPanel = () => {
       }
       console.log("[INFO ] Applied last filled references");
     }
+  };
+
+  const handleMassApply = () => {
+    massApplyingFields.forEach((item) => {
+      referenceFormMethod.setValue("field", item.field);
+      referenceFormMethod.setValue("sources", [
+        ...referenceFormMethod.getValues().sources,
+        sourceFormMethod.getValues(),
+      ]);
+      if (item.field === "company" || item.field === "duration") {
+        formContext.setValue("references", [
+          ...formContext.getValues().references,
+          referenceFormMethod.getValues(),
+        ]);
+      } else if (item.field === "position" || item.field === "rank") {
+        formContext.setValue("appointment.references", [
+          ...formContext.getValues().appointment.references,
+          referenceFormMethod.getValues(),
+        ]);
+      } else if (item.field === "skills") {
+        const selectedRef = formContext
+          .getValues()
+          .references.filter((ref) => ref.content === String(item.arrayId))[0];
+
+        selectedRef.sources.push(sourceFormMethod.getValues());
+
+        let existingReferences = [...formContext.getValues().references];
+        existingReferences[Number(item.arrayId)] = selectedRef;
+
+        formContext.setValue("references", existingReferences);
+      } else if (item.field === "name" || item.field === "issuedBy") {
+        const selectedCert =
+          formContext.getValues().certsToField[Number(item.arrayId)];
+
+        selectedCert.references.push(referenceFormMethod.getValues());
+
+        let existingCerts = [...formContext.getValues().certsToField];
+        existingCerts[Number(item.arrayId)] = selectedCert;
+
+        formContext.setValue("certsToField", existingCerts);
+      }
+      referenceFormMethod.reset();
+    });
+    setOpenPanel(false);
+    setIsMassApply(false);
+    handleMassApplyingFields.setState([]);
   };
 
   return (
@@ -184,7 +233,7 @@ export const ReferencesPanel = () => {
           }}
           size={"xs"}
           variant="outline"
-          onClick={applySourcesToReferences}
+          onClick={isMassApply ? handleMassApply : applySourcesToReferences}
           disabled={popupMode === "read" || !sourceFormMethod.formState.isValid}
         >
           Apply
