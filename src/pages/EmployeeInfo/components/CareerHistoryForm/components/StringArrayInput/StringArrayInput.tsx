@@ -32,7 +32,8 @@ export const StringArrayInput = <T extends FieldValues>({
 }: StringArrayInputProps<T>) => {
   const { classes } = useStyles();
   const referenceStateContext = useReferenceStateContext();
-  const { openPanel, currentField, currentArrayId } = referenceStateContext!;
+  const { openPanel, currentField, currentArrayId, massApplyingFields } =
+    referenceStateContext!;
   const { control, formState, getValues, setValue } = useFormContext<T>();
   const { errors } = formState;
   const { field } = useController({
@@ -105,7 +106,10 @@ export const StringArrayInput = <T extends FieldValues>({
         <ArrayRow
           key={"string_array_" + id}
           highlight={
-            openPanel && currentArrayId === id && currentField === name
+            (openPanel && currentArrayId === id && currentField === name) ||
+            massApplyingFields.filter(
+              (item) => item.field === name && item.arrayId === id,
+            ).length === 1
           }
         >
           <TextInput

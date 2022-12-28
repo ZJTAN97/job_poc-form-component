@@ -1,3 +1,4 @@
+import { useListState, UseListStateHandlers } from "@mantine/hooks";
 import React from "react";
 import { Path } from "react-hook-form";
 import { AppointmentType } from "../../../../../../model/career/Appointment";
@@ -41,11 +42,17 @@ export type ReferencesStateMethods = {
   /** setter method for setting last source being added */
   setLastSource: (arg: SourceType) => void;
 
+  /** to keep track whether mass apply mode is on or off */
+  isMassApply: boolean;
+
+  /** set mass apply mode */
+  setIsMassApply: (arg: boolean) => void;
+
   /** state to track mass applied fields */
-  massApplyingFields?: MassApplyingFields[];
+  massApplyingFields: MassApplyingFields[];
 
   /** setter method for setting fields being added to mass applied array */
-  setMassApplyingFields: (arg?: MassApplyingFields[]) => void;
+  handleMassApplyingFields: UseListStateHandlers<MassApplyingFields>;
 };
 
 /** Creation of Context */
@@ -61,8 +68,9 @@ export const useReferencesStateMethods = (): ReferencesStateMethods => {
   >();
   const [currentArrayId, setCurrentArrayId] = React.useState<number>();
   const [lastSource, setLastSource] = React.useState<SourceType>();
-  const [massApplyingFields, setMassApplyingFields] =
-    React.useState<MassApplyingFields[]>();
+  const [isMassApply, setIsMassApply] = React.useState(false);
+  const [massApplyingFields, handleMassApplyingFields] =
+    useListState<MassApplyingFields>();
 
   return {
     openPanel,
@@ -73,8 +81,10 @@ export const useReferencesStateMethods = (): ReferencesStateMethods => {
     setCurrentArrayId,
     lastSource,
     setLastSource,
+    isMassApply,
+    setIsMassApply,
     massApplyingFields,
-    setMassApplyingFields,
+    handleMassApplyingFields,
   };
 };
 

@@ -35,8 +35,10 @@ export const ReferencesPanel = () => {
     setCurrentArrayId,
     lastSource,
     setLastSource,
+    isMassApply,
+    setIsMassApply,
     massApplyingFields,
-    setMassApplyingFields,
+    handleMassApplyingFields,
   } = referenceStateContext!;
 
   const {
@@ -61,7 +63,10 @@ export const ReferencesPanel = () => {
     setCurrentField(undefined);
     setCurrentArrayId(undefined);
     setOpenPanel(false);
-    setMassApplyingFields(undefined);
+    if (isMassApply) {
+      handleMassApplyingFields.setState([]);
+      setIsMassApply(false);
+    }
   };
 
   const applyLastSource = () => {

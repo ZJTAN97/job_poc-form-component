@@ -36,7 +36,8 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
 }: ObjectArrayInputProps<T, K>) => {
   const { classes } = useStyles();
   const referenceStateContext = useReferenceStateContext();
-  const { openPanel, currentField, currentArrayId } = referenceStateContext!;
+  const { openPanel, currentField, currentArrayId, massApplyingFields } =
+    referenceStateContext!;
   const { control, formState } = useFormContext<T>();
   const { errors } = formState;
 
@@ -91,7 +92,10 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
           </Button>
           <ArrayRow
             highlight={
-              openPanel && currentField === "name" && currentArrayId === id
+              (openPanel && currentField === "name" && currentArrayId === id) ||
+              massApplyingFields.filter(
+                (item) => item.field === "name" && item.arrayId === id,
+              ).length === 1
             }
           >
             <TextInput
@@ -115,7 +119,12 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
           </ArrayRow>
           <ArrayRow
             highlight={
-              openPanel && currentField === "issuedBy" && currentArrayId === id
+              (openPanel &&
+                currentField === "issuedBy" &&
+                currentArrayId === id) ||
+              massApplyingFields.filter(
+                (item) => item.field === "issuedBy" && item.arrayId === id,
+              ).length === 1
             }
           >
             <TextInput

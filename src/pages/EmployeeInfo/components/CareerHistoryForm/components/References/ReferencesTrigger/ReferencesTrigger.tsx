@@ -1,4 +1,4 @@
-import { useReferenceStateContext } from "../References";
+import { MassApplyingFields, useReferenceStateContext } from "../References";
 import { TriggerRow, useStyles } from "./styles";
 import { useFormContext, Path } from "react-hook-form";
 import { CareerType } from "../../../../../../../model/career/Career";
@@ -35,8 +35,9 @@ export const ReferencesTrigger = ({
     setCurrentArrayId,
     currentField,
     setCurrentField,
+    isMassApply,
     massApplyingFields,
-    setMassApplyingFields,
+    handleMassApplyingFields,
   } = referenceStateContext!;
 
   const handlePanelOpen = () => {
@@ -62,29 +63,20 @@ export const ReferencesTrigger = ({
     arrayId: arrId,
   });
 
-  const handleCheckBox = () => {
-    const checkedItem = {
+  const handleCheckBox = (checked: boolean) => {
+    const checkedItem: MassApplyingFields = {
       field,
       arrayId: arrId,
     };
 
-    if (massApplyingFields !== undefined) {
-      const itemExists =
-        massApplyingFields.filter(
-          (item) => JSON.stringify(item) === JSON.stringify(checkedItem),
-        ).length === 1;
-
-      if (itemExists) {
-        setMassApplyingFields(
-          massApplyingFields.filter(
-            (item) => JSON.stringify(item) !== JSON.stringify(checkedItem),
-          ),
-        );
-      } else {
-        let copyArr = [...massApplyingFields];
-        copyArr.push(checkedItem);
-        setMassApplyingFields(copyArr);
-      }
+    if (checked) {
+      handleMassApplyingFields.append(checkedItem);
+    } else {
+      handleMassApplyingFields.setState((current) =>
+        current.filter(
+          (item) => JSON.stringify(item) !== JSON.stringify(checkedItem),
+        ),
+      );
     }
   };
 
@@ -98,8 +90,13 @@ export const ReferencesTrigger = ({
     <>
       {openPanel || existingReference.stringText ? (
         <TriggerRow>
-          {massApplyingFields !== undefined && disabled ? (
-            <Checkbox mt={30} ml={10} mr={10} onClick={handleCheckBox} />
+          {isMassApply && disabled ? (
+            <Checkbox
+              mt={30}
+              ml={10}
+              mr={10}
+              onClick={(e) => handleCheckBox(e.currentTarget.checked)}
+            />
           ) : (
             <div style={{ width: "40px" }}></div>
           )}

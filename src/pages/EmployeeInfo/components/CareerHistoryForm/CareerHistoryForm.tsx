@@ -37,7 +37,9 @@ export const CareerHistoryForm = ({
     currentField,
     currentArrayId,
     massApplyingFields,
-    setMassApplyingFields,
+    handleMassApplyingFields,
+    isMassApply,
+    setIsMassApply,
   } = referenceStateMethods;
 
   const transformedSelectedCareerValue: CareerType | undefined =
@@ -158,17 +160,9 @@ export const CareerHistoryForm = ({
   });
 
   const handleMassApply = () => {
-    if (massApplyingFields === undefined) {
-      setMassApplyingFields([]);
-      if (currentField === undefined) {
-        setOpenPanel(true);
-      }
-    } else {
-      setMassApplyingFields(undefined);
-      if (currentField === undefined) {
-        setOpenPanel(false);
-      }
-    }
+    setIsMassApply(!isMassApply);
+    setOpenPanel(!isMassApply);
+    handleMassApplyingFields.setState([]);
   };
 
   console.info(careerFormMethods.getValues());
@@ -200,16 +194,20 @@ export const CareerHistoryForm = ({
               onClick={handleMassApply}
               leftIcon={<IconEditCircle />}
             >
-              {massApplyingFields !== undefined
-                ? "Exit mass apply"
-                : "Mass apply"}
+              {isMassApply ? "Exit mass apply" : "Mass apply"}
             </Button>
           </TitleContainer>
 
           <Popover.Target>
             <MainContainer>
               {/* COMPANY */}
-              <Row highlight={openPanel && currentField === "company"}>
+              <Row
+                highlight={
+                  (openPanel && currentField === "company") ||
+                  massApplyingFields.filter((item) => item.field === "company")
+                    .length === 1
+                }
+              >
                 <Form.TextInput<CareerType>
                   label={"Company name"}
                   name={"company"}
@@ -225,7 +223,13 @@ export const CareerHistoryForm = ({
               </Row>
 
               {/* DURATION */}
-              <Row highlight={openPanel && currentField === "duration"}>
+              <Row
+                highlight={
+                  (openPanel && currentField === "duration") ||
+                  massApplyingFields.filter((item) => item.field === "duration")
+                    .length === 1
+                }
+              >
                 <Form.TextInput<CareerType>
                   label={"Duration"}
                   name={"duration"}
@@ -251,7 +255,13 @@ export const CareerHistoryForm = ({
               </Row>
 
               {/* APPOINTMENT (POSITION, RANK) */}
-              <Row highlight={openPanel && currentField === "position"}>
+              <Row
+                highlight={
+                  (openPanel && currentField === "position") ||
+                  massApplyingFields.filter((item) => item.field === "position")
+                    .length === 1
+                }
+              >
                 <Form.TextInput<CareerType>
                   label={"Position"}
                   name={"appointment.position"}
@@ -269,7 +279,13 @@ export const CareerHistoryForm = ({
                 />
               </Row>
 
-              <Row highlight={openPanel && currentField === "rank"}>
+              <Row
+                highlight={
+                  (openPanel && currentField === "rank") ||
+                  massApplyingFields.filter((item) => item.field === "rank")
+                    .length === 1
+                }
+              >
                 <Form.TextInput<CareerType>
                   label={"Rank"}
                   name={"appointment.rank"}
