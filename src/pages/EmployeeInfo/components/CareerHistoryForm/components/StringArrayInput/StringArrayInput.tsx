@@ -46,7 +46,6 @@ export const StringArrayInput = <T extends FieldValues>({
     control,
   });
 
-  // TODO: CODE REVIEW WITH WC BEFORE THIS BECOMES BLACK-BOX CODE
   const appendStringArray = () => {
     // 1. add empty string to array
     field.onChange([...field.value, ""]);
@@ -61,7 +60,6 @@ export const StringArrayInput = <T extends FieldValues>({
     } as FieldArray<T, ArrayPath<T>> | FieldArray<T, ArrayPath<T>>[]);
   };
 
-  // TODO: CODE REVIEW WITH WC BEFORE THIS BECOMES BLACK-BOX CODE
   const popStringArray = (id: number) => {
     // 1. removing the correct references
     const refToRemove = getValues().references.find(

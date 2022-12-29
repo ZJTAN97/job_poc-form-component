@@ -5,7 +5,7 @@ import { CareerType } from "../../../../../../../model/career/Career";
 import { AppointmentType } from "../../../../../../../model/career/Appointment";
 import { CertificationType } from "../../../../../../../model/career/Certification";
 import { Button, Checkbox, Textarea } from "@mantine/core";
-import { useExistingReference } from "../utils";
+import { useExistingReference } from "../hooks";
 import { IconCirclePlus } from "@tabler/icons";
 import React from "react";
 

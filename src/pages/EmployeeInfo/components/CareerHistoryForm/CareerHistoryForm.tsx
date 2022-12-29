@@ -50,6 +50,7 @@ export const CareerHistoryForm = ({
     setIsMassApply,
   } = referenceStateMethods;
 
+  // to transform skills content
   const transformedSelectedCareerValue: CareerType | undefined =
     React.useMemo(() => {
       if (selectedCareerValue) {
@@ -98,7 +99,6 @@ export const CareerHistoryForm = ({
     [key: string]: { message: string };
   };
 
-  // TODO: CODE REVIEW WITH WC BEFORE THIS BECOMES BLACK-BOX CODE
   const submitFormHandler = careerFormMethods.handleSubmit(async (data) => {
     const singleFieldReferences = careerFormMethods.getValues().references;
     const singleObjectReferences =
@@ -221,7 +221,7 @@ export const CareerHistoryForm = ({
     }
   };
 
-  // console.info(careerFormMethods.getValues());
+  console.info(careerFormMethods.getValues());
   // console.info(careerFormMethods.formState.errors);
 
   return (
