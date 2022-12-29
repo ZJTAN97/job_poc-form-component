@@ -7,6 +7,7 @@ import { CertificationType } from "../../../../../../../model/career/Certificati
 import { Button, Checkbox, Textarea } from "@mantine/core";
 import { useExistingReference } from "../utils";
 import { IconCirclePlus } from "@tabler/icons";
+import React from "react";
 
 interface ReferencesTriggerProp {
   /** Field Name required to filter which references to show for this component instance */
@@ -93,7 +94,12 @@ export const ReferencesTrigger = ({
               mt={30}
               ml={10}
               mr={10}
-              onClick={(e) => handleCheckBox(e.currentTarget.checked)}
+              checked={
+                massApplyingFields.filter(
+                  (item) => item.field === field && item.arrayId === arrId,
+                ).length === 1
+              }
+              onChange={(e) => handleCheckBox(e.currentTarget.checked)}
             />
           ) : (
             <div style={{ width: "40px" }}></div>

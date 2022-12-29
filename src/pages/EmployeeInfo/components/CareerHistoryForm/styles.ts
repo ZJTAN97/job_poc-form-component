@@ -71,3 +71,11 @@ export const Title = styled("div")(({}) => ({
   fontSize: "18px",
   fontWeight: 600,
 }));
+
+export const SelectAll = styled("div")(({}) => ({
+  display: "flex",
+  flexDirection: "column",
+  width: "69%",
+  alignItems: "end",
+  marginTop: "10px",
+}));
