@@ -52,15 +52,8 @@ export const ReferencesTrigger = ({
   };
 
   const existingReference = useExistingReference({
-    references: [
-      ...formContext.getValues().references,
-      ...formContext.getValues().appointment.references,
-      ...formContext
-        .getValues()
-        .certsToField.map((cert) => cert.references)
-        .flat(),
-    ],
-    field,
+    formValue: formContext.getValues(),
+    field: field as Path<CareerType>,
     arrayId: arrId,
   });
 

@@ -23,7 +23,7 @@ import {
   TYPES_OF_REFERENCES,
 } from "../../../../../../../model/common/Source";
 import { CareerType } from "../../../../../../../model/career/Career";
-import { useFormContext } from "react-hook-form";
+import { Path, useFormContext } from "react-hook-form";
 
 export const ReferencesPanel = () => {
   const { classes } = useStyles();
@@ -83,18 +83,13 @@ export const ReferencesPanel = () => {
     }
   };
 
+  formContext.getValues();
+
   const handleMassApply = () => {
     massApplyingFields.forEach((item) => {
       const existingReference = useExistingReference({
-        references: [
-          ...formContext.getValues().references,
-          ...formContext.getValues().appointment.references,
-          ...formContext
-            .getValues()
-            .certsToField.map((cert) => cert.references)
-            .flat(),
-        ],
-        field: item.field,
+        formValue: formContext.getValues(),
+        field: item.field as Path<CareerType>,
         arrayId: item.arrayId,
       }).filteredReference;
 

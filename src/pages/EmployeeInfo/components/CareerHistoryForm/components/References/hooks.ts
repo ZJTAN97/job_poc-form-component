@@ -16,58 +16,20 @@ import {
 } from "../../../../../../model/common/Reference";
 import { Source, SourceType } from "../../../../../../model/common/Source";
 
-export const sampleFormContext: CareerType = {
-  company: "company",
-  duration: "duration",
-  lastDrawnSalary: "lastDrawnSalary",
-  skills: ["skills"],
-  references: [
-    {
-      field: "company",
-      content: "company",
-      sources: [],
-    },
-    {
-      field: "skills",
-      content: "skills",
-      sources: [],
-    },
-  ],
-  appointment: {
-    position: "position",
-    rank: "rank",
-    references: [
-      {
-        field: "position",
-        content: "position",
-        sources: [],
-      },
-    ],
-  },
-  certsToField: [
-    {
-      name: "name",
-      issuedBy: "issuedBy",
-      references: [
-        {
-          field: "name",
-          content: "name",
-          sources: [],
-        },
-      ],
-    },
-  ],
-};
-
-export const tryGetAllReferences = <T extends FieldValues>(
-  sampleFormContext: T,
-): ReferenceType[] => {
-  const collatedReferences = [];
+export const useExistingReference = <T extends FieldValues>({
+  formValue,
+  field,
+  arrayId,
+}: {
+  formValue: T;
+  field: Path<T>;
+  arrayId?: number;
+}) => {
+  const collatedReferences: ReferenceType[] = [];
 
   // 1. Handles Root References
-  collatedReferences.push(...sampleFormContext.references);
-
-  const { references, ...remainingFields } = sampleFormContext;
+  collatedReferences.push(...formValue.references);
+  const { references, ...remainingFields } = formValue;
 
   for (let value of Object.values(remainingFields)) {
     if (typeof value === "object") {
@@ -81,26 +43,16 @@ export const tryGetAllReferences = <T extends FieldValues>(
     }
   }
 
-  return collatedReferences;
-};
-
-export const useExistingReference = <T extends FieldValues>({
-  references,
-  field,
-  arrayId,
-}: {
-  references: ReferenceType[];
-  field: Path<T>;
-  arrayId?: number;
-}) => {
   let filteredReference: ReferenceType[] = [];
   let stringText = "";
 
   if (arrayId !== undefined) {
-    const filteredByArray = references.filter((ref) => ref.field === field);
+    const filteredByArray = collatedReferences.filter(
+      (ref) => ref.field === field,
+    );
     filteredReference = filteredByArray.filter((_, id) => id === arrayId);
   } else {
-    filteredReference = references.filter((ref) => ref.field === field);
+    filteredReference = collatedReferences.filter((ref) => ref.field === field);
   }
 
   if (filteredReference.length === 1) {
@@ -124,7 +76,7 @@ export const useExistingReference = <T extends FieldValues>({
   };
 };
 
-export const useCurrentReference = (
+export const useLocateReference = (
   fieldName: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>,
 ) => {
   return fieldName === "rank" || fieldName === "position"
@@ -132,6 +84,12 @@ export const useCurrentReference = (
     : fieldName === "issuedBy" || fieldName === "name"
     ? "certsToField"
     : "references";
+};
+
+export const useLocateReference2 = <T extends FieldValues>(
+  fieldName: Path<T>,
+) => {
+  return 5;
 };
 
 export const useSetSources = ({
@@ -146,15 +104,8 @@ export const useSetSources = ({
   const formContext = useFormContext<CareerType>();
 
   const existingReference = useExistingReference({
-    references: [
-      ...formContext.getValues().references,
-      ...formContext.getValues().appointment.references,
-      ...formContext
-        .getValues()
-        .certsToField.map((cert) => cert.references)
-        .flat(),
-    ],
-    field: fieldName!,
+    formValue: formContext.getValues(),
+    field: fieldName as Path<CareerType>,
     arrayId: currentArrayId,
   }).filteredReference;
 
@@ -180,7 +131,7 @@ export const useSetSources = ({
 
   const referenceArrayMethods = useFieldArray<CareerType>({
     control: formContext.control,
-    name: useCurrentReference(fieldName),
+    name: useLocateReference(fieldName),
   });
 
   const sourceArrayMethods = useFieldArray<ReferenceType>({

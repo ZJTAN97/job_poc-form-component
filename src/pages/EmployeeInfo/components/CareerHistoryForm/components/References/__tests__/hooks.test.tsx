@@ -1,38 +1,75 @@
 import { renderHook } from "@testing-library/react";
+import { Path } from "react-hook-form";
 import { CareerType } from "../../../../../../../model/career/Career";
 import { TYPES_OF_REFERENCES } from "../../../../../../../model/common/Source";
-import {
-  sampleFormContext,
-  tryGetAllReferences,
-  useExistingReference,
-} from "../hooks";
+import { useExistingReference, useLocateReference2 } from "../hooks";
 
-describe("Testing try get all references via just form context", () => {
-  it("Testing this method", () => {
-    const references = tryGetAllReferences<CareerType>(sampleFormContext);
-    console.debug(references);
-    expect(references.length).toEqual(4);
-  });
-});
+const sampleFormValue: CareerType = {
+  company: "company",
+  duration: "duration",
+  lastDrawnSalary: "lastDrawnSalary",
+  skills: ["skills"],
+  references: [
+    {
+      field: "company",
+      content: "",
+      sources: [
+        {
+          referenceType: TYPES_OF_REFERENCES.FACEBOOK,
+          comment: "company",
+          dateObtained: "11/11/2011",
+        },
+        {
+          referenceType: TYPES_OF_REFERENCES.FACEBOOK,
+          comment: "company",
+          dateObtained: "11/11/2011",
+        },
+      ],
+    },
+    {
+      field: "lastDrawnSalary",
+      content: "",
+      sources: [
+        {
+          referenceType: TYPES_OF_REFERENCES.FACEBOOK,
+          comment: "lastDrawnSalary",
+          dateObtained: "11/11/2011",
+        },
+      ],
+    },
+  ],
+  appointment: {
+    position: "position",
+    rank: "rank",
+    references: [
+      {
+        field: "position",
+        content: "",
+        sources: [],
+      },
+    ],
+  },
+  certsToField: [
+    {
+      name: "name",
+      issuedBy: "issuedBy",
+      references: [
+        {
+          field: "name",
+          content: "",
+          sources: [],
+        },
+      ],
+    },
+  ],
+};
 
 describe("hooks/useExistingReference", () => {
   it("No references matches", () => {
     const { result } = renderHook(() =>
       useExistingReference({
-        field: "test",
-        references: [
-          {
-            field: "test2",
-            content: "",
-            sources: [
-              {
-                referenceType: TYPES_OF_REFERENCES.FACEBOOK,
-                dateObtained: "",
-                comment: "",
-              },
-            ],
-          },
-        ],
+        formValue: sampleFormValue,
+        field: "skills",
       }),
     );
     expect(result.current.stringText).toBe("");
@@ -42,20 +79,8 @@ describe("hooks/useExistingReference", () => {
   it("Reference match with single source", () => {
     const { result } = renderHook(() =>
       useExistingReference({
-        field: "test",
-        references: [
-          {
-            field: "test",
-            content: "",
-            sources: [
-              {
-                referenceType: TYPES_OF_REFERENCES.FACEBOOK,
-                dateObtained: "11/11/2011",
-                comment: "first",
-              },
-            ],
-          },
-        ],
+        field: "lastDrawnSalary",
+        formValue: sampleFormValue,
       }),
     );
 
@@ -65,44 +90,37 @@ describe("hooks/useExistingReference", () => {
   it("Reference match with multiple sources", () => {
     const { result } = renderHook(() =>
       useExistingReference({
-        field: "test",
-        references: [
-          {
-            field: "test",
-            content: "",
-            sources: [
-              {
-                referenceType: TYPES_OF_REFERENCES.FACEBOOK,
-                dateObtained: "11/11/2011",
-                comment: "first",
-              },
-              {
-                referenceType: TYPES_OF_REFERENCES.FACEBOOK,
-                dateObtained: "11/11/2011",
-                comment: "second",
-              },
-            ],
-          },
-        ],
+        field: "company",
+        formValue: sampleFormValue,
       }),
     );
 
     expect(result.current.stringText).toBe(`FACEBOOK\n11/11/2011 + 1 more`);
     expect(result.current.filteredReference).toMatchObject({
-      field: "test",
+      field: "company",
       content: "",
       sources: [
         {
           referenceType: TYPES_OF_REFERENCES.FACEBOOK,
+          comment: "company",
           dateObtained: "11/11/2011",
-          comment: "first",
         },
         {
           referenceType: TYPES_OF_REFERENCES.FACEBOOK,
+          comment: "company",
           dateObtained: "11/11/2011",
-          comment: "second",
         },
       ],
     });
+  });
+});
+
+describe("hooks/useLocateReference", () => {
+  it("Locate correct reference based on fieldName", () => {
+    const { result } = renderHook(() =>
+      useLocateReference2<CareerType>("company"),
+    );
+
+    result.current;
   });
 });
