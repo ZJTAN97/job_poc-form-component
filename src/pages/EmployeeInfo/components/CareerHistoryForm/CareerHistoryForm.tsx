@@ -1,6 +1,13 @@
-import { Button, Popover } from "@mantine/core";
-import { Row, useStyles, MainContainer, TitleContainer, Title } from "./styles";
-import { useForm } from "react-hook-form";
+import { Button, Checkbox, Popover, Text } from "@mantine/core";
+import {
+  Row,
+  useStyles,
+  MainContainer,
+  TitleContainer,
+  Title,
+  SelectAll,
+} from "./styles";
+import { useForm, Path } from "react-hook-form";
 import { Career, CareerType } from "../../../../model/career/Career";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form } from "../../../../components/Form";
@@ -17,6 +24,7 @@ import {
 import { ReferencesTrigger } from "./components/References/ReferencesTrigger";
 import { ReferencesPanel } from "./components/References/ReferencesPanel";
 import React from "react";
+import { AppointmentType } from "../../../../model/career/Appointment";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -42,6 +50,7 @@ export const CareerHistoryForm = ({
     setIsMassApply,
   } = referenceStateMethods;
 
+  // to transform skills content
   const transformedSelectedCareerValue: CareerType | undefined =
     React.useMemo(() => {
       if (selectedCareerValue) {
@@ -90,7 +99,6 @@ export const CareerHistoryForm = ({
     [key: string]: { message: string };
   };
 
-  // TODO: CODE REVIEW WITH WC BEFORE THIS BECOMES BLACK-BOX CODE
   const submitFormHandler = careerFormMethods.handleSubmit(async (data) => {
     const singleFieldReferences = careerFormMethods.getValues().references;
     const singleObjectReferences =
@@ -165,6 +173,54 @@ export const CareerHistoryForm = ({
     handleMassApplyingFields.setState([]);
   };
 
+  const handleSelectAll = (checked: boolean) => {
+    if (checked) {
+      for (const [key, value] of Object.entries(
+        careerFormMethods.getValues(),
+      )) {
+        // Probably need to standardise dirty fields to check length of content instead.
+        if (
+          (key === "company" || key === "duration") &&
+          value.toString().length > 0
+        ) {
+          handleMassApplyingFields.append({
+            field: key,
+          });
+        } else if (key === "appointment") {
+          Object.values(value).forEach((item, id) => {
+            if (item.length > 0) {
+              handleMassApplyingFields.append({
+                field: Object.keys(value)[id] as Path<AppointmentType>,
+              });
+            }
+          });
+        } else if (key === "skills") {
+          (value as string[]).forEach((item, id) => {
+            if (item.length > 0) {
+              handleMassApplyingFields.append({
+                field: key,
+                arrayId: id,
+              });
+            }
+          });
+        } else if (key === "certsToField") {
+          (value as CertificationType[]).forEach((cert, certId) => {
+            Object.values(cert).forEach((value, id) => {
+              if (value.length > 0) {
+                handleMassApplyingFields.append({
+                  field: Object.keys(cert)[id] as Path<CertificationType>,
+                  arrayId: certId,
+                });
+              }
+            });
+          });
+        }
+      }
+    } else {
+      handleMassApplyingFields.setState([]);
+    }
+  };
+
   console.info(careerFormMethods.getValues());
   // console.info(careerFormMethods.formState.errors);
 
@@ -200,6 +256,15 @@ export const CareerHistoryForm = ({
 
           <Popover.Target>
             <MainContainer>
+              {isMassApply ? (
+                <SelectAll>
+                  <Text size={"xs"}>Select all</Text>
+                  <Checkbox
+                    mr={12}
+                    onChange={(e) => handleSelectAll(e.currentTarget.checked)}
+                  />
+                </SelectAll>
+              ) : null}
               {/* COMPANY */}
               <Row
                 highlight={
