@@ -16,6 +16,74 @@ import {
 } from "../../../../../../model/common/Reference";
 import { Source, SourceType } from "../../../../../../model/common/Source";
 
+export const sampleFormContext: CareerType = {
+  company: "company",
+  duration: "duration",
+  lastDrawnSalary: "lastDrawnSalary",
+  skills: ["skills"],
+  references: [
+    {
+      field: "company",
+      content: "company",
+      sources: [],
+    },
+    {
+      field: "skills",
+      content: "skills",
+      sources: [],
+    },
+  ],
+  appointment: {
+    position: "position",
+    rank: "rank",
+    references: [
+      {
+        field: "position",
+        content: "position",
+        sources: [],
+      },
+    ],
+  },
+  certsToField: [
+    {
+      name: "name",
+      issuedBy: "issuedBy",
+      references: [
+        {
+          field: "name",
+          content: "name",
+          sources: [],
+        },
+      ],
+    },
+  ],
+};
+
+export const tryGetAllReferences = <T extends FieldValues>(
+  sampleFormContext: T,
+): ReferenceType[] => {
+  const collatedReferences = [];
+
+  // 1. Handles Root References
+  collatedReferences.push(...sampleFormContext.references);
+
+  const { references, ...remainingFields } = sampleFormContext;
+
+  for (let value of Object.values(remainingFields)) {
+    if (typeof value === "object") {
+      if (!Array.isArray(value)) {
+        // 2. Handles Single Object References
+        collatedReferences.push(...value.references);
+      } else if (Array.isArray(value) && typeof value[0] === "object") {
+        // 3. Handles Array Object References
+        value.map((obj) => collatedReferences.push(...obj.references));
+      }
+    }
+  }
+
+  return collatedReferences;
+};
+
 export const useExistingReference = <T extends FieldValues>({
   references,
   field,

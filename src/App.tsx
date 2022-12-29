@@ -26,7 +26,7 @@ const App = () => {
             element: <CreateEmployee />,
           },
           {
-            path: "/employee",
+            path: "/career-info",
             element: <EmployeeInfo />,
           },
           {

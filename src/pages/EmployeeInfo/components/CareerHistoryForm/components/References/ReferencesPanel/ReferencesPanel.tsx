@@ -8,11 +8,7 @@ import {
   TitleContainer,
   useStyles,
 } from "./styles";
-import {
-  useCurrentReference,
-  useExistingReference,
-  useSetSources,
-} from "../hooks";
+import { useExistingReference, useSetSources } from "../hooks";
 
 import { Button, Popover } from "@mantine/core";
 import {
@@ -27,8 +23,7 @@ import {
   TYPES_OF_REFERENCES,
 } from "../../../../../../../model/common/Source";
 import { CareerType } from "../../../../../../../model/career/Career";
-import { useFieldArray, useFormContext } from "react-hook-form";
-import { ReferenceType } from "../../../../../../../model/common/Reference";
+import { useFormContext } from "react-hook-form";
 
 export const ReferencesPanel = () => {
   const { classes } = useStyles();
