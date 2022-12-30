@@ -1,8 +1,7 @@
 import { renderHook } from "@testing-library/react";
-import { Path } from "react-hook-form";
 import { CareerType } from "../../../../../../../model/career/Career";
 import { TYPES_OF_REFERENCES } from "../../../../../../../model/common/Source";
-import { useExistingReference, useLocateReference2 } from "../hooks";
+import { useExistingReference } from "../hooks";
 
 const sampleFormValue: CareerType = {
   company: "company",
@@ -112,15 +111,5 @@ describe("hooks/useExistingReference", () => {
         },
       ],
     });
-  });
-});
-
-describe("hooks/useLocateReference", () => {
-  it("Locate correct reference based on fieldName", () => {
-    const { result } = renderHook(() =>
-      useLocateReference2<CareerType>("company"),
-    );
-
-    result.current;
   });
 });

@@ -86,12 +86,6 @@ export const useLocateReference = (
     : "references";
 };
 
-export const useLocateReference2 = <T extends FieldValues>(
-  fieldName: Path<T>,
-) => {
-  return 5;
-};
-
 export const useSetSources = ({
   fieldName,
   currentArrayId,
