@@ -6,6 +6,7 @@ import {
   useFieldArray,
   useForm,
   useFormContext,
+  UseFormReturn,
 } from "react-hook-form";
 import { AppointmentType } from "../../../../../../model/career/Appointment";
 import { CareerType } from "../../../../../../model/career/Career";
@@ -84,6 +85,54 @@ export const useLocateReference = (
     : fieldName === "issuedBy" || fieldName === "name"
     ? "certsToField"
     : "references";
+};
+
+export const useUpdateReferences = <T extends FieldValues>({
+  formContext,
+  field,
+  arrayId,
+  reference,
+  source,
+}: {
+  formContext: UseFormReturn<any, any>;
+  field: Path<T>;
+  arrayId?: number;
+  reference: ReferenceType;
+  source: SourceType;
+}) => {
+  const existingReference = useExistingReference({
+    formValue: formContext.getValues(),
+    field,
+    arrayId,
+  }).filteredReference;
+
+  const isObject = field === "rank" || field === "position";
+  const isArrayObject = field === "issuedBy" || field === "name";
+  const isArrayString = field === "skills" && existingReference;
+
+  if (isObject) {
+    if (existingReference) {
+      const indexToReplace = formContext
+        .getValues()
+        .appointment.references.indexOf(existingReference);
+      existingReference.sources.push(source);
+      formContext.getValues().appointment.references[indexToReplace] =
+        existingReference;
+    } else {
+      formContext.setValue("appointment.references", [
+        ...formContext.getValues().appointment.references,
+        reference,
+      ]);
+    }
+  } else if (isArrayString) {
+    const selectedReference = formContext
+      .getValues()
+      .references.filter((ref: any) => ref.content === String(arrayId))[0];
+    selectedReference.sources.push(source);
+    let existingReferences = [...formContext.getValues().references];
+    existingReferences[Number(arrayId)] = selectedReference;
+    formContext.setValue("references", existingReferences);
+  }
 };
 
 export const useSetSources = ({
