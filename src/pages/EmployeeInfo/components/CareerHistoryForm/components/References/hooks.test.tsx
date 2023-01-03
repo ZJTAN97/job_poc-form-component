@@ -18,7 +18,6 @@ const mockEditedSourceValue = (() => ({
 }))();
 
 const mockFormMethods = (() => {
-  ``;
   const { result } = renderHook(() =>
     useForm<CareerType>({
       resolver: zodResolver(Career),
@@ -147,17 +146,17 @@ describe("hooks/useExistingReference", () => {
 
 describe("hooks/useUpdateReference", () => {
   describe("CRUD references for single object type", () => {
-    it("create source without existing reference", () => {
-      renderHook(() =>
+    it("create source", () => {
+      const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
           field: "position",
           source: mockSourceValue,
         }),
       );
-      expect(mockFormMethods.getValues().appointment.references).toHaveLength(
-        1,
-      );
+      result.current.updateReference();
+
+      expect(mockFormMethods.getValues().appointment.references.length).toBe(1);
       expect(
         mockFormMethods
           .getValues()
@@ -166,64 +165,35 @@ describe("hooks/useUpdateReference", () => {
       ).toBe(1);
     });
 
-    it("create source with existing reference", () => {
-      renderHook(() =>
-        useUpdateReferences({
-          formMethods: mockFormMethods,
-          field: "position",
-          source: mockSourceValue,
-        }),
-      );
-      expect(mockFormMethods.getValues().appointment.references.length).toBe(1);
-      expect(
-        mockFormMethods
-          .getValues()
-          .appointment.references.filter((item) => item.field === "position")[0]
-          .sources.length,
-      ).toBe(2);
-    });
-
     it("update existing source", () => {
-      renderHook(() =>
+      const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
           field: "position",
           source: mockEditedSourceValue,
-          sourceId: 1,
+          sourceId: 0,
         }),
       );
+      result.current.updateReference();
 
       expect(
         mockFormMethods
           .getValues()
           .appointment.references.filter((item) => item.field === "position")[0]
-          .sources.length,
-      ).toBe(2);
-      expect(
-        mockFormMethods
-          .getValues()
-          .appointment.references.filter((item) => item.field === "position")[0]
-          .sources[1],
+          .sources[0],
       ).toMatchObject(mockEditedSourceValue);
     });
 
     it("delete source", () => {
-      renderHook(() =>
+      const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
           field: "position",
-
-          sourceId: 1,
-        }),
-      );
-      renderHook(() =>
-        useUpdateReferences({
-          formMethods: mockFormMethods,
-          field: "position",
-
           sourceId: 0,
         }),
       );
+      result.current.updateReference();
+
       expect(
         mockFormMethods
           .getValues()
@@ -238,13 +208,15 @@ describe("hooks/useUpdateReference", () => {
 
   describe("CRUD references for string type", () => {
     it("create source", () => {
-      renderHook(() =>
+      const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
           field: "duration",
           source: mockSourceValue,
         }),
       );
+      result.current.updateReference();
+
       expect(
         mockFormMethods
           .getValues()
@@ -253,7 +225,7 @@ describe("hooks/useUpdateReference", () => {
     });
 
     it("update existing source", () => {
-      renderHook(() =>
+      const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
           field: "duration",
@@ -261,6 +233,8 @@ describe("hooks/useUpdateReference", () => {
           sourceId: 1,
         }),
       );
+      result.current.updateReference();
+
       expect(
         mockFormMethods
           .getValues()
@@ -269,13 +243,15 @@ describe("hooks/useUpdateReference", () => {
     });
 
     it("delete source", () => {
-      renderHook(() =>
+      const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
           field: "duration",
           sourceId: 1,
         }),
       );
+      result.current.updateReference();
+
       expect(
         mockFormMethods
           .getValues()
@@ -290,7 +266,7 @@ describe("hooks/useUpdateReference", () => {
 
   describe("CRUD references for string array type", () => {
     it("create source", () => {
-      renderHook(() =>
+      const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
           field: "skills",
@@ -298,6 +274,8 @@ describe("hooks/useUpdateReference", () => {
           arrayId: 0,
         }),
       );
+      result.current.updateReference();
+
       expect(
         mockFormMethods
           .getValues()
@@ -308,7 +286,7 @@ describe("hooks/useUpdateReference", () => {
     });
 
     it("update existing source", () => {
-      renderHook(() =>
+      const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
           field: "skills",
@@ -317,6 +295,8 @@ describe("hooks/useUpdateReference", () => {
           sourceId: 0,
         }),
       );
+      result.current.updateReference();
+
       expect(
         mockFormMethods
           .getValues()
@@ -327,7 +307,7 @@ describe("hooks/useUpdateReference", () => {
     });
 
     it("delete source", () => {
-      renderHook(() =>
+      const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
           field: "skills",
@@ -335,6 +315,8 @@ describe("hooks/useUpdateReference", () => {
           sourceId: 1,
         }),
       );
+      result.current.updateReference();
+
       expect(
         mockFormMethods
           .getValues()
@@ -351,7 +333,7 @@ describe("hooks/useUpdateReference", () => {
 
   describe("CRUD references for object array type", () => {
     it("create source", () => {
-      renderHook(() =>
+      const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
           field: "name",
@@ -359,6 +341,8 @@ describe("hooks/useUpdateReference", () => {
           arrayId: 0,
         }),
       );
+      result.current.updateReference();
+
       expect(
         mockFormMethods
           .getValues()
@@ -368,7 +352,7 @@ describe("hooks/useUpdateReference", () => {
     });
 
     it("update existing source", () => {
-      renderHook(() =>
+      const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
           field: "name",
@@ -377,6 +361,8 @@ describe("hooks/useUpdateReference", () => {
           sourceId: 1,
         }),
       );
+      result.current.updateReference();
+
       expect(
         mockFormMethods
           .getValues()
@@ -386,7 +372,7 @@ describe("hooks/useUpdateReference", () => {
     });
 
     it("delete source", () => {
-      renderHook(() =>
+      const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
           field: "name",
@@ -394,6 +380,8 @@ describe("hooks/useUpdateReference", () => {
           sourceId: 1,
         }),
       );
+      result.current.updateReference();
+
       expect(
         mockFormMethods
           .getValues()

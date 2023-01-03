@@ -114,112 +114,118 @@ export const useUpdateReferences = <T extends FieldValues>({
   source?: SourceType;
   sourceId?: number;
 }) => {
-  const existingReference = useExistingReference({
-    formValue: formMethods.getValues(),
-    field,
-    arrayId,
-  }).filteredReference;
+  const updateReference = () => {
+    const existingReference = useExistingReference({
+      formValue: formMethods.getValues(),
+      field,
+      arrayId,
+    }).filteredReference;
 
-  const isObject = field === "rank" || field === "position";
-  const isArrayObject =
-    (field === "issuedBy" || field === "name") && arrayId !== undefined;
-  const isArrayString =
-    field === "skills" && existingReference && arrayId !== undefined;
+    const isObject = field === "rank" || field === "position";
+    const isArrayObject =
+      (field === "issuedBy" || field === "name") && arrayId !== undefined;
+    const isArrayString =
+      field === "skills" && existingReference && arrayId !== undefined;
 
-  const updateExistingSources = () => {
-    const isAddSource = source && sourceId === undefined;
-    const isUpdateSource = source && sourceId !== undefined;
-    const isDeleteSource = source === undefined && sourceId !== undefined;
+    const updateExistingSources = () => {
+      const isAddSource = source && sourceId === undefined;
+      const isUpdateSource = source && sourceId !== undefined;
+      const isDeleteSource = source === undefined && sourceId !== undefined;
 
-    if (isAddSource) {
-      // add new
-      existingReference.sources.push(source);
-    } else if (isUpdateSource) {
-      // update
-      existingReference.sources[sourceId] = source;
-    } else if (isDeleteSource) {
-      // delete
-      existingReference.sources.splice(sourceId, 1);
-    }
-  };
-
-  // Handle Object Type
-  if (isObject) {
-    if (existingReference) {
-      const referenceIndexToReplace = formMethods
-        .getValues()
-        .appointment.references.indexOf(existingReference);
-      updateExistingSources();
-      if (existingReference.sources.length === 0) {
-        formMethods
-          .getValues()
-          .appointment.references.splice(referenceIndexToReplace, 1);
-      } else {
-        formMethods.getValues().appointment.references[
-          referenceIndexToReplace
-        ] = existingReference;
+      if (isAddSource) {
+        // add new
+        existingReference.sources.push(source);
+      } else if (isUpdateSource) {
+        // update
+        existingReference.sources[sourceId] = source;
+      } else if (isDeleteSource) {
+        // delete
+        existingReference.sources.splice(sourceId, 1);
       }
-    } else {
-      formMethods.setValue("appointment.references", [
-        ...formMethods.getValues().appointment.references,
-        {
-          field,
-          content: "",
-          sources: [source],
-        },
-      ]);
+    };
+
+    // Handle Object Type
+    if (isObject) {
+      if (existingReference) {
+        const referenceIndexToReplace = formMethods
+          .getValues()
+          .appointment.references.indexOf(existingReference);
+        updateExistingSources();
+        if (existingReference.sources.length === 0) {
+          formMethods
+            .getValues()
+            .appointment.references.splice(referenceIndexToReplace, 1);
+        } else {
+          formMethods.getValues().appointment.references[
+            referenceIndexToReplace
+          ] = existingReference;
+        }
+      } else {
+        formMethods.setValue("appointment.references", [
+          ...formMethods.getValues().appointment.references,
+          {
+            field,
+            content: "",
+            sources: [source],
+          },
+        ]);
+      }
     }
-  }
-  // Handle Array String Type
-  // Note that for Array String Types,
-  // empty sources references are created/removed automatically
-  // Refer to StringArrayInput.tsx for implementation
-  else if (isArrayString) {
-    const referenceIndexToReplace = formMethods
-      .getValues()
-      .references.indexOf(existingReference);
-    updateExistingSources();
-    formMethods.getValues().references[referenceIndexToReplace] =
-      existingReference;
-  }
-  // Handle Array Object Type
-  else if (isArrayObject) {
-    const selectedObject = formMethods.getValues().certsToField[arrayId];
-    if (existingReference) {
-      const indexToReplace =
-        selectedObject.references.indexOf(existingReference);
-      updateExistingSources();
-      selectedObject.references[indexToReplace] = existingReference;
-    } else {
-      selectedObject.references.push({
-        field,
-        content: "",
-        sources: [source],
-      });
-    }
-    let existingArrayObjects = [...formMethods.getValues().certsToField];
-    existingArrayObjects[arrayId] = selectedObject;
-    formMethods.setValue("certsToField", existingArrayObjects);
-  }
-  // Handle String Type
-  else {
-    if (existingReference) {
-      const indexToReplace = formMethods
+    // Handle Array String Type
+    // Note that for Array String Types,
+    // empty sources references are created/removed automatically
+    // Refer to StringArrayInput.tsx for implementation
+    else if (isArrayString) {
+      const referenceIndexToReplace = formMethods
         .getValues()
         .references.indexOf(existingReference);
       updateExistingSources();
-      formMethods.getValues().references[indexToReplace] = existingReference;
-    } else {
-      formMethods.setValue("references", [
-        ...formMethods.getValues().references,
-        {
+      formMethods.getValues().references[referenceIndexToReplace] =
+        existingReference;
+    }
+    // Handle Array Object Type
+    else if (isArrayObject) {
+      const selectedObject = formMethods.getValues().certsToField[arrayId];
+      if (existingReference) {
+        const indexToReplace =
+          selectedObject.references.indexOf(existingReference);
+        updateExistingSources();
+        selectedObject.references[indexToReplace] = existingReference;
+      } else {
+        selectedObject.references.push({
           field,
           content: "",
           sources: [source],
-        },
-      ]);
+        });
+      }
+      let existingArrayObjects = [...formMethods.getValues().certsToField];
+      existingArrayObjects[arrayId] = selectedObject;
+      formMethods.setValue("certsToField", existingArrayObjects);
     }
-  }
+    // Handle String Type
+    else {
+      if (existingReference) {
+        const indexToReplace = formMethods
+          .getValues()
+          .references.indexOf(existingReference);
+        updateExistingSources();
+        formMethods.getValues().references[indexToReplace] = existingReference;
+      } else {
+        formMethods.setValue("references", [
+          ...formMethods.getValues().references,
+          {
+            field,
+            content: "",
+            sources: [source],
+          },
+        ]);
+      }
+    }
+  };
+
+  return {
+    updateReference,
+  };
 };
 
 export const useSetSources = ({
