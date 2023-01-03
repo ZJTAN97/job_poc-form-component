@@ -114,13 +114,15 @@ export const useUpdateReferences = <T extends FieldValues>({
   source?: SourceType;
   sourceId?: number;
 }) => {
-  const updateReference = () => {
-    const existingReference = useExistingReference({
-      formValue: formMethods.getValues(),
-      field,
-      arrayId,
-    }).filteredReference;
+  const existingReference = useExistingReference({
+    formValue: formMethods.getValues(),
+    field,
+    arrayId,
+  }).filteredReference;
 
+  const existingSources = existingReference?.sources ?? [];
+
+  const updateReference = () => {
     const isObject = field === "rank" || field === "position";
     const isArrayObject =
       (field === "issuedBy" || field === "name") && arrayId !== undefined;
@@ -225,6 +227,7 @@ export const useUpdateReferences = <T extends FieldValues>({
 
   return {
     updateReference,
+    existingSources,
   };
 };
 
