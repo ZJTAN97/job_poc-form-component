@@ -15,16 +15,13 @@ export const Base = ({ children }: BaseProps) => {
       padding="md"
       header={
         <Header height={60} p="xs">
-          LinkedOut
+          LinkedOut V2
         </Header>
       }
       navbar={
         <Navbar width={{ base: 200 }} p="xs">
           <Container onClick={() => navigate({ to: "/career-info" })}>
             <div className={styles.selector}>Career Info</div>
-          </Container>
-          <Container onClick={() => navigate({ to: "/create-employee" })}>
-            <div className={styles.selector}>Create Employee</div>
           </Container>
         </Navbar>
       }

@@ -1,6 +1,5 @@
 import React from "react";
 import { ReactLocation, Router } from "@tanstack/react-location";
-import { CreateEmployee } from "./pages/CreateEmployee";
 import { EmployeeInfo } from "./pages/EmployeeInfo";
 import { QueryClient, QueryClientProvider } from "react-query";
 
@@ -21,10 +20,6 @@ const App = () => {
       <Router
         location={reactLocation}
         routes={[
-          {
-            path: "/create-employee",
-            element: <CreateEmployee />,
-          },
           {
             path: "/career-info",
             element: <EmployeeInfo />,
