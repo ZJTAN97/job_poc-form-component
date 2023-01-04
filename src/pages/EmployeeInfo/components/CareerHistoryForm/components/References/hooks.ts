@@ -1,21 +1,7 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
-import {
-  FieldValues,
-  Path,
-  useFieldArray,
-  useForm,
-  useFormContext,
-  UseFormReturn,
-} from "react-hook-form";
-import { AppointmentType } from "../../../../../../model/career/Appointment";
-import { CareerType } from "../../../../../../model/career/Career";
-import { CertificationType } from "../../../../../../model/career/Certification";
-import {
-  Reference,
-  ReferenceType,
-} from "../../../../../../model/common/Reference";
-import { Source, SourceType } from "../../../../../../model/common/Source";
+import { FieldValues, Path, UseFormReturn } from "react-hook-form";
+import { ReferenceType } from "../../../../../../model/common/Reference";
+import { SourceType } from "../../../../../../model/common/Source";
 
 /**
  * Retrieve the location of the reference in the form value provided based on the field provided
@@ -84,16 +70,6 @@ export const useExistingReference = <T extends FieldValues>({
   };
 };
 
-export const useLocateReference = (
-  fieldName: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>,
-) => {
-  return fieldName === "rank" || fieldName === "position"
-    ? "appointment.references"
-    : fieldName === "issuedBy" || fieldName === "name"
-    ? "certsToField"
-    : "references";
-};
-
 /**
  * Updates the respective Reference values in the Form based on provided field
  * @param {UseFormReturn<any, any>} formMethods React Hook Form Methods from useForm Hooks
@@ -103,26 +79,26 @@ export const useLocateReference = (
  */
 export const useUpdateReferences = <T extends FieldValues>({
   formMethods,
-  field,
-  arrayId,
   source,
-  sourceId,
 }: {
   formMethods: UseFormReturn<any, any>;
-  field: Path<T>;
-  arrayId?: number;
-  source?: SourceType;
-  sourceId?: number;
+  source: SourceType;
 }) => {
-  const existingReference = useExistingReference({
-    formValue: formMethods.getValues(),
+  const updateReference = ({
     field,
     arrayId,
-  }).filteredReference;
+    sourceId,
+  }: {
+    field: Path<T>;
+    arrayId?: number;
+    sourceId?: number;
+  }) => {
+    const existingReference = useExistingReference({
+      formValue: formMethods.getValues(),
+      field,
+      arrayId,
+    }).filteredReference;
 
-  const existingSources = existingReference?.sources ?? [];
-
-  const updateReference = () => {
     const isObject = field === "rank" || field === "position";
     const isArrayObject =
       (field === "issuedBy" || field === "name") && arrayId !== undefined;
@@ -130,9 +106,12 @@ export const useUpdateReferences = <T extends FieldValues>({
       field === "skills" && existingReference && arrayId !== undefined;
 
     const updateExistingSources = () => {
-      const isAddSource = source && sourceId === undefined;
-      const isUpdateSource = source && sourceId !== undefined;
-      const isDeleteSource = source === undefined && sourceId !== undefined;
+      const isAddSource =
+        source.referenceType !== undefined && sourceId === undefined;
+      const isUpdateSource =
+        source.referenceType !== undefined && sourceId !== undefined;
+      const isDeleteSource =
+        source.referenceType === undefined && sourceId !== undefined;
 
       if (isAddSource) {
         // add new
@@ -227,174 +206,5 @@ export const useUpdateReferences = <T extends FieldValues>({
 
   return {
     updateReference,
-    existingSources,
-  };
-};
-
-export const useSetSources = ({
-  fieldName,
-  currentArrayId,
-  setLastSource,
-}: {
-  fieldName: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
-  currentArrayId?: number;
-  setLastSource: (arg: SourceType) => void;
-}) => {
-  const formContext = useFormContext<CareerType>();
-
-  const existingReference = useExistingReference({
-    formValue: formContext.getValues(),
-    field: fieldName as Path<CareerType>,
-    arrayId: currentArrayId,
-  }).filteredReference;
-
-  const referenceFormMethod = useForm<ReferenceType>({
-    resolver: zodResolver(Reference),
-    mode: "onChange",
-    defaultValues: {
-      field: fieldName,
-      content: "",
-      sources: existingReference?.sources ?? [],
-    },
-  });
-
-  const sourceFormMethod = useForm<SourceType>({
-    resolver: zodResolver(Source),
-    mode: "onChange",
-    defaultValues: {
-      comment: "",
-      dateObtained: "2022-11-11T12:19:54.52",
-      referenceType: undefined,
-    },
-  });
-
-  const referenceArrayMethods = useFieldArray<CareerType>({
-    control: formContext.control,
-    name: useLocateReference(fieldName),
-  });
-
-  const sourceArrayMethods = useFieldArray<ReferenceType>({
-    control: referenceFormMethod.control,
-    name: "sources",
-  });
-
-  const existingSources = existingReference?.sources ?? [];
-
-  const [sourceId, setSourceId] = React.useState<number>();
-  const [popupMode, setPopupMode] = React.useState<"edit" | "read">(
-    existingSources.length > 0 ? "read" : "edit",
-  );
-
-  const updateReferences = () => {
-    const isAppointmentReference =
-      fieldName === "rank" || fieldName === "position";
-    const isCertReference = fieldName === "issuedBy" || fieldName === "name";
-    const isSkillReference = fieldName === "skills" && existingReference;
-
-    if (isAppointmentReference) {
-      if (existingReference) {
-        const existingReferenceId = formContext
-          .getValues()
-          .appointment.references.indexOf(existingReference);
-        referenceArrayMethods.update(
-          existingReferenceId,
-          referenceFormMethod.getValues(),
-        );
-      } else {
-        referenceArrayMethods.append(referenceFormMethod.getValues());
-      }
-    } else if (isCertReference) {
-      const selectedCert =
-        formContext.getValues().certsToField[currentArrayId!];
-      if (existingReference) {
-        const selectedCertReferenceId =
-          selectedCert.references.indexOf(existingReference);
-        let currentReferences = selectedCert.references;
-        currentReferences[selectedCertReferenceId] =
-          referenceFormMethod.getValues();
-        referenceArrayMethods.update(currentArrayId!, {
-          ...selectedCert,
-          references: currentReferences,
-        });
-      } else {
-        referenceArrayMethods.update(currentArrayId!, {
-          ...selectedCert,
-          references: [
-            ...selectedCert.references,
-            referenceFormMethod.getValues(),
-          ],
-        });
-      }
-    } else if (isSkillReference) {
-      const existingReferenceId = formContext
-        .getValues()
-        .references.indexOf(existingReference);
-      referenceArrayMethods.update(existingReferenceId, {
-        ...existingReference,
-        sources: referenceFormMethod.getValues().sources,
-      });
-    } else {
-      if (existingReference) {
-        const existingReferenceId = formContext
-          .getValues()
-          .references.indexOf(existingReference);
-        referenceArrayMethods.update(
-          existingReferenceId,
-          referenceFormMethod.getValues(),
-        );
-      } else {
-        referenceArrayMethods.append(referenceFormMethod.getValues());
-      }
-    }
-  };
-
-  const applySourcesToReferences = () => {
-    if (sourceId !== undefined) {
-      sourceArrayMethods.update(sourceId, sourceFormMethod.getValues());
-      setSourceId(undefined);
-    } else {
-      sourceArrayMethods.append(sourceFormMethod.getValues());
-    }
-    updateReferences();
-    setLastSource(sourceFormMethod.getValues());
-    sourceFormMethod.reset();
-    setPopupMode("read");
-    setSourceId(undefined);
-  };
-
-  const editSource = (sourceId: number) => {
-    sourceFormMethod.setValue(
-      "referenceType",
-      referenceFormMethod.getValues().sources[sourceId].referenceType,
-    );
-    sourceFormMethod.setValue(
-      "dateObtained",
-      referenceFormMethod.getValues().sources[sourceId].dateObtained,
-    );
-    sourceFormMethod.setValue(
-      "comment",
-      referenceFormMethod.getValues().sources[sourceId].comment,
-    );
-    setPopupMode("edit");
-    setSourceId(sourceId);
-  };
-
-  const deleteSource = (sourceId: number) => {
-    sourceArrayMethods.remove(sourceId);
-    updateReferences();
-    if (referenceFormMethod.getValues().sources.length === 0) {
-      setPopupMode("edit");
-    }
-  };
-
-  return {
-    existingSources,
-    sourceFormMethod,
-    referenceFormMethod,
-    applySourcesToReferences,
-    editSource,
-    deleteSource,
-    setPopupMode,
-    popupMode,
   };
 };

@@ -8,8 +8,7 @@ import {
   TitleContainer,
   useStyles,
 } from "./styles";
-import { useExistingReference, useSetSources } from "../hooks";
-
+import { useExistingReference, useUpdateReferences } from "../hooks";
 import { Button, Popover } from "@mantine/core";
 import {
   IconArrowLeft,
@@ -19,16 +18,18 @@ import {
 } from "@tabler/icons";
 import { Form } from "../../../../../../../components/Form";
 import {
+  Source,
   SourceType,
   TYPES_OF_REFERENCES,
 } from "../../../../../../../model/common/Source";
 import { CareerType } from "../../../../../../../model/career/Career";
-import { Path, useFormContext } from "react-hook-form";
+import { Path, useFormContext, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 export const ReferencesPanel = () => {
   const { classes } = useStyles();
 
-  const formContext = useFormContext<CareerType>();
+  const formMethods = useFormContext<CareerType>();
   const referenceStateContext = useReferenceStateContext();
   const {
     currentField,
@@ -44,22 +45,40 @@ export const ReferencesPanel = () => {
     handleMassApplyingFields,
   } = referenceStateContext!;
 
-  const {
-    sourceFormMethod,
-    referenceFormMethod,
-    applySourcesToReferences,
-    editSource,
-    deleteSource,
-    popupMode,
-    setPopupMode,
-    existingSources,
-  } = useSetSources({
-    fieldName: currentField!,
-    currentArrayId,
-    setLastSource,
+  const sourceFormMethod = useForm<SourceType>({
+    resolver: zodResolver(Source),
+    mode: "onChange",
+    defaultValues: {
+      comment: "",
+      dateObtained: "2022-11-11T12:19:54.52",
+      referenceType: undefined,
+    },
+  });
+  // im only using it cause comments not changing, need look into it
+  sourceFormMethod.watch();
+
+  const [sourceId, setSourceId] = React.useState<number>();
+
+  const { updateReference } = useUpdateReferences({
+    formMethods,
+    source: sourceFormMethod.getValues(),
   });
 
+  const existingReference = useExistingReference({
+    formValue: formMethods.getValues(),
+    field: currentField as Path<CareerType>,
+    arrayId: currentArrayId,
+  }).filteredReference;
+
+  console.log("-- look here --");
+  console.log(existingReference);
+
+  const existingSources = existingReference?.sources ?? [];
+
   const [showCommentsInput, setShowCommentsInput] = React.useState(false);
+  const [popupMode, setPopupMode] = React.useState<"edit" | "read">(
+    existingSources.length > 0 ? "read" : "edit",
+  );
 
   const handleClosePanel = () => {
     setCurrentField(undefined);
@@ -83,85 +102,42 @@ export const ReferencesPanel = () => {
     }
   };
 
-  formContext.getValues();
-
   const handleMassApply = () => {
-    massApplyingFields.forEach((item) => {
-      const existingReference = useExistingReference({
-        formValue: formContext.getValues(),
-        field: item.field as Path<CareerType>,
-        arrayId: item.arrayId,
-      }).filteredReference;
-
-      referenceFormMethod.setValue("field", item.field);
-      referenceFormMethod.setValue("sources", [
-        ...referenceFormMethod.getValues().sources,
-        sourceFormMethod.getValues(),
-      ]);
-
-      // 1. Handle Single Field Type
-      if (item.field === "company" || item.field === "duration") {
-        if (existingReference !== undefined) {
-          const indexToReplace = formContext
-            .getValues()
-            .references.indexOf(existingReference);
-          existingReference.sources.push(sourceFormMethod.getValues());
-          formContext.getValues().references[indexToReplace] =
-            existingReference;
-        } else {
-          formContext.setValue("references", [
-            ...formContext.getValues().references,
-            referenceFormMethod.getValues(),
-          ]);
-        }
-        // 2. Handle Single Object Type
-      } else if (item.field === "position" || item.field === "rank") {
-        if (existingReference !== undefined) {
-          const indexToReplace = formContext
-            .getValues()
-            .appointment.references.indexOf(existingReference);
-          existingReference.sources.push(sourceFormMethod.getValues());
-          formContext.getValues().appointment.references[indexToReplace] =
-            existingReference;
-        } else {
-          formContext.setValue("appointment.references", [
-            ...formContext.getValues().appointment.references,
-            referenceFormMethod.getValues(),
-          ]);
-        }
-        // 3. Handle String Array
-      } else if (item.field === "skills") {
-        const selectedRef = formContext
-          .getValues()
-          .references.filter((ref) => ref.content === String(item.arrayId))[0];
-        selectedRef.sources.push(sourceFormMethod.getValues());
-        let existingReferences = [...formContext.getValues().references];
-        existingReferences[Number(item.arrayId)] = selectedRef;
-        formContext.setValue("references", existingReferences);
-        // 4. Handle Array of Objects
-      } else if (item.field === "name" || item.field === "issuedBy") {
-        const selectedCert =
-          formContext.getValues().certsToField[Number(item.arrayId)];
-
-        if (existingReference) {
-          const indexToReplace =
-            selectedCert.references.indexOf(existingReference);
-          existingReference.sources.push(sourceFormMethod.getValues());
-          selectedCert.references[indexToReplace] = existingReference;
-        } else {
-          selectedCert.references.push(referenceFormMethod.getValues());
-        }
-
-        let existingCerts = [...formContext.getValues().certsToField];
-        existingCerts[Number(item.arrayId)] = selectedCert;
-
-        formContext.setValue("certsToField", existingCerts);
-      }
-      referenceFormMethod.reset();
+    massApplyingFields.forEach(({ field, arrayId }) => {
+      updateReference({
+        field: field,
+        arrayId: arrayId,
+      });
     });
     setOpenPanel(false);
     setIsMassApply(false);
     handleMassApplyingFields.setState([]);
+  };
+
+  const editSource = (id: number) => {
+    setSourceId(id);
+    if (existingReference) {
+      sourceFormMethod.setValue(
+        "referenceType",
+        existingReference.sources[id].referenceType,
+      );
+      sourceFormMethod.setValue(
+        "dateObtained",
+        existingReference.sources[id].dateObtained,
+      );
+      sourceFormMethod.setValue(
+        "comment",
+        existingReference.sources[id].comment,
+      );
+    }
+    setPopupMode("edit");
+  };
+
+  const deleteSource = (id: number) => {
+    updateReference({
+      field: currentField as Path<CareerType>,
+      sourceId: id,
+    });
   };
 
   return (
@@ -179,7 +155,11 @@ export const ReferencesPanel = () => {
       </TitleContainer>
 
       {popupMode === "edit" ? (
-        <Form methods={sourceFormMethod}>
+        <Form<SourceType>
+          methods={sourceFormMethod}
+          preventLeaving
+          useLocalStorage
+        >
           {lastSource && (
             <Button
               size="xs"
@@ -231,9 +211,7 @@ export const ReferencesPanel = () => {
                   <IconEdit
                     size={20}
                     style={{ cursor: "pointer" }}
-                    onClick={() => {
-                      editSource(id);
-                    }}
+                    onClick={() => editSource(id)}
                   />
                   <IconIdOff
                     size={20}
@@ -256,7 +234,7 @@ export const ReferencesPanel = () => {
             size={"xs"}
             variant="subtle"
             onClick={() => setPopupMode("read")}
-            disabled={referenceFormMethod.getValues()?.sources?.length === 0}
+            disabled={existingSources.length === 0}
           >
             Cancel
           </Button>
@@ -267,7 +245,21 @@ export const ReferencesPanel = () => {
           }}
           size={"xs"}
           variant="outline"
-          onClick={isMassApply ? handleMassApply : applySourcesToReferences}
+          onClick={
+            isMassApply
+              ? handleMassApply
+              : () => {
+                  updateReference({
+                    field: currentField as Path<CareerType>,
+                    arrayId: currentArrayId,
+                    sourceId,
+                  });
+                  setLastSource(sourceFormMethod.getValues());
+                  sourceFormMethod.reset();
+                  setSourceId(undefined);
+                  setPopupMode("read");
+                }
+          }
           disabled={popupMode === "read" || !sourceFormMethod.formState.isValid}
         >
           Apply

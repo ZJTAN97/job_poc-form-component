@@ -11,6 +11,11 @@ const mockSourceValue = (() => ({
   dateObtained: "11/11/2011",
 }))();
 
+const mockDeleteSourceValue = (() => ({
+  comment: "",
+  dateObtained: "",
+}))();
+
 const mockEditedSourceValue = (() => ({
   referenceType: TYPES_OF_REFERENCES.REDDIT,
   comment: "this is an edited value",
@@ -150,11 +155,12 @@ describe("hooks/useUpdateReference", () => {
       const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
-          field: "position",
           source: mockSourceValue,
         }),
       );
-      result.current.updateReference();
+      result.current.updateReference({
+        field: "position",
+      });
 
       expect(mockFormMethods.getValues().appointment.references.length).toBe(1);
       expect(
@@ -169,12 +175,13 @@ describe("hooks/useUpdateReference", () => {
       const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
-          field: "position",
           source: mockEditedSourceValue,
-          sourceId: 0,
         }),
       );
-      result.current.updateReference();
+      result.current.updateReference({
+        sourceId: 0,
+        field: "position",
+      });
 
       expect(
         mockFormMethods
@@ -188,11 +195,13 @@ describe("hooks/useUpdateReference", () => {
       const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
-          field: "position",
-          sourceId: 0,
+          source: mockDeleteSourceValue,
         }),
       );
-      result.current.updateReference();
+      result.current.updateReference({
+        field: "position",
+        sourceId: 0,
+      });
 
       expect(
         mockFormMethods
@@ -211,11 +220,12 @@ describe("hooks/useUpdateReference", () => {
       const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
-          field: "duration",
           source: mockSourceValue,
         }),
       );
-      result.current.updateReference();
+      result.current.updateReference({
+        field: "duration",
+      });
 
       expect(
         mockFormMethods
@@ -228,12 +238,13 @@ describe("hooks/useUpdateReference", () => {
       const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
-          field: "duration",
           source: mockEditedSourceValue,
-          sourceId: 1,
         }),
       );
-      result.current.updateReference();
+      result.current.updateReference({
+        field: "duration",
+        sourceId: 1,
+      });
 
       expect(
         mockFormMethods
@@ -246,11 +257,13 @@ describe("hooks/useUpdateReference", () => {
       const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
-          field: "duration",
-          sourceId: 1,
+          source: mockDeleteSourceValue,
         }),
       );
-      result.current.updateReference();
+      result.current.updateReference({
+        field: "duration",
+        sourceId: 1,
+      });
 
       expect(
         mockFormMethods
@@ -269,12 +282,13 @@ describe("hooks/useUpdateReference", () => {
       const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
-          field: "skills",
           source: mockSourceValue,
-          arrayId: 0,
         }),
       );
-      result.current.updateReference();
+      result.current.updateReference({
+        field: "skills",
+        arrayId: 0,
+      });
 
       expect(
         mockFormMethods
@@ -289,13 +303,14 @@ describe("hooks/useUpdateReference", () => {
       const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
-          field: "skills",
           source: mockEditedSourceValue,
-          arrayId: 1,
-          sourceId: 0,
         }),
       );
-      result.current.updateReference();
+      result.current.updateReference({
+        field: "skills",
+        arrayId: 1,
+        sourceId: 0,
+      });
 
       expect(
         mockFormMethods
@@ -310,12 +325,14 @@ describe("hooks/useUpdateReference", () => {
       const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
-          field: "skills",
-          arrayId: 1,
-          sourceId: 1,
+          source: mockDeleteSourceValue,
         }),
       );
-      result.current.updateReference();
+      result.current.updateReference({
+        field: "skills",
+        arrayId: 1,
+        sourceId: 1,
+      });
 
       expect(
         mockFormMethods
@@ -336,12 +353,13 @@ describe("hooks/useUpdateReference", () => {
       const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
-          field: "name",
           source: mockSourceValue,
-          arrayId: 0,
         }),
       );
-      result.current.updateReference();
+      result.current.updateReference({
+        field: "name",
+        arrayId: 0,
+      });
 
       expect(
         mockFormMethods
@@ -355,13 +373,14 @@ describe("hooks/useUpdateReference", () => {
       const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
-          field: "name",
           source: mockEditedSourceValue,
-          arrayId: 0,
-          sourceId: 1,
         }),
       );
-      result.current.updateReference();
+      result.current.updateReference({
+        field: "name",
+        arrayId: 0,
+        sourceId: 1,
+      });
 
       expect(
         mockFormMethods
@@ -375,12 +394,14 @@ describe("hooks/useUpdateReference", () => {
       const { result } = renderHook(() =>
         useUpdateReferences({
           formMethods: mockFormMethods,
-          field: "name",
-          arrayId: 0,
-          sourceId: 1,
+          source: mockDeleteSourceValue,
         }),
       );
-      result.current.updateReference();
+      result.current.updateReference({
+        field: "name",
+        arrayId: 0,
+        sourceId: 1,
+      });
 
       expect(
         mockFormMethods
