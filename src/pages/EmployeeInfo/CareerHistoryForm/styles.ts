@@ -4,11 +4,9 @@ import { createStyles } from "@mantine/styles";
 export const useStyles = createStyles((theme) => ({
   formTextInput: {
     width: "400px",
+    margin: "15px 0",
   },
-  skillTextInput: {
-    width: "400px",
-    marginBottom: "10px",
-  },
+
   reference: {
     fontSize: "12px",
     cursor: "pointer",
@@ -25,7 +23,7 @@ export const useStyles = createStyles((theme) => ({
 }));
 
 export const MainContainer = styled("div")(({}) => ({
-  padding: "0 30px 50px 40px",
+  padding: "0 50px 50px 40px",
   marginBottom: "50px",
   width: "fit-content",
   overflowY: "scroll",

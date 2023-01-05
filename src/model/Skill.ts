@@ -7,3 +7,5 @@ export const Skill = z.object({
   }),
   references: z.array(Reference),
 });
+
+export type SkillType = z.infer<typeof Skill>;
