@@ -23,11 +23,14 @@ export const Title = styled("div")(({ disabled }: { disabled?: boolean }) => ({
 
 export const ArrayContainer = styled("div")(({}) => ({
   padding: "10px 0 10px 0",
+  marginTop: "30px",
 }));
 
 export const ArrayRow = styled("div")(
   ({ highlight }: { highlight?: boolean }) => ({
-    padding: "10px 0px",
+    display: "flex",
+    padding: "20px 15px",
+    gap: "10px",
     borderRadius: "5px",
     backgroundColor: highlight ? "rgb(192 235 249 / 20%)" : "",
   }),

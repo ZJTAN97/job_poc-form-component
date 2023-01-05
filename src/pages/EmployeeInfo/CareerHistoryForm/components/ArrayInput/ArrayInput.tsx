@@ -7,6 +7,7 @@ import {
   useFieldArray,
   useFormContext,
 } from "react-hook-form";
+import { ReferencesTrigger } from "../References/ReferencesTrigger";
 import { ArrayContainer, ArrayRow, useStyles } from "./styles";
 
 type GenericObject<TForm extends FieldValues> = {
@@ -36,6 +37,9 @@ export const ArrayInput = <TForm extends FieldValues>({
   return (
     <ArrayContainer>
       <Button
+        variant="light"
+        size="xs"
+        ml={15}
         onClick={() =>
           arrayMethods.append(
             defaultValue as FieldArray<TForm, ArrayPath<TForm>>,
@@ -45,7 +49,7 @@ export const ArrayInput = <TForm extends FieldValues>({
         Add {name.charAt(0).toUpperCase() + name.slice(1)}
       </Button>
       {fields.map((val, id: number) => (
-        <ArrayRow key={"array_input_" + id}>
+        <div key={"wrapper_" + id}>
           {Object.keys((val as unknown as GenericObject<TForm>).value).map(
             (key) => (
               <ArrayRow key={"array_input_" + id + key}>
@@ -65,10 +69,11 @@ export const ArrayInput = <TForm extends FieldValues>({
                     arrayMethods.update(id, copy);
                   }}
                 />
+                <ReferencesTrigger field="skills" />
               </ArrayRow>
             ),
           )}
-        </ArrayRow>
+        </div>
       ))}
     </ArrayContainer>
   );

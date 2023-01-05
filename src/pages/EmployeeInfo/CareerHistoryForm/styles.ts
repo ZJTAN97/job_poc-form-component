@@ -4,7 +4,6 @@ import { createStyles } from "@mantine/styles";
 export const useStyles = createStyles((theme) => ({
   formTextInput: {
     width: "400px",
-    margin: "15px 0",
   },
 
   reference: {
