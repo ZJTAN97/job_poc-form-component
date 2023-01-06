@@ -15,3 +15,5 @@ export const Reference = z.object({
   dateObtained: z.string(),
   comment: z.string(),
 });
+
+export type ReferenceType = z.infer<typeof Reference>;

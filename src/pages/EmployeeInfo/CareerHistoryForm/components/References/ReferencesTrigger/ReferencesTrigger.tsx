@@ -4,35 +4,36 @@ import {
 } from "../References";
 import { TriggerRow, useStyles } from "./styles";
 import { useFormContext, Path } from "react-hook-form";
-import { Button, Checkbox, Textarea } from "@mantine/core";
+import { Button, Textarea } from "@mantine/core";
 import { IconCirclePlus } from "@tabler/icons";
-import React from "react";
 import { CareerType } from "../../../../../../model/Career";
 
 interface ReferencesTriggerProp {
   /** Field Name required to filter which references to show for this component instance */
-  field: string;
+  field: Path<CareerType>;
 
   /** Disable trigger */
   disabled?: boolean;
 
-  arrId?: number;
+  arrayId?: number;
 }
 
 export const ReferencesTrigger = ({
   field,
   disabled,
-  arrId,
+  arrayId,
 }: ReferencesTriggerProp) => {
   const { classes } = useStyles();
 
   const referenceStateContext = useReferenceStateContext();
-  const formContext = useFormContext<CareerType>();
-
-  const { openPanel, setOpenPanel } =
+  const { openPanel, setOpenPanel, setCurrentField, setCurrentArrayId } =
     referenceStateContext as ReferencesStateMethods;
 
-  const handlePanelOpen = () => {};
+  const handlePanelOpen = () => {
+    setOpenPanel(true);
+    setCurrentField(field);
+    setCurrentArrayId(arrayId);
+  };
 
   return (
     <>

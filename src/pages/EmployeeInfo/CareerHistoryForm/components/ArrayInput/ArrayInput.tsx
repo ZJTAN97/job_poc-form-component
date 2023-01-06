@@ -4,9 +4,11 @@ import {
   FieldArray,
   FieldArrayWithId,
   FieldValues,
+  Path,
   useFieldArray,
   useFormContext,
 } from "react-hook-form";
+import { CareerType } from "../../../../../model/Career";
 import { ReferencesTrigger } from "../References/ReferencesTrigger";
 import { ArrayContainer, ArrayRow, useStyles } from "./styles";
 
@@ -69,7 +71,10 @@ export const ArrayInput = <TForm extends FieldValues>({
                     arrayMethods.update(id, copy);
                   }}
                 />
-                <ReferencesTrigger field="skills" />
+                <ReferencesTrigger
+                  field={name as Path<CareerType>}
+                  arrayId={id}
+                />
               </ArrayRow>
             ),
           )}

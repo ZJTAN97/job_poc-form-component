@@ -28,7 +28,7 @@ export const Title = styled("div")(({ theme }) => ({
 export const ButtonRow = styled("div")(({ theme }) => ({
   backgroundColor: "#fafafa",
   padding: "10px",
-  marginTop: "10px",
+  marginTop: "50px",
   display: "flex",
   justifyContent: "space-between",
 }));

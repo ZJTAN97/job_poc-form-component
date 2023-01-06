@@ -7,3 +7,5 @@ export const Company = z.object({
   }),
   references: z.array(Reference),
 });
+
+export type CompanyType = z.infer<typeof Company>;

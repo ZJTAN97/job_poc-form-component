@@ -1,6 +1,6 @@
-import { useListState, UseListStateHandlers } from "@mantine/hooks";
 import React from "react";
 import { Path } from "react-hook-form";
+import { CareerType } from "../../../../../model/Career";
 
 /** Main Context Type */
 export type ReferencesStateMethods = {
@@ -9,6 +9,14 @@ export type ReferencesStateMethods = {
 
   /** setter method to manage state of panel */
   setOpenPanel: (arg: boolean) => void;
+
+  currentField?: Path<CareerType>;
+
+  setCurrentField: (arg?: Path<CareerType>) => void;
+
+  currentArrayId?: number;
+
+  setCurrentArrayId: (arg?: number) => void;
 };
 
 /** Creation of Context */
@@ -19,10 +27,16 @@ export const ReferenceStateContext = React.createContext<
 /** Think of it as using the initial values */
 export const useReferencesStateMethods = (): ReferencesStateMethods => {
   const [openPanel, setOpenPanel] = React.useState(false);
+  const [currentField, setCurrentField] = React.useState<Path<CareerType>>();
+  const [currentArrayId, setCurrentArrayId] = React.useState<number>();
 
   return {
     openPanel,
     setOpenPanel,
+    currentField,
+    setCurrentField,
+    currentArrayId,
+    setCurrentArrayId,
   };
 };
 
