@@ -188,7 +188,7 @@ export const CareerHistoryForm = ({
           });
         } else if (key === "appointment") {
           Object.values(value).forEach((item, id) => {
-            if (item.length > 0) {
+            if (item.length > 0 && Object.keys(value)[id] !== "references") {
               handleMassApplyingFields.append({
                 field: Object.keys(value)[id] as Path<AppointmentType>,
               });
@@ -206,7 +206,7 @@ export const CareerHistoryForm = ({
         } else if (key === "certsToField") {
           (value as CertificationType[]).forEach((cert, certId) => {
             Object.values(cert).forEach((value, id) => {
-              if (value.length > 0) {
+              if (value.length > 0 && Object.keys(cert)[id] !== "references") {
                 handleMassApplyingFields.append({
                   field: Object.keys(cert)[id] as Path<CertificationType>,
                   arrayId: certId,
@@ -221,7 +221,7 @@ export const CareerHistoryForm = ({
     }
   };
 
-  console.info(careerFormMethods.getValues());
+  // console.info(careerFormMethods.getValues());
   // console.info(careerFormMethods.formState.errors);
 
   return (

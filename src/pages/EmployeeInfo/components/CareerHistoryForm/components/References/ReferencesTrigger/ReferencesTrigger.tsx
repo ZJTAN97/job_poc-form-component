@@ -39,7 +39,7 @@ export const ReferencesTrigger = ({
     isMassApply,
     massApplyingFields,
     handleMassApplyingFields,
-  } = referenceStateContext!;
+  } = referenceStateContext;
 
   const handlePanelOpen = () => {
     setOpenPanel(true);

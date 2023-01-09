@@ -43,7 +43,7 @@ export const ReferencesPanel = () => {
     setIsMassApply,
     massApplyingFields,
     handleMassApplyingFields,
-  } = referenceStateContext!;
+  } = referenceStateContext;
 
   const sourceFormMethod = useForm<SourceType>({
     resolver: zodResolver(Source),
@@ -54,13 +54,10 @@ export const ReferencesPanel = () => {
       referenceType: undefined,
     },
   });
-  sourceFormMethod.watch();
 
   const [sourceId, setSourceId] = React.useState<number>();
 
-  const { updateReference } = useUpdateReferences({
-    source: sourceFormMethod.getValues(),
-  });
+  const { updateReference } = useUpdateReferences();
   const formMethods = useFormContext<CareerType>();
 
   const existingReference = getExistingReference({
@@ -98,9 +95,10 @@ export const ReferencesPanel = () => {
     }
   };
 
-  const handleMassApply = () => {
+  const handleMassApply = sourceFormMethod.handleSubmit(async (data) => {
     massApplyingFields.forEach(({ field, arrayId }) => {
       updateReference({
+        source: data,
         field,
         arrayId,
       });
@@ -108,7 +106,7 @@ export const ReferencesPanel = () => {
     setOpenPanel(false);
     setIsMassApply(false);
     handleMassApplyingFields.setState([]);
-  };
+  });
 
   const editSource = (id: number) => {
     setSourceId(id);
@@ -131,6 +129,7 @@ export const ReferencesPanel = () => {
 
   const deleteSource = (id: number) => {
     updateReference({
+      source: sourceFormMethod.getValues(),
       field: currentField as Path<CareerType>,
       arrayId: currentArrayId,
       sourceId: id,
@@ -138,17 +137,18 @@ export const ReferencesPanel = () => {
     sourceFormMethod.reset();
   };
 
-  const applySources = () => {
+  const applySources = sourceFormMethod.handleSubmit(async (data) => {
     updateReference({
+      source: data,
       field: currentField as Path<CareerType>,
       arrayId: currentArrayId,
       sourceId,
     });
-    setLastSource(sourceFormMethod.getValues());
+    setLastSource(data);
     sourceFormMethod.reset();
     setSourceId(undefined);
     setPopupMode("read");
-  };
+  });
 
   return (
     <Popover.Dropdown p={30}>

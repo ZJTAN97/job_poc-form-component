@@ -130,13 +130,12 @@ const UseUpdateReferenceTestComponent = ({
   sourceId?: number;
   source: SourceType;
 }) => {
-  const { updateReference } = useUpdateReferences<CareerType>({
-    source,
-  });
+  const { updateReference } = useUpdateReferences<CareerType>();
   updateReference({
     field,
     arrayId,
     sourceId,
+    source,
   });
   return null;
 };

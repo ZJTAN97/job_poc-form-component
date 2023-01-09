@@ -9,18 +9,16 @@ import { getExistingReference } from "./utils";
  * @param { number | undefined } arrayId if selected field is array, have to specify its array Id
  * @param { SourceType } source Source Value provided
  */
-export const useUpdateReferences = <T extends FieldValues>({
-  source,
-}: {
-  source: SourceType;
-}) => {
+export const useUpdateReferences = <T extends FieldValues>() => {
   const formMethods = useFormContext<T>();
 
   const updateReference = ({
+    source,
     field,
     arrayId,
     sourceId,
   }: {
+    source: SourceType;
     field: Path<T>;
     arrayId?: number;
     sourceId?: number;
