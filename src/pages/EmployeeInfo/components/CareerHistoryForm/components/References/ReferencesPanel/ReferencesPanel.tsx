@@ -26,6 +26,7 @@ import { CareerType } from "../../../../../../../model/career/Career";
 import { Path, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getExistingReference } from "../utils";
+import { useReferenceStateContext2 } from "../References2";
 
 export const ReferencesPanel = () => {
   const { classes } = useStyles();
@@ -149,6 +150,11 @@ export const ReferencesPanel = () => {
     setSourceId(undefined);
     setPopupMode("read");
   });
+
+  const referenceStateContext2 = useReferenceStateContext2();
+
+  console.log("-- look here --");
+  console.log(referenceStateContext2);
 
   return (
     <Popover.Dropdown p={30}>

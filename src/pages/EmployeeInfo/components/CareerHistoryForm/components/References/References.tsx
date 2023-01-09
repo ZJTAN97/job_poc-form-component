@@ -60,50 +60,6 @@ export const ReferenceStateContext = React.createContext<
   ReferencesStateMethods | undefined
 >(undefined);
 
-enum ReferenceStateModes {
-  EDIT = "EDIT",
-  MASS = "MASS",
-  RESET = "RESET",
-}
-
-interface ReferenceState {
-  openPanel: boolean;
-  currentField?: string;
-  currentArrayId?: number;
-}
-
-type ReferenceActions = ReferenceState & {
-  type: ReferenceStateModes;
-};
-
-const initialReferenceState: ReferenceState = {
-  openPanel: false,
-  currentField: undefined,
-  currentArrayId: undefined,
-};
-
-function referenceStaterReducer(
-  state: ReferenceState,
-  action: ReferenceActions,
-): ReferenceState {
-  const { type, ...payload } = action;
-
-  switch (type) {
-    case ReferenceStateModes.EDIT:
-      return {
-        ...state,
-        currentField: action.currentField,
-        currentArrayId: action.currentArrayId,
-      };
-
-    case ReferenceStateModes.RESET:
-      return initialReferenceState;
-
-    default:
-      return initialReferenceState;
-  }
-}
-
 /** Think of it as using the initial values */
 export const useReferencesStateMethods = (): ReferencesStateMethods => {
   const [openPanel, setOpenPanel] = React.useState(false);
@@ -115,12 +71,6 @@ export const useReferencesStateMethods = (): ReferencesStateMethods => {
   const [isMassApply, setIsMassApply] = React.useState(false);
   const [massApplyingFields, handleMassApplyingFields] =
     useListState<MassApplyingFields>();
-
-  // reducer test
-  const [state, dispatch] = React.useReducer(
-    referenceStaterReducer,
-    initialReferenceState,
-  );
 
   return {
     openPanel,
