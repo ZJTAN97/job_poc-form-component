@@ -89,5 +89,9 @@ export const useReferencesStateMethods = (): ReferencesStateMethods => {
 };
 
 /** Think of it as using the current values after much manipulation */
-export const useReferenceStateContext = () =>
-  React.useContext(ReferenceStateContext);
+export const useReferenceStateContext = () => {
+  const context = React.useContext(ReferenceStateContext);
+  if (context === undefined)
+    throw new Error("Context must be used within provider");
+  return context;
+};

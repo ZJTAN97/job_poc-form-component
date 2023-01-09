@@ -37,7 +37,7 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
   const { classes } = useStyles();
   const referenceStateContext = useReferenceStateContext();
   const { openPanel, currentField, currentArrayId, massApplyingFields } =
-    referenceStateContext!;
+    referenceStateContext;
   const { control, formState } = useFormContext<T>();
   const { errors } = formState;
 

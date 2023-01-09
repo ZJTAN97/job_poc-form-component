@@ -19,7 +19,7 @@ export function GetReferenceTypeKey(value: string) {
 
 export const Source = z.object({
   dateObtained: z.string().min(1, "Cannot be empty"),
-  referenceType: z.nativeEnum(TYPES_OF_REFERENCES),
+  referenceType: z.nativeEnum(TYPES_OF_REFERENCES).optional(),
   comment: z.string(),
 });
 

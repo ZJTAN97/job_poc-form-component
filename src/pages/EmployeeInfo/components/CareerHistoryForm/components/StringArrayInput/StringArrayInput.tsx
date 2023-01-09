@@ -33,7 +33,7 @@ export const StringArrayInput = <T extends FieldValues>({
   const { classes } = useStyles();
   const referenceStateContext = useReferenceStateContext();
   const { openPanel, currentField, currentArrayId, massApplyingFields } =
-    referenceStateContext!;
+    referenceStateContext;
   const { control, formState, getValues, setValue } = useFormContext<T>();
   const { errors } = formState;
   const { field } = useController({
