@@ -18,10 +18,14 @@ export const getExistingReference = <T extends FieldValues>({
 
   for (let value of Object.values(remainingFields)) {
     if (typeof value === "object") {
-      if (!Array.isArray(value)) {
+      if (!Array.isArray(value) && value !== null) {
         // 2. Handles Single Object References
         collatedReferences.push(...value.references);
-      } else if (Array.isArray(value) && typeof value[0] === "object") {
+      } else if (
+        Array.isArray(value) &&
+        typeof value[0] === "object" &&
+        value !== null
+      ) {
         // 3. Handles Array Object References
         value.map((obj) => collatedReferences.push(...obj.references));
       }

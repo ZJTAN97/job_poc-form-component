@@ -6,7 +6,6 @@ import { AppointmentType } from "../../../../../../../model/career/Appointment";
 import { CertificationType } from "../../../../../../../model/career/Certification";
 import { Button, Checkbox, Textarea } from "@mantine/core";
 import { IconCirclePlus } from "@tabler/icons";
-import React from "react";
 import { getExistingReference } from "../utils";
 
 interface ReferencesTriggerProp {
