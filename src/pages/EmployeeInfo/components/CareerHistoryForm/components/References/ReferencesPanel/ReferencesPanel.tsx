@@ -1,5 +1,4 @@
 import React from "react";
-import { useReferenceStateContext } from "../References";
 import {
   ButtonRow,
   ReferenceCard,
@@ -26,36 +25,20 @@ import { CareerType } from "../../../../../../../model/career/Career";
 import { Path, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getExistingReference } from "../utils";
-import { useReferenceStateContextNew } from "../References2";
+import { useReferenceStateContext } from "../References";
 
 export const ReferencesPanel = () => {
   const { classes } = useStyles();
 
-  const referenceStateContextNew = useReferenceStateContextNew();
+  const referenceStateContextNew = useReferenceStateContext();
   const {
     dispatch,
-    openPanel,
     currentArrayId,
     currentField,
+    isMassApply,
     massAppliedFields,
+    setMassAppliedFields,
   } = referenceStateContextNew;
-
-  const [lastSource, setLastSource] = React.useState<SourceType>();
-
-  // const referenceStateContext = useReferenceStateContext();
-  // const {
-  //   currentField,
-  //   setCurrentField,
-  //   setOpenPanel,
-  //   currentArrayId,
-  //   setCurrentArrayId,
-  //   lastSource,
-  //   setLastSource,
-  //   isMassApply,
-  //   setIsMassApply,
-  //   massApplyingFields,
-  //   handleMassApplyingFields,
-  // } = referenceStateContext;
 
   const sourceFormMethod = useForm<SourceType>({
     resolver: zodResolver(Source),
@@ -89,38 +72,21 @@ export const ReferencesPanel = () => {
     dispatch({
       type: "RESET_ALL",
     });
-    // setCurrentField(undefined);
-    // setCurrentArrayId(undefined);
-    // setOpenPanel(false);
-    if (massAppliedFields) {
-      // handleMassApplyingFields.setState([]);
-      // setIsMassApply(false);
-    }
-  };
-
-  const applyLastSource = () => {
-    if (lastSource) {
-      sourceFormMethod.setValue("referenceType", lastSource.referenceType);
-      sourceFormMethod.setValue("dateObtained", lastSource.dateObtained);
-      if (lastSource.comment.length > 0) {
-        setShowCommentsInput(true);
-        sourceFormMethod.setValue("comment", lastSource.comment);
-      }
-      console.log("[INFO ] Applied last filled references");
-    }
+    setMassAppliedFields.setState([]);
   };
 
   const handleMassApply = sourceFormMethod.handleSubmit(async (data) => {
-    // massApplyingFields.forEach(({ field, arrayId }) => {
-    //   updateReference({
-    //     source: data,
-    //     field,
-    //     arrayId,
-    //   });
-    // });
-    // setOpenPanel(false);
-    // setIsMassApply(false);
-    // handleMassApplyingFields.setState([]);
+    massAppliedFields.forEach(({ field, arrayId }) => {
+      updateReference({
+        source: data,
+        field,
+        arrayId,
+      });
+    });
+    setMassAppliedFields.setState([]);
+    dispatch({
+      type: "RESET_ALL",
+    });
   });
 
   const editSource = (id: number) => {
@@ -152,17 +118,16 @@ export const ReferencesPanel = () => {
     sourceFormMethod.reset();
   };
 
-  const applySources = sourceFormMethod.handleSubmit(async (data) => {
+  const applySources = sourceFormMethod.handleSubmit((data) => {
     updateReference({
       source: data,
       field: currentField as Path<CareerType>,
       arrayId: currentArrayId,
       sourceId,
     });
-    setLastSource(data);
-    sourceFormMethod.reset();
     setSourceId(undefined);
     setPopupMode("read");
+    sourceFormMethod.reset();
   });
 
   return (
@@ -181,17 +146,6 @@ export const ReferencesPanel = () => {
 
       {popupMode === "edit" ? (
         <Form methods={sourceFormMethod} preventLeaving useLocalStorage>
-          {lastSource && (
-            <Button
-              size="xs"
-              variant="subtle"
-              p={0}
-              mt={10}
-              onClick={applyLastSource}
-            >
-              Apply last source
-            </Button>
-          )}
           <Form.Dropdown
             data={Object.values(TYPES_OF_REFERENCES)}
             mt={20}
@@ -262,8 +216,7 @@ export const ReferencesPanel = () => {
           }}
           size={"xs"}
           variant="outline"
-          // onClick={massAppliedFields ? handleMassApply : applySources}
-          onClick={applySources}
+          onClick={isMassApply ? handleMassApply : applySources}
           disabled={popupMode === "read" || !sourceFormMethod.formState.isValid}
         >
           Apply

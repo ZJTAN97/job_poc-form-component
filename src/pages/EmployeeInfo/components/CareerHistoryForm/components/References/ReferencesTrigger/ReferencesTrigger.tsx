@@ -1,4 +1,3 @@
-import { MassApplyingFields, useReferenceStateContext } from "../References";
 import { TriggerRow, useStyles } from "./styles";
 import { useFormContext, Path } from "react-hook-form";
 import { CareerType } from "../../../../../../../model/career/Career";
@@ -7,7 +6,7 @@ import { CertificationType } from "../../../../../../../model/career/Certificati
 import { Button, Checkbox, Textarea } from "@mantine/core";
 import { IconCirclePlus } from "@tabler/icons";
 import { getExistingReference } from "../utils";
-import { useReferenceStateContextNew } from "../References2";
+import { MassApplyingFields, useReferenceStateContext } from "../References";
 
 interface ReferencesTriggerProp {
   /** Field Name required to filter which references to show for this component instance */
@@ -28,27 +27,16 @@ export const ReferencesTrigger = ({
 
   const formContext = useFormContext<CareerType>();
 
-  const referenceStateContextNew = useReferenceStateContextNew();
+  const referenceStateContextNew = useReferenceStateContext();
   const {
     dispatch,
     openPanel,
     currentArrayId,
     currentField,
+    isMassApply,
     massAppliedFields,
+    setMassAppliedFields,
   } = referenceStateContextNew;
-
-  // const referenceStateContext = useReferenceStateContext();
-  // const {
-  //   openPanel,
-  //   setOpenPanel,
-  //   currentArrayId,
-  //   setCurrentArrayId,
-  //   currentField,
-  //   setCurrentField,
-  //   isMassApply,
-  //   massApplyingFields,
-  //   handleMassApplyingFields,
-  // } = referenceStateContext;
 
   const handlePanelOpen = () => {
     dispatch({
@@ -56,13 +44,6 @@ export const ReferencesTrigger = ({
       currentField: field,
       currentArrayId: arrId,
     });
-    // setOpenPanel(true);
-    // setCurrentField(field);
-    // if (arrId !== undefined) {
-    //   setCurrentArrayId(arrId);
-    // } else {
-    //   setCurrentArrayId(undefined);
-    // }
   };
 
   const existingReference = getExistingReference({
@@ -71,20 +52,23 @@ export const ReferencesTrigger = ({
     arrayId: arrId,
   });
 
+  console.log("-- look here --");
+  console.log(formContext.getValues());
+
   const handleCheckBox = (checked: boolean) => {
-    // const checkedItem: MassApplyingFields = {
-    //   field,
-    //   arrayId: arrId,
-    // };
-    // if (checked) {
-    //   handleMassApplyingFields.append(checkedItem);
-    // } else {
-    //   handleMassApplyingFields.setState((current) =>
-    //     current.filter(
-    //       (item) => JSON.stringify(item) !== JSON.stringify(checkedItem),
-    //     ),
-    //   );
-    // }
+    const checkedItem: MassApplyingFields = {
+      field,
+      arrayId: arrId,
+    };
+    if (checked) {
+      setMassAppliedFields.append(checkedItem);
+    } else {
+      setMassAppliedFields.setState((current) =>
+        current.filter(
+          (item) => JSON.stringify(item) !== JSON.stringify(checkedItem),
+        ),
+      );
+    }
   };
 
   const referencesErrors = formContext.formState.errors as unknown as {
@@ -95,7 +79,7 @@ export const ReferencesTrigger = ({
     <>
       {openPanel || existingReference.stringText ? (
         <TriggerRow>
-          {massAppliedFields && disabled ? (
+          {isMassApply && disabled ? (
             <Checkbox
               mt={30}
               ml={10}

@@ -17,11 +17,6 @@ import { ObjectArrayInput } from "./components/ObjectArrayInput";
 import { CertificationType } from "../../../../model/career/Certification";
 
 import { IconEditCircle } from "@tabler/icons";
-import {
-  MassApplyingFields,
-  ReferenceStateContext,
-  useReferencesStateMethods,
-} from "./components/References";
 import { ReferencesTrigger } from "./components/References/ReferencesTrigger";
 import { ReferencesPanel } from "./components/References/ReferencesPanel";
 import React from "react";
@@ -29,8 +24,7 @@ import { AppointmentType } from "../../../../model/career/Appointment";
 import {
   ReferenceStateProvider,
   useReferenceState,
-} from "./components/References/References2";
-import { useListState } from "@mantine/hooks";
+} from "./components/References/References";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -51,24 +45,10 @@ export const CareerHistoryForm = ({
     openPanel,
     currentArrayId,
     currentField,
+    isMassApply,
     massAppliedFields,
     setMassAppliedFields,
   } = referenceState;
-
-  // const [massAppliedFields, setMassAppliedFields] =
-  //   useListState<MassApplyingFields>(undefined);
-
-  // const referenceStateMethods = useReferencesStateMethods();
-  // const {
-  //   openPanel,
-  //   setOpenPanel,
-  //   currentField,
-  //   currentArrayId,
-  //   massApplyingFields,
-  //   handleMassApplyingFields,
-  //   isMassApply,
-  //   setIsMassApply,
-  // } = referenceStateMethods;
 
   // to transform skills content
   const transformedSelectedCareerValue: CareerType | undefined =
@@ -188,10 +168,16 @@ export const CareerHistoryForm = ({
   });
 
   const handleMassApply = () => {
-    // setIsMassApply(!isMassApply);
-    // setOpenPanel(!isMassApply);
-    // handleMassApplyingFields.setState([]);
     setMassAppliedFields.setState([]);
+    if (isMassApply) {
+      dispatch({
+        type: "RESET_ALL",
+      });
+    } else {
+      dispatch({
+        type: "MASS_ADD",
+      });
+    }
   };
 
   const handleSelectAll = (checked: boolean) => {
@@ -242,7 +228,7 @@ export const CareerHistoryForm = ({
     }
   };
 
-  console.info(careerFormMethods.getValues());
+  // console.info(careerFormMethods.getValues());
   // console.info(careerFormMethods.formState.errors);
 
   return (
@@ -252,7 +238,6 @@ export const CareerHistoryForm = ({
         preventLeaving={true}
         useLocalStorage={true}
       >
-        {/* <ReferenceStateContext.Provider value={referenceStateMethods}> */}
         <Popover
           opened={openPanel}
           position="right"
@@ -272,13 +257,13 @@ export const CareerHistoryForm = ({
               onClick={handleMassApply}
               leftIcon={<IconEditCircle />}
             >
-              {massAppliedFields ? "Exit mass apply" : "Mass apply"}
+              {isMassApply ? "Exit mass apply" : "Mass apply"}
             </Button>
           </TitleContainer>
 
           <Popover.Target>
             <MainContainer>
-              {massAppliedFields ? (
+              {isMassApply ? (
                 <SelectAll>
                   <Text size={"xs"}>Select all</Text>
                   <Checkbox
@@ -438,7 +423,6 @@ export const CareerHistoryForm = ({
             </MainContainer>
           </Popover.Target>
         </Popover>
-        {/* </ReferenceStateContext.Provider> */}
       </Form>
     </ReferenceStateProvider>
   );
