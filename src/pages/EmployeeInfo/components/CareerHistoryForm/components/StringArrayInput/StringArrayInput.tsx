@@ -11,7 +11,7 @@ import {
   ArrayPath,
   PathValue,
 } from "react-hook-form";
-import { useReferenceStateContext } from "../References";
+import { useReferenceStateContext } from "../References/References";
 import {
   ArrayContainer,
   ArrayRow,
@@ -31,9 +31,11 @@ export const StringArrayInput = <T extends FieldValues>({
   referenceTrigger,
 }: StringArrayInputProps<T>) => {
   const { classes } = useStyles();
-  const referenceStateContext = useReferenceStateContext();
-  const { openPanel, currentField, currentArrayId, massApplyingFields } =
-    referenceStateContext!;
+
+  const referenceStateContextNew = useReferenceStateContext();
+  const { openPanel, currentArrayId, currentField, massAppliedFields } =
+    referenceStateContextNew;
+
   const { control, formState, getValues, setValue } = useFormContext<T>();
   const { errors } = formState;
   const { field } = useController({
@@ -105,7 +107,7 @@ export const StringArrayInput = <T extends FieldValues>({
           key={"string_array_" + id}
           highlight={
             (openPanel && currentArrayId === id && currentField === name) ||
-            massApplyingFields.filter(
+            massAppliedFields.filter(
               (item) => item.field === name && item.arrayId === id,
             ).length === 1
           }

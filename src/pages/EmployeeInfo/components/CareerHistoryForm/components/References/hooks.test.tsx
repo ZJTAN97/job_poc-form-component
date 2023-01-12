@@ -1,7 +1,10 @@
-import { renderHook } from "@testing-library/react";
-import { TYPES_OF_REFERENCES } from "../../../../../../model/common/Source";
-import { useExistingReference, useUpdateReferences } from "./hooks";
-import { useForm } from "react-hook-form";
+import { render, renderHook } from "@testing-library/react";
+import {
+  SourceType,
+  TYPES_OF_REFERENCES,
+} from "../../../../../../model/common/Source";
+import { useUpdateReferences } from "./hooks";
+import { useForm, FormProvider, Path } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Career, CareerType } from "../../../../../../model/career/Career";
 
@@ -9,6 +12,11 @@ const mockSourceValue = (() => ({
   referenceType: TYPES_OF_REFERENCES.FACEBOOK,
   comment: "",
   dateObtained: "11/11/2011",
+}))();
+
+const mockDeleteSourceValue = (() => ({
+  comment: "",
+  dateObtained: "",
 }))();
 
 const mockEditedSourceValue = (() => ({
@@ -107,55 +115,44 @@ const mockFormMethods = (() => {
   return result.current;
 })();
 
-describe("hooks/useExistingReference", () => {
-  it("No references matches", () => {
-    const formValue = mockFormMethods.getValues();
-    const { result } = renderHook(() =>
-      useExistingReference({
-        formValue,
-        field: "lastDrawnSalary",
-      }),
-    );
-    expect(result.current.stringText).toBe("");
-    expect(result.current.filteredReference).toBeUndefined();
-  });
+const WrappedFormProvider = ({ children }: { children: React.ReactNode }) => {
+  return <FormProvider {...mockFormMethods}>{children}</FormProvider>;
+};
 
-  it("Reference match with single source", () => {
-    const formValue = mockFormMethods.getValues();
-    const { result } = renderHook(() =>
-      useExistingReference({
-        field: "duration",
-        formValue,
-      }),
-    );
-    expect(result.current.stringText).toBe(`FACEBOOK\n11/11/2011`);
+const UseUpdateReferenceTestComponent = ({
+  field,
+  arrayId,
+  sourceId,
+  source,
+}: {
+  field: Path<CareerType>;
+  arrayId?: number;
+  sourceId?: number;
+  source: SourceType;
+}) => {
+  const { updateReference } = useUpdateReferences<CareerType>();
+  updateReference({
+    field,
+    arrayId,
+    sourceId,
+    source,
   });
-
-  it("Reference match with multiple sources", () => {
-    const formValue = mockFormMethods.getValues();
-    const { result } = renderHook(() =>
-      useExistingReference({
-        field: "company",
-        formValue,
-      }),
-    );
-    expect(result.current.stringText).toBe(`FACEBOOK\n11/11/2011 + 1 more`);
-    expect(result.current.filteredReference.sources).toHaveLength(2);
-  });
-});
+  return null;
+};
 
 describe("hooks/useUpdateReference", () => {
   describe("CRUD references for single object type", () => {
-    it("create source", () => {
-      const { result } = renderHook(() =>
-        useUpdateReferences({
-          formMethods: mockFormMethods,
-          field: "position",
-          source: mockSourceValue,
-        }),
-      );
-      result.current.updateReference();
+    beforeEach(() => {});
 
+    it("create source", () => {
+      render(
+        <WrappedFormProvider>
+          <UseUpdateReferenceTestComponent
+            field={"position" as Path<CareerType>}
+            source={mockSourceValue}
+          />
+        </WrappedFormProvider>,
+      );
       expect(mockFormMethods.getValues().appointment.references.length).toBe(1);
       expect(
         mockFormMethods
@@ -166,16 +163,15 @@ describe("hooks/useUpdateReference", () => {
     });
 
     it("update existing source", () => {
-      const { result } = renderHook(() =>
-        useUpdateReferences({
-          formMethods: mockFormMethods,
-          field: "position",
-          source: mockEditedSourceValue,
-          sourceId: 0,
-        }),
+      render(
+        <WrappedFormProvider>
+          <UseUpdateReferenceTestComponent
+            field={"position" as Path<CareerType>}
+            sourceId={0}
+            source={mockEditedSourceValue}
+          />
+        </WrappedFormProvider>,
       );
-      result.current.updateReference();
-
       expect(
         mockFormMethods
           .getValues()
@@ -185,15 +181,15 @@ describe("hooks/useUpdateReference", () => {
     });
 
     it("delete source", () => {
-      const { result } = renderHook(() =>
-        useUpdateReferences({
-          formMethods: mockFormMethods,
-          field: "position",
-          sourceId: 0,
-        }),
+      render(
+        <WrappedFormProvider>
+          <UseUpdateReferenceTestComponent
+            field={"position" as Path<CareerType>}
+            sourceId={0}
+            source={mockDeleteSourceValue}
+          />
+        </WrappedFormProvider>,
       );
-      result.current.updateReference();
-
       expect(
         mockFormMethods
           .getValues()
@@ -208,15 +204,14 @@ describe("hooks/useUpdateReference", () => {
 
   describe("CRUD references for string type", () => {
     it("create source", () => {
-      const { result } = renderHook(() =>
-        useUpdateReferences({
-          formMethods: mockFormMethods,
-          field: "duration",
-          source: mockSourceValue,
-        }),
+      render(
+        <WrappedFormProvider>
+          <UseUpdateReferenceTestComponent
+            field={"duration"}
+            source={mockSourceValue}
+          />
+        </WrappedFormProvider>,
       );
-      result.current.updateReference();
-
       expect(
         mockFormMethods
           .getValues()
@@ -225,16 +220,15 @@ describe("hooks/useUpdateReference", () => {
     });
 
     it("update existing source", () => {
-      const { result } = renderHook(() =>
-        useUpdateReferences({
-          formMethods: mockFormMethods,
-          field: "duration",
-          source: mockEditedSourceValue,
-          sourceId: 1,
-        }),
+      render(
+        <WrappedFormProvider>
+          <UseUpdateReferenceTestComponent
+            field={"duration"}
+            source={mockEditedSourceValue}
+            sourceId={1}
+          />
+        </WrappedFormProvider>,
       );
-      result.current.updateReference();
-
       expect(
         mockFormMethods
           .getValues()
@@ -243,15 +237,15 @@ describe("hooks/useUpdateReference", () => {
     });
 
     it("delete source", () => {
-      const { result } = renderHook(() =>
-        useUpdateReferences({
-          formMethods: mockFormMethods,
-          field: "duration",
-          sourceId: 1,
-        }),
+      render(
+        <WrappedFormProvider>
+          <UseUpdateReferenceTestComponent
+            field={"duration"}
+            source={mockDeleteSourceValue}
+            sourceId={1}
+          />
+        </WrappedFormProvider>,
       );
-      result.current.updateReference();
-
       expect(
         mockFormMethods
           .getValues()
@@ -266,16 +260,15 @@ describe("hooks/useUpdateReference", () => {
 
   describe("CRUD references for string array type", () => {
     it("create source", () => {
-      const { result } = renderHook(() =>
-        useUpdateReferences({
-          formMethods: mockFormMethods,
-          field: "skills",
-          source: mockSourceValue,
-          arrayId: 0,
-        }),
+      render(
+        <WrappedFormProvider>
+          <UseUpdateReferenceTestComponent
+            field={"skills"}
+            source={mockSourceValue}
+            arrayId={0}
+          />
+        </WrappedFormProvider>,
       );
-      result.current.updateReference();
-
       expect(
         mockFormMethods
           .getValues()
@@ -286,17 +279,16 @@ describe("hooks/useUpdateReference", () => {
     });
 
     it("update existing source", () => {
-      const { result } = renderHook(() =>
-        useUpdateReferences({
-          formMethods: mockFormMethods,
-          field: "skills",
-          source: mockEditedSourceValue,
-          arrayId: 1,
-          sourceId: 0,
-        }),
+      render(
+        <WrappedFormProvider>
+          <UseUpdateReferenceTestComponent
+            field={"skills"}
+            source={mockEditedSourceValue}
+            arrayId={1}
+            sourceId={0}
+          />
+        </WrappedFormProvider>,
       );
-      result.current.updateReference();
-
       expect(
         mockFormMethods
           .getValues()
@@ -307,16 +299,16 @@ describe("hooks/useUpdateReference", () => {
     });
 
     it("delete source", () => {
-      const { result } = renderHook(() =>
-        useUpdateReferences({
-          formMethods: mockFormMethods,
-          field: "skills",
-          arrayId: 1,
-          sourceId: 1,
-        }),
+      render(
+        <WrappedFormProvider>
+          <UseUpdateReferenceTestComponent
+            field={"skills"}
+            source={mockDeleteSourceValue}
+            arrayId={1}
+            sourceId={1}
+          />
+        </WrappedFormProvider>,
       );
-      result.current.updateReference();
-
       expect(
         mockFormMethods
           .getValues()
@@ -333,16 +325,15 @@ describe("hooks/useUpdateReference", () => {
 
   describe("CRUD references for object array type", () => {
     it("create source", () => {
-      const { result } = renderHook(() =>
-        useUpdateReferences({
-          formMethods: mockFormMethods,
-          field: "name",
-          source: mockSourceValue,
-          arrayId: 0,
-        }),
+      render(
+        <WrappedFormProvider>
+          <UseUpdateReferenceTestComponent
+            field={"name" as Path<CareerType>}
+            source={mockSourceValue}
+            arrayId={0}
+          />
+        </WrappedFormProvider>,
       );
-      result.current.updateReference();
-
       expect(
         mockFormMethods
           .getValues()
@@ -352,17 +343,16 @@ describe("hooks/useUpdateReference", () => {
     });
 
     it("update existing source", () => {
-      const { result } = renderHook(() =>
-        useUpdateReferences({
-          formMethods: mockFormMethods,
-          field: "name",
-          source: mockEditedSourceValue,
-          arrayId: 0,
-          sourceId: 1,
-        }),
+      render(
+        <WrappedFormProvider>
+          <UseUpdateReferenceTestComponent
+            field={"name" as Path<CareerType>}
+            source={mockEditedSourceValue}
+            arrayId={0}
+            sourceId={1}
+          />
+        </WrappedFormProvider>,
       );
-      result.current.updateReference();
-
       expect(
         mockFormMethods
           .getValues()
@@ -372,16 +362,16 @@ describe("hooks/useUpdateReference", () => {
     });
 
     it("delete source", () => {
-      const { result } = renderHook(() =>
-        useUpdateReferences({
-          formMethods: mockFormMethods,
-          field: "name",
-          arrayId: 0,
-          sourceId: 1,
-        }),
+      render(
+        <WrappedFormProvider>
+          <UseUpdateReferenceTestComponent
+            field={"name" as Path<CareerType>}
+            source={mockDeleteSourceValue}
+            arrayId={0}
+            sourceId={1}
+          />
+        </WrappedFormProvider>,
       );
-      result.current.updateReference();
-
       expect(
         mockFormMethods
           .getValues()

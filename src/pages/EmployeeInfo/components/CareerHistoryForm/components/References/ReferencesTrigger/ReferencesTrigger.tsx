@@ -1,13 +1,12 @@
-import { MassApplyingFields, useReferenceStateContext } from "../References";
 import { TriggerRow, useStyles } from "./styles";
 import { useFormContext, Path } from "react-hook-form";
 import { CareerType } from "../../../../../../../model/career/Career";
 import { AppointmentType } from "../../../../../../../model/career/Appointment";
 import { CertificationType } from "../../../../../../../model/career/Certification";
 import { Button, Checkbox, Textarea } from "@mantine/core";
-import { useExistingReference } from "../hooks";
 import { IconCirclePlus } from "@tabler/icons";
-import React from "react";
+import { getExistingReference } from "../utils";
+import { MassApplyingFields, useReferenceStateContext } from "../References";
 
 interface ReferencesTriggerProp {
   /** Field Name required to filter which references to show for this component instance */
@@ -26,33 +25,29 @@ export const ReferencesTrigger = ({
 }: ReferencesTriggerProp) => {
   const { classes } = useStyles();
 
-  const referenceStateContext = useReferenceStateContext();
   const formContext = useFormContext<CareerType>();
 
+  const referenceStateContextNew = useReferenceStateContext();
   const {
+    dispatch,
     openPanel,
-    setOpenPanel,
     currentArrayId,
-    setCurrentArrayId,
     currentField,
-    setCurrentField,
     isMassApply,
-    massApplyingFields,
-    handleMassApplyingFields,
-  } = referenceStateContext!;
+    massAppliedFields,
+    setMassAppliedFields,
+  } = referenceStateContextNew;
 
   const handlePanelOpen = () => {
-    setOpenPanel(true);
-    setCurrentField(field);
-    if (arrId !== undefined) {
-      setCurrentArrayId(arrId);
-    } else {
-      setCurrentArrayId(undefined);
-    }
+    dispatch({
+      type: "EDIT_ONE",
+      currentField: field,
+      currentArrayId: arrId,
+    });
   };
 
-  const existingReference = useExistingReference({
-    formValue: formContext.getValues(),
+  const existingReference = getExistingReference({
+    formMethodValue: formContext.getValues(),
     field: field as Path<CareerType>,
     arrayId: arrId,
   });
@@ -62,11 +57,10 @@ export const ReferencesTrigger = ({
       field,
       arrayId: arrId,
     };
-
     if (checked) {
-      handleMassApplyingFields.append(checkedItem);
+      setMassAppliedFields.append(checkedItem);
     } else {
-      handleMassApplyingFields.setState((current) =>
+      setMassAppliedFields.setState((current) =>
         current.filter(
           (item) => JSON.stringify(item) !== JSON.stringify(checkedItem),
         ),
@@ -88,7 +82,7 @@ export const ReferencesTrigger = ({
               ml={10}
               mr={10}
               checked={
-                massApplyingFields.filter(
+                massAppliedFields.filter(
                   (item) => item.field === field && item.arrayId === arrId,
                 ).length === 1
               }

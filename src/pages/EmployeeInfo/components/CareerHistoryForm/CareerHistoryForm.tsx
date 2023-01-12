@@ -17,14 +17,14 @@ import { ObjectArrayInput } from "./components/ObjectArrayInput";
 import { CertificationType } from "../../../../model/career/Certification";
 
 import { IconEditCircle } from "@tabler/icons";
-import {
-  ReferenceStateContext,
-  useReferencesStateMethods,
-} from "./components/References";
 import { ReferencesTrigger } from "./components/References/ReferencesTrigger";
 import { ReferencesPanel } from "./components/References/ReferencesPanel";
 import React from "react";
 import { AppointmentType } from "../../../../model/career/Appointment";
+import {
+  ReferenceStateProvider,
+  useReferenceState,
+} from "./components/References/References";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -38,17 +38,17 @@ export const CareerHistoryForm = ({
   const { classes } = useStyles();
 
   const { saveOrCreateCareer } = useSaveOrCreateCareer();
-  const referenceStateMethods = useReferencesStateMethods();
+
+  const referenceState = useReferenceState();
   const {
+    dispatch,
     openPanel,
-    setOpenPanel,
-    currentField,
     currentArrayId,
-    massApplyingFields,
-    handleMassApplyingFields,
+    currentField,
     isMassApply,
-    setIsMassApply,
-  } = referenceStateMethods;
+    massAppliedFields,
+    setMassAppliedFields,
+  } = referenceState;
 
   // to transform skills content
   const transformedSelectedCareerValue: CareerType | undefined =
@@ -168,9 +168,16 @@ export const CareerHistoryForm = ({
   });
 
   const handleMassApply = () => {
-    setIsMassApply(!isMassApply);
-    setOpenPanel(!isMassApply);
-    handleMassApplyingFields.setState([]);
+    setMassAppliedFields.setState([]);
+    if (isMassApply) {
+      dispatch({
+        type: "RESET_ALL",
+      });
+    } else {
+      dispatch({
+        type: "MASS_ADD",
+      });
+    }
   };
 
   const handleSelectAll = (checked: boolean) => {
@@ -178,18 +185,17 @@ export const CareerHistoryForm = ({
       for (const [key, value] of Object.entries(
         careerFormMethods.getValues(),
       )) {
-        // Probably need to standardise dirty fields to check length of content instead.
         if (
           (key === "company" || key === "duration") &&
           value.toString().length > 0
         ) {
-          handleMassApplyingFields.append({
+          setMassAppliedFields.append({
             field: key,
           });
         } else if (key === "appointment") {
           Object.values(value).forEach((item, id) => {
-            if (item.length > 0) {
-              handleMassApplyingFields.append({
+            if (item.length > 0 && Object.keys(value)[id] !== "references") {
+              setMassAppliedFields.append({
                 field: Object.keys(value)[id] as Path<AppointmentType>,
               });
             }
@@ -197,7 +203,7 @@ export const CareerHistoryForm = ({
         } else if (key === "skills") {
           (value as string[]).forEach((item, id) => {
             if (item.length > 0) {
-              handleMassApplyingFields.append({
+              setMassAppliedFields.append({
                 field: key,
                 arrayId: id,
               });
@@ -206,8 +212,8 @@ export const CareerHistoryForm = ({
         } else if (key === "certsToField") {
           (value as CertificationType[]).forEach((cert, certId) => {
             Object.values(cert).forEach((value, id) => {
-              if (value.length > 0) {
-                handleMassApplyingFields.append({
+              if (value.length > 0 && Object.keys(cert)[id] !== "references") {
+                setMassAppliedFields.append({
                   field: Object.keys(cert)[id] as Path<CertificationType>,
                   arrayId: certId,
                 });
@@ -217,20 +223,20 @@ export const CareerHistoryForm = ({
         }
       }
     } else {
-      handleMassApplyingFields.setState([]);
+      setMassAppliedFields.setState([]);
     }
   };
 
-  console.info(careerFormMethods.getValues());
+  // console.info(careerFormMethods.getValues());
   // console.info(careerFormMethods.formState.errors);
 
   return (
-    <Form<CareerType>
-      methods={careerFormMethods}
-      preventLeaving={true}
-      useLocalStorage={true}
-    >
-      <ReferenceStateContext.Provider value={referenceStateMethods}>
+    <ReferenceStateProvider value={referenceState}>
+      <Form<CareerType>
+        methods={careerFormMethods}
+        preventLeaving={true}
+        useLocalStorage={true}
+      >
         <Popover
           opened={openPanel}
           position="right"
@@ -245,8 +251,6 @@ export const CareerHistoryForm = ({
             <Button
               variant={"subtle"}
               size="xs"
-              pl={0}
-              mb={10}
               onClick={handleMassApply}
               leftIcon={<IconEditCircle />}
             >
@@ -269,7 +273,7 @@ export const CareerHistoryForm = ({
               <Row
                 highlight={
                   (openPanel && currentField === "company") ||
-                  massApplyingFields.filter((item) => item.field === "company")
+                  massAppliedFields?.filter((item) => item.field === "company")
                     .length === 1
                 }
               >
@@ -283,7 +287,7 @@ export const CareerHistoryForm = ({
                 />
                 <ReferencesTrigger
                   field="company"
-                  disabled={careerFormMethods.formState.dirtyFields.company}
+                  disabled={careerFormMethods.getValues().company.length > 0}
                 />
               </Row>
 
@@ -291,7 +295,7 @@ export const CareerHistoryForm = ({
               <Row
                 highlight={
                   (openPanel && currentField === "duration") ||
-                  massApplyingFields.filter((item) => item.field === "duration")
+                  massAppliedFields?.filter((item) => item.field === "duration")
                     .length === 1
                 }
               >
@@ -304,7 +308,7 @@ export const CareerHistoryForm = ({
                 />
                 <ReferencesTrigger
                   field="duration"
-                  disabled={careerFormMethods.formState.dirtyFields.duration}
+                  disabled={careerFormMethods.getValues().duration.length > 0}
                 />
               </Row>
 
@@ -323,7 +327,7 @@ export const CareerHistoryForm = ({
               <Row
                 highlight={
                   (openPanel && currentField === "position") ||
-                  massApplyingFields.filter((item) => item.field === "position")
+                  massAppliedFields?.filter((item) => item.field === "position")
                     .length === 1
                 }
               >
@@ -338,8 +342,8 @@ export const CareerHistoryForm = ({
                 <ReferencesTrigger
                   field="position"
                   disabled={
-                    careerFormMethods.formState.dirtyFields.appointment
-                      ?.position
+                    careerFormMethods.getValues().appointment.position.length >
+                    0
                   }
                 />
               </Row>
@@ -347,7 +351,7 @@ export const CareerHistoryForm = ({
               <Row
                 highlight={
                   (openPanel && currentField === "rank") ||
-                  massApplyingFields.filter((item) => item.field === "rank")
+                  massAppliedFields?.filter((item) => item.field === "rank")
                     .length === 1
                 }
               >
@@ -362,7 +366,7 @@ export const CareerHistoryForm = ({
                 <ReferencesTrigger
                   field="rank"
                   disabled={
-                    careerFormMethods.formState.dirtyFields.appointment?.rank
+                    careerFormMethods.getValues().appointment.rank.length > 0
                   }
                 />
               </Row>
@@ -416,7 +420,7 @@ export const CareerHistoryForm = ({
             </MainContainer>
           </Popover.Target>
         </Popover>
-      </ReferenceStateContext.Provider>
-    </Form>
+      </Form>
+    </ReferenceStateProvider>
   );
 };
