@@ -36,24 +36,22 @@ export const useUpdateReferences = <T extends FieldValues>() => {
       field === "skills" && existingReference && arrayId !== undefined;
 
     const updateExistingSources = () => {
-      if (existingReference) {
-        const isAddSource =
-          source.referenceType !== undefined && sourceId === undefined;
-        const isUpdateSource =
-          source.referenceType !== undefined && sourceId !== undefined;
-        const isDeleteSource =
-          source.referenceType === undefined && sourceId !== undefined;
+      const isAddSource =
+        source.referenceType !== undefined && sourceId === undefined;
+      const isUpdateSource =
+        source.referenceType !== undefined && sourceId !== undefined;
+      const isDeleteSource =
+        source.referenceType === undefined && sourceId !== undefined;
 
-        if (isAddSource) {
-          // add new
-          existingReference.sources.push(source);
-        } else if (isUpdateSource) {
-          // update
-          existingReference.sources[sourceId] = source;
-        } else if (isDeleteSource) {
-          // delete
-          existingReference.sources.splice(sourceId, 1);
-        }
+      if (isAddSource) {
+        // add new
+        existingReference.sources.push(source);
+      } else if (isUpdateSource) {
+        // update
+        existingReference.sources[sourceId] = source;
+      } else if (isDeleteSource) {
+        // delete
+        existingReference.sources.splice(sourceId, 1);
       }
     };
 
@@ -68,10 +66,6 @@ export const useUpdateReferences = <T extends FieldValues>() => {
           formMethods
             .getValues()
             .appointment.references.splice(referenceIndexToReplace, 1);
-        } else {
-          formMethods.getValues().appointment.references[
-            referenceIndexToReplace
-          ] = existingReference;
         }
       } else {
         formMethods.setValue(
@@ -92,21 +86,13 @@ export const useUpdateReferences = <T extends FieldValues>() => {
     // empty sources references are created/removed automatically
     // Refer to StringArrayInput.tsx for implementation
     else if (isArrayString) {
-      const referenceIndexToReplace = formMethods
-        .getValues()
-        .references.indexOf(existingReference);
       updateExistingSources();
-      formMethods.getValues().references[referenceIndexToReplace] =
-        existingReference;
     }
     // Handle Array Object Type
     else if (isArrayObject) {
       const selectedObject = formMethods.getValues().certsToField[arrayId];
       if (existingReference) {
-        const indexToReplace =
-          selectedObject.references.indexOf(existingReference);
         updateExistingSources();
-        selectedObject.references[indexToReplace] = existingReference;
       } else {
         selectedObject.references.push({
           field,
@@ -124,11 +110,7 @@ export const useUpdateReferences = <T extends FieldValues>() => {
     // Handle String Type
     else {
       if (existingReference) {
-        const indexToReplace = formMethods
-          .getValues()
-          .references.indexOf(existingReference);
         updateExistingSources();
-        formMethods.getValues().references[indexToReplace] = existingReference;
       } else {
         formMethods.setValue(
           "references" as Path<T>,

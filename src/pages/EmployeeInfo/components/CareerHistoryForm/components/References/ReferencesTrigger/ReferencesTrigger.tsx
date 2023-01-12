@@ -52,9 +52,6 @@ export const ReferencesTrigger = ({
     arrayId: arrId,
   });
 
-  console.log("-- look here --");
-  console.log(formContext.getValues());
-
   const handleCheckBox = (checked: boolean) => {
     const checkedItem: MassApplyingFields = {
       field,

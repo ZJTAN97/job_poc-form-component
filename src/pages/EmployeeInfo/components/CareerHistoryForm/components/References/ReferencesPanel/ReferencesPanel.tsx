@@ -116,6 +116,9 @@ export const ReferencesPanel = () => {
       sourceId: id,
     });
     sourceFormMethod.reset();
+    if (existingReference.sources.length === 0) {
+      setPopupMode("edit");
+    }
   };
 
   const applySources = sourceFormMethod.handleSubmit((data) => {
