@@ -1,6 +1,5 @@
 import { Button, TextInput } from "@mantine/core";
 import { IconCirclePlus, IconX } from "@tabler/icons";
-import React from "react";
 import {
   useFormContext,
   useController,
@@ -9,6 +8,7 @@ import {
   PathValue,
 } from "react-hook-form";
 import { useReferenceStateContext } from "../References/References";
+import { ReferencesTrigger } from "../References/ReferencesTrigger";
 import {
   ArrayContainer,
   ArrayRow,
@@ -21,18 +21,13 @@ import {
 interface ObjectArrayInputProps<T extends FieldValues, K extends FieldValues> {
   /** Available naming paths for Form Object */
   name: Path<T>;
-
   /** To set empty objects when adding input fields on UI */
   emptyObject: K;
-
-  /** Reference Trigger components to be tagged to each individual input field */
-  referenceTrigger: (id: number, name: Path<T> | Path<K>) => React.ReactNode;
 }
 
 export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
   name,
   emptyObject,
-  referenceTrigger,
 }: ObjectArrayInputProps<T, K>) => {
   const { classes } = useStyles();
 
@@ -117,7 +112,11 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
                 arrayErrors[id].name?.message
               }
             />
-            {referenceTrigger(id, "name" as Path<K>)}
+            <ReferencesTrigger
+              field={"name"}
+              disabled={field.value[id].name.length > 0}
+              arrId={id}
+            />
           </ArrayRow>
           <ArrayRow
             highlight={
@@ -146,7 +145,11 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
                 arrayErrors[id].issuedBy?.message
               }
             />
-            {referenceTrigger(id, "issuedBy" as Path<K>)}
+            <ReferencesTrigger
+              field={"issuedBy"}
+              disabled={field.value[id].issuedBy.length > 0}
+              arrId={id}
+            />
           </ArrayRow>
         </ObjectArrayRow>
       ))}

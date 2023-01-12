@@ -1,6 +1,5 @@
 import { TextInput } from "@mantine/core";
 import { IconCirclePlus, IconX } from "@tabler/icons";
-import React from "react";
 import {
   useFormContext,
   useController,
@@ -11,7 +10,9 @@ import {
   ArrayPath,
   PathValue,
 } from "react-hook-form";
+import { CareerType } from "../../../../../../model/career/Career";
 import { useReferenceStateContext } from "../References/References";
+import { ReferencesTrigger } from "../References/ReferencesTrigger";
 import {
   ArrayContainer,
   ArrayRow,
@@ -23,12 +24,10 @@ import {
 
 interface StringArrayInputProps<T extends FieldValues> {
   name: Path<T>;
-  referenceTrigger: (index: number) => React.ReactNode;
 }
 
 export const StringArrayInput = <T extends FieldValues>({
   name,
-  referenceTrigger,
 }: StringArrayInputProps<T>) => {
   const { classes } = useStyles();
 
@@ -139,7 +138,11 @@ export const StringArrayInput = <T extends FieldValues>({
               arrayErrors[id].message
             }
           />
-          {referenceTrigger(id)}
+          <ReferencesTrigger
+            field={name as Path<CareerType>}
+            disabled={val.length > 0}
+            arrId={id}
+          />
         </ArrayRow>
       ))}
     </ArrayContainer>

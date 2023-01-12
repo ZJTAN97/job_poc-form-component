@@ -372,18 +372,7 @@ export const CareerHistoryForm = ({
               </Row>
 
               {/* SKILLS  */}
-              <StringArrayInput<CareerType>
-                name="skills"
-                referenceTrigger={(arrId) => (
-                  <ReferencesTrigger
-                    field="skills"
-                    disabled={
-                      careerFormMethods.getValues().skills[arrId].length > 1
-                    }
-                    arrId={arrId}
-                  />
-                )}
-              />
+              <StringArrayInput<CareerType> name="skills" />
 
               {/* CERTS  */}
               <ObjectArrayInput<CareerType, CertificationType>
@@ -393,19 +382,6 @@ export const CareerHistoryForm = ({
                   issuedBy: "",
                   references: [],
                 }}
-                referenceTrigger={(arrId, field) => (
-                  <ReferencesTrigger
-                    field={field}
-                    disabled={
-                      field === "issuedBy"
-                        ? careerFormMethods.getValues().certsToField[arrId]
-                            .issuedBy.length > 1
-                        : careerFormMethods.getValues().certsToField[arrId].name
-                            .length > 1
-                    }
-                    arrId={arrId}
-                  />
-                )}
               />
 
               <Button

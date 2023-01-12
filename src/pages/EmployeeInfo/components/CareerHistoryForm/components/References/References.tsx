@@ -33,7 +33,7 @@ interface ReferenceState {
   dispatch: React.Dispatch<ReferenceActions>;
 }
 
-const initialReferenceState: ReferenceState = {
+export const initialReferenceState: ReferenceState = {
   openPanel: false,
   currentField: undefined,
   currentArrayId: undefined,
