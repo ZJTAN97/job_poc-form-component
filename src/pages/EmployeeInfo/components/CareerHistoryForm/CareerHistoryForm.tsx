@@ -185,7 +185,6 @@ export const CareerHistoryForm = ({
       for (const [key, value] of Object.entries(
         careerFormMethods.getValues(),
       )) {
-        // TODO: need to standardise dirty fields to check length of content instead.
         if (
           (key === "company" || key === "duration") &&
           value.toString().length > 0
@@ -228,7 +227,7 @@ export const CareerHistoryForm = ({
     }
   };
 
-  console.info(careerFormMethods.getValues());
+  // console.info(careerFormMethods.getValues());
   // console.info(careerFormMethods.formState.errors);
 
   return (
@@ -252,8 +251,6 @@ export const CareerHistoryForm = ({
             <Button
               variant={"subtle"}
               size="xs"
-              pl={0}
-              mb={10}
               onClick={handleMassApply}
               leftIcon={<IconEditCircle />}
             >
@@ -290,7 +287,7 @@ export const CareerHistoryForm = ({
                 />
                 <ReferencesTrigger
                   field="company"
-                  disabled={careerFormMethods.formState.dirtyFields.company}
+                  disabled={careerFormMethods.getValues().company.length > 0}
                 />
               </Row>
 
@@ -311,7 +308,7 @@ export const CareerHistoryForm = ({
                 />
                 <ReferencesTrigger
                   field="duration"
-                  disabled={careerFormMethods.formState.dirtyFields.duration}
+                  disabled={careerFormMethods.getValues().duration.length > 0}
                 />
               </Row>
 
@@ -345,8 +342,8 @@ export const CareerHistoryForm = ({
                 <ReferencesTrigger
                   field="position"
                   disabled={
-                    careerFormMethods.formState.dirtyFields.appointment
-                      ?.position
+                    careerFormMethods.getValues().appointment.position.length >
+                    0
                   }
                 />
               </Row>
@@ -369,7 +366,7 @@ export const CareerHistoryForm = ({
                 <ReferencesTrigger
                   field="rank"
                   disabled={
-                    careerFormMethods.formState.dirtyFields.appointment?.rank
+                    careerFormMethods.getValues().appointment.rank.length > 0
                   }
                 />
               </Row>

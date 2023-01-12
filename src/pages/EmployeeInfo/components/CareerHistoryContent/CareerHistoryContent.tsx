@@ -50,8 +50,8 @@ export const CareerHistoryContent = ({
 
       if (sources) {
         const firstSource = `${
-          sources[0].referenceType
-        }  | ${sources[0].dateObtained.slice(0, 10)} | ${sources[0].comment}`;
+          sources[0]?.referenceType
+        }  | ${sources[0]?.dateObtained.slice(0, 10)} | ${sources[0]?.comment}`;
 
         return (
           firstSource +
