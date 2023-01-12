@@ -18,6 +18,7 @@ import { CertificationType } from "../../../../model/career/Certification";
 
 import { IconEditCircle } from "@tabler/icons";
 import {
+  MassApplyingFields,
   ReferenceStateContext,
   useReferencesStateMethods,
 } from "./components/References";
@@ -25,6 +26,11 @@ import { ReferencesTrigger } from "./components/References/ReferencesTrigger";
 import { ReferencesPanel } from "./components/References/ReferencesPanel";
 import React from "react";
 import { AppointmentType } from "../../../../model/career/Appointment";
+import {
+  ReferenceStateProvider,
+  useReferenceState,
+} from "./components/References/References2";
+import { useListState } from "@mantine/hooks";
 
 interface CareerHistoryFormProps {
   setDrawer: (arg: boolean) => void;
@@ -38,17 +44,31 @@ export const CareerHistoryForm = ({
   const { classes } = useStyles();
 
   const { saveOrCreateCareer } = useSaveOrCreateCareer();
-  const referenceStateMethods = useReferencesStateMethods();
+
+  const referenceState = useReferenceState();
   const {
+    dispatch,
     openPanel,
-    setOpenPanel,
-    currentField,
     currentArrayId,
-    massApplyingFields,
-    handleMassApplyingFields,
-    isMassApply,
-    setIsMassApply,
-  } = referenceStateMethods;
+    currentField,
+    massAppliedFields,
+    setMassAppliedFields,
+  } = referenceState;
+
+  // const [massAppliedFields, setMassAppliedFields] =
+  //   useListState<MassApplyingFields>(undefined);
+
+  // const referenceStateMethods = useReferencesStateMethods();
+  // const {
+  //   openPanel,
+  //   setOpenPanel,
+  //   currentField,
+  //   currentArrayId,
+  //   massApplyingFields,
+  //   handleMassApplyingFields,
+  //   isMassApply,
+  //   setIsMassApply,
+  // } = referenceStateMethods;
 
   // to transform skills content
   const transformedSelectedCareerValue: CareerType | undefined =
@@ -168,9 +188,10 @@ export const CareerHistoryForm = ({
   });
 
   const handleMassApply = () => {
-    setIsMassApply(!isMassApply);
-    setOpenPanel(!isMassApply);
-    handleMassApplyingFields.setState([]);
+    // setIsMassApply(!isMassApply);
+    // setOpenPanel(!isMassApply);
+    // handleMassApplyingFields.setState([]);
+    setMassAppliedFields.setState([]);
   };
 
   const handleSelectAll = (checked: boolean) => {
@@ -178,18 +199,18 @@ export const CareerHistoryForm = ({
       for (const [key, value] of Object.entries(
         careerFormMethods.getValues(),
       )) {
-        // Probably need to standardise dirty fields to check length of content instead.
+        // TODO: need to standardise dirty fields to check length of content instead.
         if (
           (key === "company" || key === "duration") &&
           value.toString().length > 0
         ) {
-          handleMassApplyingFields.append({
+          setMassAppliedFields.append({
             field: key,
           });
         } else if (key === "appointment") {
           Object.values(value).forEach((item, id) => {
             if (item.length > 0 && Object.keys(value)[id] !== "references") {
-              handleMassApplyingFields.append({
+              setMassAppliedFields.append({
                 field: Object.keys(value)[id] as Path<AppointmentType>,
               });
             }
@@ -197,7 +218,7 @@ export const CareerHistoryForm = ({
         } else if (key === "skills") {
           (value as string[]).forEach((item, id) => {
             if (item.length > 0) {
-              handleMassApplyingFields.append({
+              setMassAppliedFields.append({
                 field: key,
                 arrayId: id,
               });
@@ -207,7 +228,7 @@ export const CareerHistoryForm = ({
           (value as CertificationType[]).forEach((cert, certId) => {
             Object.values(cert).forEach((value, id) => {
               if (value.length > 0 && Object.keys(cert)[id] !== "references") {
-                handleMassApplyingFields.append({
+                setMassAppliedFields.append({
                   field: Object.keys(cert)[id] as Path<CertificationType>,
                   arrayId: certId,
                 });
@@ -217,20 +238,21 @@ export const CareerHistoryForm = ({
         }
       }
     } else {
-      handleMassApplyingFields.setState([]);
+      setMassAppliedFields.setState([]);
     }
   };
 
-  // console.info(careerFormMethods.getValues());
+  console.info(careerFormMethods.getValues());
   // console.info(careerFormMethods.formState.errors);
 
   return (
-    <Form<CareerType>
-      methods={careerFormMethods}
-      preventLeaving={true}
-      useLocalStorage={true}
-    >
-      <ReferenceStateContext.Provider value={referenceStateMethods}>
+    <ReferenceStateProvider value={referenceState}>
+      <Form<CareerType>
+        methods={careerFormMethods}
+        preventLeaving={true}
+        useLocalStorage={true}
+      >
+        {/* <ReferenceStateContext.Provider value={referenceStateMethods}> */}
         <Popover
           opened={openPanel}
           position="right"
@@ -250,13 +272,13 @@ export const CareerHistoryForm = ({
               onClick={handleMassApply}
               leftIcon={<IconEditCircle />}
             >
-              {isMassApply ? "Exit mass apply" : "Mass apply"}
+              {massAppliedFields ? "Exit mass apply" : "Mass apply"}
             </Button>
           </TitleContainer>
 
           <Popover.Target>
             <MainContainer>
-              {isMassApply ? (
+              {massAppliedFields ? (
                 <SelectAll>
                   <Text size={"xs"}>Select all</Text>
                   <Checkbox
@@ -269,7 +291,7 @@ export const CareerHistoryForm = ({
               <Row
                 highlight={
                   (openPanel && currentField === "company") ||
-                  massApplyingFields.filter((item) => item.field === "company")
+                  massAppliedFields?.filter((item) => item.field === "company")
                     .length === 1
                 }
               >
@@ -291,7 +313,7 @@ export const CareerHistoryForm = ({
               <Row
                 highlight={
                   (openPanel && currentField === "duration") ||
-                  massApplyingFields.filter((item) => item.field === "duration")
+                  massAppliedFields?.filter((item) => item.field === "duration")
                     .length === 1
                 }
               >
@@ -323,7 +345,7 @@ export const CareerHistoryForm = ({
               <Row
                 highlight={
                   (openPanel && currentField === "position") ||
-                  massApplyingFields.filter((item) => item.field === "position")
+                  massAppliedFields?.filter((item) => item.field === "position")
                     .length === 1
                 }
               >
@@ -347,7 +369,7 @@ export const CareerHistoryForm = ({
               <Row
                 highlight={
                   (openPanel && currentField === "rank") ||
-                  massApplyingFields.filter((item) => item.field === "rank")
+                  massAppliedFields?.filter((item) => item.field === "rank")
                     .length === 1
                 }
               >
@@ -416,7 +438,8 @@ export const CareerHistoryForm = ({
             </MainContainer>
           </Popover.Target>
         </Popover>
-      </ReferenceStateContext.Provider>
-    </Form>
+        {/* </ReferenceStateContext.Provider> */}
+      </Form>
+    </ReferenceStateProvider>
   );
 };

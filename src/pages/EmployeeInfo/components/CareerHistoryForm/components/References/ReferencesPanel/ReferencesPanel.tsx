@@ -26,24 +26,36 @@ import { CareerType } from "../../../../../../../model/career/Career";
 import { Path, useForm, useFormContext } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { getExistingReference } from "../utils";
+import { useReferenceStateContextNew } from "../References2";
 
 export const ReferencesPanel = () => {
   const { classes } = useStyles();
 
-  const referenceStateContext = useReferenceStateContext();
+  const referenceStateContextNew = useReferenceStateContextNew();
   const {
-    currentField,
-    setCurrentField,
-    setOpenPanel,
+    dispatch,
+    openPanel,
     currentArrayId,
-    setCurrentArrayId,
-    lastSource,
-    setLastSource,
-    isMassApply,
-    setIsMassApply,
-    massApplyingFields,
-    handleMassApplyingFields,
-  } = referenceStateContext;
+    currentField,
+    massAppliedFields,
+  } = referenceStateContextNew;
+
+  const [lastSource, setLastSource] = React.useState<SourceType>();
+
+  // const referenceStateContext = useReferenceStateContext();
+  // const {
+  //   currentField,
+  //   setCurrentField,
+  //   setOpenPanel,
+  //   currentArrayId,
+  //   setCurrentArrayId,
+  //   lastSource,
+  //   setLastSource,
+  //   isMassApply,
+  //   setIsMassApply,
+  //   massApplyingFields,
+  //   handleMassApplyingFields,
+  // } = referenceStateContext;
 
   const sourceFormMethod = useForm<SourceType>({
     resolver: zodResolver(Source),
@@ -74,12 +86,15 @@ export const ReferencesPanel = () => {
   );
 
   const handleClosePanel = () => {
-    setCurrentField(undefined);
-    setCurrentArrayId(undefined);
-    setOpenPanel(false);
-    if (isMassApply) {
-      handleMassApplyingFields.setState([]);
-      setIsMassApply(false);
+    dispatch({
+      type: "RESET_ALL",
+    });
+    // setCurrentField(undefined);
+    // setCurrentArrayId(undefined);
+    // setOpenPanel(false);
+    if (massAppliedFields) {
+      // handleMassApplyingFields.setState([]);
+      // setIsMassApply(false);
     }
   };
 
@@ -96,16 +111,16 @@ export const ReferencesPanel = () => {
   };
 
   const handleMassApply = sourceFormMethod.handleSubmit(async (data) => {
-    massApplyingFields.forEach(({ field, arrayId }) => {
-      updateReference({
-        source: data,
-        field,
-        arrayId,
-      });
-    });
-    setOpenPanel(false);
-    setIsMassApply(false);
-    handleMassApplyingFields.setState([]);
+    // massApplyingFields.forEach(({ field, arrayId }) => {
+    //   updateReference({
+    //     source: data,
+    //     field,
+    //     arrayId,
+    //   });
+    // });
+    // setOpenPanel(false);
+    // setIsMassApply(false);
+    // handleMassApplyingFields.setState([]);
   });
 
   const editSource = (id: number) => {
@@ -247,7 +262,8 @@ export const ReferencesPanel = () => {
           }}
           size={"xs"}
           variant="outline"
-          onClick={isMassApply ? handleMassApply : applySources}
+          // onClick={massAppliedFields ? handleMassApply : applySources}
+          onClick={applySources}
           disabled={popupMode === "read" || !sourceFormMethod.formState.isValid}
         >
           Apply

@@ -1,3 +1,4 @@
+import { useListState, UseListStateHandlers } from "@mantine/hooks";
 import React from "react";
 import { Path } from "react-hook-form";
 import { AppointmentType } from "../../../../../../model/career/Appointment";
@@ -8,13 +9,6 @@ export type MassApplyingFields = {
   field: Path<CareerType> | Path<AppointmentType> | Path<CertificationType>;
   arrayId?: number;
 };
-
-interface ReferenceState {
-  openPanel: boolean;
-  currentField?: string;
-  currentArrayId?: number;
-  massApplyingFields?: MassApplyingFields[];
-}
 
 type ReferenceActions =
   | {
@@ -30,11 +24,22 @@ type ReferenceActions =
       massApplyingFields: MassApplyingFields[];
     };
 
+interface ReferenceState {
+  openPanel: boolean;
+  currentField?: string;
+  currentArrayId?: number;
+  massAppliedFields?: MassApplyingFields[];
+  setMassAppliedFields: UseListStateHandlers<MassApplyingFields>;
+  dispatch: React.Dispatch<ReferenceActions>;
+}
+
 const initialReferenceState: ReferenceState = {
   openPanel: false,
   currentField: undefined,
   currentArrayId: undefined,
-  massApplyingFields: undefined,
+  massAppliedFields: undefined,
+  setMassAppliedFields: {} as UseListStateHandlers<MassApplyingFields>,
+  dispatch: () => {},
 };
 
 function referenceStaterReducer(
@@ -59,7 +64,6 @@ function referenceStaterReducer(
         openPanel: true,
         currentField: undefined,
         currentArrayId: undefined,
-        massApplyingFields: action.massApplyingFields,
       };
 
     default:
@@ -68,30 +72,46 @@ function referenceStaterReducer(
 }
 
 /** Creation of Context */
-export const ReferenceStateContext2 = React.createContext<
-  ReferenceState | undefined
->(undefined);
+const ReferenceStateContext = React.createContext<ReferenceState | undefined>(
+  undefined,
+);
+
+/** Creation of Context Provider */
+export const ReferenceStateProvider = ({
+  value,
+  children,
+}: {
+  value: ReferenceState;
+  children: React.ReactNode;
+}) => {
+  return (
+    <ReferenceStateContext.Provider value={value}>
+      {children}
+    </ReferenceStateContext.Provider>
+  );
+};
 
 /** Hook to setup and use initial setup */
-export const useReferenceStateMethods2 = () => {
+export const useReferenceState = (): ReferenceState => {
   const [state, dispatch] = React.useReducer(
     referenceStaterReducer,
     initialReferenceState,
   );
 
-  const { openPanel, currentArrayId, currentField } = state;
+  const [massAppliedFields, setMassAppliedFields] =
+    useListState<MassApplyingFields>(undefined);
 
   return {
-    openPanel,
-    currentArrayId,
-    currentField,
-    dispatchReferenceState: dispatch,
+    ...state,
+    massAppliedFields,
+    setMassAppliedFields,
+    dispatch,
   };
 };
 
 /** Hook to retrieve reference context values from any component */
-export const useReferenceStateContext2 = () => {
-  const context = React.useContext(ReferenceStateContext2);
+export const useReferenceStateContextNew = () => {
+  const context = React.useContext(ReferenceStateContext);
   if (context === undefined)
     throw new Error("Context must be used within provider");
   return context;

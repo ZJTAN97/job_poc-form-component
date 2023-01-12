@@ -9,6 +9,7 @@ import {
   PathValue,
 } from "react-hook-form";
 import { useReferenceStateContext } from "../References";
+import { useReferenceStateContextNew } from "../References/References2";
 import {
   ArrayContainer,
   ArrayRow,
@@ -35,9 +36,19 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
   referenceTrigger,
 }: ObjectArrayInputProps<T, K>) => {
   const { classes } = useStyles();
-  const referenceStateContext = useReferenceStateContext();
-  const { openPanel, currentField, currentArrayId, massApplyingFields } =
-    referenceStateContext;
+
+  const referenceStateContextNew = useReferenceStateContextNew();
+  const {
+    dispatch,
+    openPanel,
+    currentArrayId,
+    currentField,
+    massAppliedFields,
+  } = referenceStateContextNew;
+
+  // const referenceStateContext = useReferenceStateContext();
+  // const { openPanel, currentField, currentArrayId, massApplyingFields } =
+  //   referenceStateContext;
   const { control, formState } = useFormContext<T>();
   const { errors } = formState;
 
@@ -93,7 +104,7 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
           <ArrayRow
             highlight={
               (openPanel && currentField === "name" && currentArrayId === id) ||
-              massApplyingFields.filter(
+              massAppliedFields?.filter(
                 (item) => item.field === "name" && item.arrayId === id,
               ).length === 1
             }
@@ -122,7 +133,7 @@ export const ObjectArrayInput = <T extends FieldValues, K extends FieldValues>({
               (openPanel &&
                 currentField === "issuedBy" &&
                 currentArrayId === id) ||
-              massApplyingFields.filter(
+              massAppliedFields?.filter(
                 (item) => item.field === "issuedBy" && item.arrayId === id,
               ).length === 1
             }
